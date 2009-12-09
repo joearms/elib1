@@ -1,0 +1,497 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso8859-1">
+<script language="JavaScript" SRC="render.js"></script>
+<script language="JavaScript" SRC="dragger.js"></script>
+<style>
+
+/* some styles */
+
+body { margin-left:10%; background-color: #f0f0f0;}
+
+
+.content {
+  padding: 1em;
+}
+
+.bar {
+  background-color: #008080;
+  color: #ffffff;
+  font-weight: bold;
+  padding: 2px 1em 2px 1em;
+}
+
+.box {
+  background-color: #ffff00;
+  border: 1px solid #000000;
+  color: #000000;
+  padding: 0px;
+  position: absolute;
+}
+
+
+.table1 {border-top: solid 1px #000000;
+          border-right: solid 1px #000000;}
+
+.level1 { padding-left:10px;
+         background-color:#9999ff;
+         border-left: 1px solid black; 
+	 border-bottom: 1px solid black; }
+
+.level2 { padding-left:25px;
+         background-color:#bbbbff;
+         border-left: 1px solid black; 
+	 border-bottom: 1px solid black; }
+
+.level3 { padding-left:40px;
+         background-color:#ddddff;
+         border-left: 1px solid black; 
+	 border-bottom: 1px solid black; }
+
+.data1{  padding-left: 25px;
+         background-color: #ffffff;
+         border-left: 1px solid black; 
+	 border-bottom: 1px solid black; }
+
+.data2{  padding-left: 40px;
+         background-color: #ffffff;
+         border-left: 1px solid black; 
+	 border-bottom: 1px solid black; }
+
+.data3{  padding-left: 55px;
+         background-color: #ffffff;
+         border-left: 1px solid black; 
+	 border-bottom: 1px solid black; }
+
+.selected { padding-left:40px; 
+         border-left: 1px solid black; 
+	 border-bottom: 1px solid black;
+         background-color: #ffc080 }
+
+p	 {color:black}
+p i	 {color: black}
+p tt	 {font-weight: bold}
+h1       {color:  #394d7f;}
+h2	 {color:   #394d7f;}
+pre	 {color: green; font-weight:bold}
+ul	 {margin-left: 120px}
+</style>
+
+<script>
+
+var data = [
+    {header:"Getting started",
+     show: true, open: true,
+     content: "You are **now** //interacting// with the folding editor.\n\nTry it Hit the **m** key twice - with a one second delay between hitting it.\n\n You can navigate by using the up and down arrows. You can enter a fold by hitting enter. If the fold is open it will close when you hit enter.\n\nAs you move up and down with the arrow keys the currently selected fold will be shown in red.\n\nNow try closing this fold and open the fold marked Editing",
+     level: 1},
+    {header: "Editing",
+     show: true, open:false,
+     content: "To edit a fold type escape - when you have finished editing type escape.\nAs you edit the data the display will change.\n\nNow close this fold and open the fold marked organising.",
+     level: 1},
+    {header:"Organising",
+     show: true, open:false,
+     content: "To organise your headings you can move them up or down using the **u** and **d** keys.\n\nYou can promote or demote a level by using the left and right arrows.\n\nNote that you can only move a level up within it's own level - to move a header2 up beyond the current block of header 2 elements you have to move it up using the **u** key as far as it will go then use the //left arrow// to promote the level to a header 1 - then you can move it higher",
+     level: 1},
+    {header:"Wiki text",
+     show: true, open: false, 
+     content: "The internal form of a fold is //wiki text// - the relationship between the wiki text and the formatted text is --very simple-- easy to understand if you just hit ESC - then you will see the wiki text and the rendered text on the screen at the same time. Try it now.",
+     level: 1},
+    {header:"Preformatted text",
+     show: false, open: false,
+     content: "> this is sub heading\n>containing\n>preformatted\n> text",
+   level: 2},
+    {header:"Bullets",
+     show: false, open: false,
+     content: "* one\n*Two\n*three ",
+     level: 2},
+    {header:"Modes",
+     show: true, open:false,
+     content: "The folding edit runs in edit/organise mode - or view mode.\n\nToswap modes type **m**",
+     level: 1},
+     {header: "About",
+     show: true, open: false,
+     level:1,
+     content: "Written by <<joe armstrong>>. This is my first attempt at javasript -it's great fun. This edit is part of //Erlang on Steriods//"},
+     {header: "To do",
+     show: true, open: false,
+     level:1,
+     content: "* Remove flickering. I realise that this can be done by simply toggeling the display property of the appropriate elemement between //block// and //none//. This should be fairly easy. I will try this in //structure editor1//"}
+     
+    ];
+     
+var selected = 0;
+var foldingMode = true;
+var mode = "navigate";
+
+var levelStyle = new Array();
+levelStyle[1] = "level1";
+levelStyle[2] = "level2";
+levelStyle[3] = "level3";
+
+var levelData = new Array();
+levelData[1] = "data1";
+levelData[2] = "data2";
+levelData[3] = "data3";
+
+function edit_selected(){
+    var id, str;
+    str = data[selected].content;
+    id = document.getElementById("editBox");
+    id.value = str;
+    id =  document.getElementById("editHeader");
+    id.value = data[selected].header;
+    id.rows=1;
+    data[selected].show = true;
+    render_rows();
+}
+	
+function load() {
+    var max, i;
+    selected = 0;
+    // tdebug();
+    render_rows();
+}
+
+function debug(){
+    var out, i, max;
+    out = document.getElementById("debug");
+    out.innerHTML = "";
+    out.innerHTML += "Debug";
+    max = data.length;
+    out.innerHTML += "<br>max="+max;
+    out.innerHTML += "<br>selected="+selected;
+    for(i=0; i < max; i++){
+	out.innerHTML += "<br>";
+	out.innerHTML += i+": ";
+	out.innerHTML += " level=" + data[i]. level;
+	out.innerHTML += " show = "  + data[i].show;
+	out.innerHTML += " open = "  + data[i].open;
+	out.innerHTML += " header = " + data[i].header;
+    };
+}
+
+function render_folds(){
+    var level, id, i, max,row,col;
+    document.getElementById("mode").innerHTML = mode;
+    id = document.getElementById("maintab"); 
+    id.innerHTML = "";
+    max = data.length;
+    for(i=0; i< max; i++){
+	// -1 means at the end
+	if(data[i].show){
+	    row = id.insertRow(-1);
+	    col=row.insertCell(0);
+	    col.innerHTML = data[i].header;
+	    col.setAttribute("class", levelStyle[data[i].level]);
+	    if(i == selected)col.setAttribute("style", "color:red");
+	    if(data[i].open){
+		// show the content in a new row
+		row = id.insertRow(-1);
+		col=row.insertCell(0);
+		col.setAttribute("class", levelData[data[i].level]);
+		render_wiki_str_in_node(col, data[i].content);
+	    };
+	};
+    }
+}
+
+function selection_down() {
+    var i;
+    max = data.length;
+    i = selected;
+    while(i++ < max - 1){
+	if( data[i].show ){
+	    return(i);
+	};
+    };
+    return(selected);
+}
+
+function selection_up() {
+    var i;
+    i = selected;
+    while(i-- > 0){
+	if( data[i].show ){
+	    return(i);
+	};
+    };
+    return(selected);
+}
+
+function move_selection_up(){
+    // we'll be smart here and call move selection down
+    // do this
+    var nn, i;
+    nn = data[selected].level;
+    i = selected-1;
+    if( i < 0 )return(false);
+    // alert("!scanning from "+ i +" nn = " + nn);
+    // should be looking at the same level or less
+    while(i > 0 && data[i].level > nn)i--;
+    up = i;
+    // alert("nn="+nn+" up =" + up);
+    if(up >= 0 && data[up].level >= nn){
+	selected = up;
+	move_selection_down();
+	selected=up;
+    };
+}
+
+function move_selection_down(){
+    var nn, start, stop, i, insert, max;
+    // find out how much to move
+    nn = data[selected].level;
+    start = selected;
+    nn = data[selected].level;
+    i = selected+1;
+    max = data.length;
+    while(i < max && data[i].level > nn)i++;
+    stop = i-1;
+    // alert("start = "+start+" stop = "+stop);
+    // find out where to put the data
+    // at stop + 1 we should either be at the end of the 
+    // array OR we have hit a h(nn)
+    // alert("i=+"+i);
+    if(i==max)return(false);
+    // alert("search from="+i);
+    if(data[i].level == nn){
+	// found a h(nn)
+	// skip over the children
+	i+=1;
+	while(i < max && data[i].level > nn)i++;
+	insert = i-1;
+	// alert("start = " + start + " stop = " + stop + " insert ="+ insert);
+	move_block_forward(start, stop, insert);
+    } else if (data[i].level < nn) {
+	// alert("no");
+	return(false);
+    } else {
+	// hit the end -- not sure if we can get here
+	alert("end");
+	move_block_forward(start, stop, max-1);
+    }
+}
+
+function move_block_forward(start, stop, insert){
+    // tested in test_js12.html
+    var	p = data.slice(0, start);
+    var q = data.slice(start, stop+1);
+    var r = data.slice(stop+1, insert+1);
+    var s = data.slice(insert+1, data.length);
+    // alert("pl="+p.length+"ql"+q.length);
+    selected = p.length + r.length;
+    data = p.concat(r,q,s);
+
+    
+    return (data);
+}
+
+// enter selected (is a toggle)
+//   this opens or closes all the children
+
+function enter_selected() {
+    var max, i, nn, flag;
+    max = data.length;
+    i = selected;
+    flag = ! data[i].open;
+    data[i].open = flag;
+    nn = data[i].level + 1;
+    j = i+1;
+    while(j < max  && data[j].level == nn){
+	data[j].show=flag;
+	j++;
+    }
+}
+
+function render_rows() {
+    if(foldingMode) render_folds();
+}
+
+function clear_static_display(){
+  id = document.getElementById("statictab"); 
+  id.innerHTML="";
+}
+
+function render_non_folding(){
+    var i,id,max;
+    id = document.getElementById("maintab"); 
+    id.innerHTML = "";
+    id = document.getElementById("statictab"); 
+    max = data.length;
+    for(i=0; i < max; i++){
+	id.innerHTML += "<h1>" + data[i].header + "</h1>";
+	render_wiki_str_in_node(id, data[i].content);
+    };
+}
+
+function mynewclicker(event){
+    var text = whichElement(event);
+    var key = event.keyCode;
+    var str = text.value;
+    var row = text.parentNode.parentNode.rowIndex;
+    var table = document.getElementById("maintab");
+    var id = table.rows[row-1].cells[0];
+    id.innerHTML="";
+    render_wiki_str_in_node(id, str);
+    if ( key == 27) {
+	data[selected].content = str;
+	data[selected].edit = false;
+	// restore the origonal key handler for the body
+	render_rows();
+	document.body.setAttribute("onkeyup", "keypressed(event)");
+    };
+}
+
+function keypressed(event){
+    var key, e, textid, headerid;
+    var modeid= document.getElementById("mode");
+    modeid.innerHTML = mode;
+    key = event.keyCode;
+    if ( key == 27 ) {
+	if (mode == "navigate"){
+	    mode = "edit";
+	    var id = document.getElementById("editBox");
+	    id.focus();
+	    modeid.innerHTML = mode;
+	    var id = document.getElementById("boxB");
+	    id.style.display = "block";
+	} else if(mode == "edit") {
+	    mode = "navigate";
+	    var id = document.getElementById("maintab");
+	    modeid.innerHTML = mode;
+	    var id = document.getElementById("editBox");
+	    id.blur();
+	    var id = document.getElementById("boxB");
+	    id.style.display = "none";
+	}
+    } else {
+	if (mode == "navigate") key_press_fold(key);
+	else key_press_edit(key);
+    }
+}
+
+function key_press_edit(key){
+    var id, key;
+    var id = document.getElementById("editBox");
+    var idheader = document.getElementById("editHeader");
+    resize_textarea(id);
+    idheader.rows = 1;
+    data[selected].content = id.value;
+    data[selected].header  = idheader.value;
+    render_rows();
+}
+
+function resize_textarea(id) {
+    var n, str, i;
+    str = id.value;
+    n = 0;
+    for (i=0;i<str.length;i++)
+      if (str[i] == '\n') n += 1;
+    id.rows = n + 1;
+}
+
+
+
+function key_press_fold(key){
+    switch(key) {
+    case 40:
+	// down
+	selected = selection_down();
+	break;
+    case 37:
+	// left arrow
+	if(data[selected].level > 1) data[selected].level -= 1;
+	break;
+    case 38:
+	// move selection up
+	selected = selection_up();
+	break;
+    case 39:
+	// right arrow 
+	if(data[selected].level < 3) data[selected].level += 1;
+	break;
+     case 85:
+	 // key 'u' move title up
+	 move_selection_up();
+	 break;
+    case 68:
+	// key 'd' move title down
+	move_selection_down();
+	break;
+    case 69:
+	// 'e'
+	edit_selected();
+	break;
+    case 13:
+	enter_selected();
+	break;
+    case 77:
+	// 'm'
+	foldingMode = ! foldingMode;
+	if(foldingMode == true)clear_static_display();
+	else render_non_folding();
+	break;
+    case 80:
+	alert("pop");
+	break;
+    default:
+	// alert("non"+key);
+	break;
+    };
+    // debug();
+    edit_selected();
+    render_rows();
+}
+
+function whichElement(e)
+{
+    var targ
+    if (!e) var e = window.event
+    if (e.target) 
+       targ = e.target
+    else 
+       if (e.srcElement) 
+	  targ = e.srcElement
+    if (targ.nodeType == 3) // defeat Safari bug
+	targ = targ.parentNode
+    return(targ);
+}
+
+</script>
+
+</head>
+
+
+<body onkeyup="keypressed(event)" onload="load()" width="80%">
+
+
+<table>
+    <tr><td id="mode">Mode:</td></tr>
+<tr><td>
+<table   border=1 id="maintab" width="800px" cellspacing=0>
+</table>
+</td>
+</tr>
+</table>
+
+<div id="statictab"">
+</div>
+
+<p>
+<div id="debug">
+</div>
+
+<div id="boxB" class="box" style="display:none">
+  <div class="bar" style="width:40em;"
+       onmousedown="dragStart(event, 'boxB')">Edit box</div>
+  <div class="content" style="width:40em;"
+   <textarea id="editHeader" cols=60 rows=1 style='overflow:hidden'>Header</textarea>
+   <textarea id="editBox" cols=60 rows=2 style='overflow:hidden'>Content</textarea></td></tr>
+</div>
+</div>
+
+<script>
+
+
+</script>

@@ -1,0 +1,2 @@
+#/bin/sh
+erl -noshell -pa '.' -s epeg_bootstrap peg2erl $1

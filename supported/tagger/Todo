@@ -1,0 +1,17 @@
+The todo file has a list of things that need to be done
+As entires are added they should be marked as done/by/date
+
+ToDo
+
+Open Items (one liners)
+
+Number Status Assigned Date        What
+1      closed joe      2009-12-05  Make an initial release
+2      open   joe      2009-12-05  Investigate the bug ...
+
+Notes: Free text
+
+[1] started by joe on 2009-12-15
+    closed by joe on  2009-12-15
+
+[2] nothing yet

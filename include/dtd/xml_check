@@ -1,0 +1,6 @@
+#!/bin/sh
+export XML_CATALOG_FILES=$HOME/code/elib2-1/dtd/catalog.xml
+unset SGML_CATALOG_FILES
+unset XML_DEBUG_CATALOG
+xmllint  --nonet --valid --noout  $1
+

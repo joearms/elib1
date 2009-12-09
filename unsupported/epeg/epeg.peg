@@ -1,0 +1,290 @@
+%{
+-import(lists, [flatten/1]).
+
+batch([X]) ->
+    In = atom_to_list(X),
+    peg2erl(In),
+    init:stop().
+
+peg2erl(In) ->
+    Mod = filename:rootname(In),
+    io:format("compiling:~p~n",[In]),
+    Code = peg_compile(Mod, In),
+    io:format("* creating * ~s.erl~n",[Mod]),
+    file:write_file(Mod ++ ".erl", Code).
+
+peg_compile(Mod, In) ->
+    Parse = parse_peg_file(In),
+    epeg_compiler:compile(Mod, Parse).
+
+parse_peg_file(F) ->
+    io:format("Parsing:~p~n",[F]),
+    {ok, B} = file:read_file(F),
+    L = binary_to_list(B),
+    {Time, {Val, []}} = timer:tc(?MODULE, parse_grammar, [L]),
+    Rate = Time/length(L),
+    io:format("time:~p (ms)"
+	      "#chars = ~w rate=~p~n", [Time/1000, length(L), Rate]),
+    Val.
+
+
+%}
+
+## final is the name of the finaliser module
+## if omitted this defaults to ?MODULE
+
+# final = epeg;
+
+## Now for the grammar
+
+grammar = - ( code | def | unexpected)+ endOfFile ;
+
+unexpected = . ;
+
+endOfFile = !. ;	  
+
+code = "%{" ( !'%}' . )* '%}' ;
+
+def = ident '=' expr ';' - ;
+
+expr = seq ('|' seq)* -; 
+
+seq = prefix (prefix)*;
+
+prefix = ( '&' action )
+|	 ('&' suffix )
+|	 ('!' suffix )
+|        suffix;
+
+suffix  = primary ('?' | '*' | '+' )?;
+
+primary = ident ':' ident ! '='
+        | ident ! '='    
+        | '(' expr ')' 
+        | literal        
+        | class
+        | '.' ;
+
+# Lexical syntax
+
+int = [0-9]+;
+
+ident =  "-" - | [a-z][a-zA-Z_]* -; 
+
+literal = lit -;
+
+# literals '...'  or "..."
+# the ... are char's
+
+lit  =  ["] (!["] char )*  ["] 
+     |  ['] (!['] char )*  [']; 
+
+# chars are what we find inside strings
+# we use the Erlang quoting convention here
+# \n \t \f \v \r are special
+# \\ is backslash
+# \C is C
+# \OOO is octal
+# \^ C is control 
+
+## this is horrible
+
+char = 
+     "\\" [0-3][0-7][0-7]
+     | "\\" [0-7][0-7]     
+     | "\\" [0-7]
+     | "\\" [bdefnrstv\'"]
+     | "\\^" [a-zA-Z]
+     | "\\\\"            
+     | !"\\" . 
+     | "\\" .
+     | . ;
+
+class = '['  ( !']' range )* ']' -;
+
+range = char "-" char | char;
+
+action = '{' braces* '}' - ;
+
+braces = '{' (!'}' .)* '}' | !'}' .;
+
+spaces =  (space | comment)* ;
+
+- =	(space | comment)* ;
+
+space = " " | "\t" | endofline;
+
+## comments are comments in peg files
+
+comment = "#" (!endofline .)* endofline;
+
+endofline = "\r\n" | "\n" | "\r";
+
+%{
+
+-define(IN(X,Low,Hi),Low =< X, X =< Hi).
+
+final(grammar, [_,G,_]) -> {gram,G};
+
+final(ws, _) -> ws;
+
+final(unexpected, X) ->
+    io:format("Unexpected symbol:~p",[[X]]),
+    {error, [X]};
+
+final(action, [_,B,_,_]) -> {action, B};
+
+final(class, [_,X,_,_]) -> {class, reduce(X)};
+
+%% char sucks -- fortunately we only have to define it once
+
+final(char, X) ->
+    char1(X);
+	    
+final(spaces, X) ->
+    {spaces, flatten(X)};
+    %% {spaces, X}.
+
+final('-', _) ->
+    spaces;
+
+final(range, [A,_,B]) -> {A,B};
+final(range, X) -> X;
+
+final(endofline, _) -> eol;
+
+final(space, X) -> X;
+
+final(comment, X) -> {comment, X};
+
+final(code, [_,L,_]) ->
+    R = reduce(L),
+    io:format("code (~w bytes) ...~n",[length(R)]),
+    {code, R};
+
+final(endOfFile, _) -> endofFile;
+
+final(ident, ['-',spaces]) -> "-";
+final(ident, [A,B,spaces]) -> [A|B];
+
+final(line, L) -> reduce(L);
+
+final(def, [Id,'=',Expr,';',_]) ->
+    io:format("~p ",[Id]),
+    {defn, Id, Expr};
+
+final(expr, [Seq, More, _]) ->
+   L = reduce(More),
+   case [Seq|L] of
+     [Z] -> Z;
+     Many -> {alt, Many} 
+   end;
+
+final(seq, [A,B]) ->
+    case [A|B] of
+       [Z] -> Z;
+       L -> {seq, L}
+    end;
+
+final(prefix, ['&', A]) -> {land, A};
+final(prefix, ['!', A]) -> {bang, A};
+final(prefix, X) -> X;
+
+final(suffix, [X, []]) -> X;
+final(suffix, [X, ['?']]) -> {question, X};
+final(suffix, [X, ['+']]) -> {plus, X};
+final(suffix, [X, ['*']]) -> {star, X};
+
+final(primary, [Id, bang]) -> {nt, Id};    
+final(primary, [Mod, ':', Id, bang]) -> {nt, Mod,Id};    
+final(primary, ['(',E,')']) -> E;
+final(primary, '.') -> any;
+final(primary, X) -> X;
+
+final(literal, [X,_]) ->  X;
+
+final(lit, [$',L,$']) -> {litthenspace, reduce(L)};
+final(lit, [$",L,$"]) -> {lit, reduce(L)};
+
+final(int, X) -> list_to_integer(X);
+
+final(erlerror, S) -> {badToken, [S]};
+
+final(dws, _) ->  dot;
+final(Tag, S) ->  {Tag, S}.
+	   
+reduce(L) -> [X || [_,X] <- L].
+
+char1([bang,X]) ->
+    X;
+char1(['\\', X]) when ?IN(X, $0, $7) ->
+    X - $0;
+char1(['\\', X, Y]) when ?IN(X, $0, $7), ?IN(Y, $0, $7) ->
+    (X-$0) * 8 + (Y - $0);
+char1(['\\', X, Y, Z]) when ?IN(X, $0, $3), ?IN(Y, $0, $7), ?IN(Z, $0, $7) ->
+    (X-$0) * 64 + (Y-$0) * 8 + (Z - $0);
+char1(['\\^', X]) when ?IN(X, $a, $z) ->
+    X - $a + 1;
+char1(['\\^', X]) when ?IN(X, $A, $Z) ->
+    X - $A + 1;
+char1('\\\\') ->
+    $\\;
+char1('\\') ->
+    $\\;
+char1(['\\', C]) ->
+    case C of
+	$b -> $\b;
+	$d -> $\d;
+	$e -> $\e;
+	$f -> $\f;
+	$n -> $\n;
+	$r -> $\r;
+	$s -> $\s;
+	$t -> $\t;
+	$v -> $\v;
+	$' -> $';
+	$" -> $";
+	C -> C
+    end;
+char1(X) ->
+    io:format("ooo char=~p~n",[X]),
+    {char, X}.
+
+test() ->
+    Mods =  [epeg,epeg_compiler,epeg_pc],
+    cover:start(),
+    [cover:compile(I) || I <- Mods],
+    io:format("Testing...~n"),
+    compare_parses("./peglib.peg"),
+    compare_parses("./pegtest.peg"),
+    compare_parses("./epeg.peg"),
+    io:format("all tests work -- PEG works - hooray~n"),
+    io:format("Analysing...~n"),
+    [{ok,_} = cover:analyse_to_file(I) || I <- Mods],
+    io:format("Done...~n"),
+    init:stop().
+
+compare_parses(F) ->
+    io:format("Testing epeg on:~s~n",[F]),
+    %% parse ourself
+    Val1 = peg_compile("mod", F),
+    io:format("Val1=~p~n",[Val1]),
+    Val2 = epeg_bootstrap:peg_compile("mod", F),
+    %% io:format("Val2=~p~n",[Val2]),
+    case Val1 of
+	Val2 ->
+	    io:format("YES EPEG Works~n"),
+	    yes;
+	_ ->
+	    io:format("EPEG failed - this is really really bad~n"),
+	    dump("debug.tmp", {epeg,Val1,bootstrap,Val2}),
+	    init:stop()
+    end.
+
+dump(File, Term) ->
+    {ok, S} = file:open(File, [write]),
+    io:format(S, "~p.~n", [Term]),
+    file:close(S).
+%}
+
+

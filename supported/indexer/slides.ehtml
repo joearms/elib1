@@ -1,0 +1,313 @@
+<script src='/include/jquery-1.3.2.min.js'></script>
+<script src='/include/jquery-slides.js'></script>
+<link rel='stylesheet' href='/include/slides.css'>
+<body>
+
+  <div class='slide'>
+    <h1>Indexer</h1>
+     
+    <p>How to build an index of all Erlang files:</p>
+    
+    <ol>
+      <li>Crawl the file system. Collect all *.erl files and
+      pack into a single file <b>erl.crawl</b></li>
+      <li>Number the files 1 2 3 ...</li>
+      <li>For each file:
+         <ol>
+	   <li>Extract all English words from the file</li>
+	   <li>Stem the words</li>
+	   <li>Porter the words</li>
+	   <li>Assign a unique integer 1,2,3... to each word</li>
+	   <li>Append a tuple <b>{WordNumber, FileNumber}</b>
+	   to <b>erl.indices</b></li>
+	 </ol>
+      </li>
+      <li>Sort <b>erl.indices</b></li>
+      <li>Gather the indices. So we get <b>{WordNumber, [FileNumeber]}</b>
+      tuples.</li>
+      <li>Gamma compress the <b>[FileNumber]</b> tuples.</li>
+      <li>Output the index</li>
+    </ol>
+  </div>
+  <div class='slide'>
+
+    <h1>Building the index 1/2</h1>
+    
+    <p>Data</p>
+    <table>
+      <tr><td><b>FileNumber</b></td>
+      <td><b>FileName</b></td><td><b>Content</b></tr>
+      <tr><td>1</td><td>one.erl</td>
+      <td>sitting eating module</tr>
+      <tr><td>2</td><td>lib_misc.erl</td>
+      <td>eat lists module</tr>
+      <tr><td>3</td><td>app1.erl</td>
+      <td>module exported</td></tr>
+    </table>
+    
+    <p>Extract stem and number the words</p>
+
+    <table>
+      <tr><td><b>WordNumber</b></td><td><b>word</b></td></tr>
+      <tr><td>1</td><td>sit</td></tr>
+      <tr><td>2</td><td>eat</td></tr>
+      <tr><td>3</td><td>module</td></tr>
+      <tr><td>4</td><td>list</td></tr>
+      <tr><td>5</td><td>export</td></tr>
+    </table>
+
+    <div style="position:absolute;left:43%;top:90px">
+      <p>Emit tuples</p>
+      <table>
+	<tr><td><b>{WordNumber,FileNumber}</b></td></tr>
+	<tr><td>{1,1}</td></tr>
+	<tr><td>{2,1}</td></tr>
+	<tr><td>{3,1}</td></tr>
+	<tr><td>{2,2}</td></tr>
+	<tr><td>{4,2}</td></tr>
+	<tr><td>{3,2}</td></tr>
+	<tr><td>{3,3}</td></tr>
+	<tr><td>{5,3}</td></tr>
+      </table>
+    </div>
+
+    <div style="position:absolute;left:70%;top:90px">
+      <p>Sort</p>
+      <table>
+	<tr><td><b>{WordNumber,FileNumber}</b></td></tr>
+	<tr><td>{1,1}</td></tr>
+	<tr><td>{2,1}</td></tr>
+	<tr><td>{2,2}</td></tr>
+	<tr><td>{3,1}</td></tr>
+	<tr><td>{3,2}</td></tr>
+	<tr><td>{3,3}</td></tr>
+	<tr><td>{4,2}</td></tr>
+	<tr><td>{5,3}</td></tr>
+      </table>
+    </div>
+
+  </div>
+  <div class='slide'>
+    <h1>Building the index 2/2</h1>
+    <p>Gather</p>
+      <table>
+	<tr><td><b>{WordNumber,FileNumber}</b></td></tr>
+	<tr><td>{1,[1]}</td></tr>
+	<tr><td>{2,[1,2]}</td></tr>
+	<tr><td>{3,[1,2,3]}</td></tr>
+	<tr><td>{4,[2]}</td></tr>
+	<tr><td>{5,[3]}</td></tr>
+      </table>
+
+      <div class="middle">
+	<p>Emit index (this is a dets table)</p>
+	<table>
+	  <tr><td><b>Key</b></td><td>Value</td></tr>
+	  <tr><td>&lt;&lt;"sit">></td><td>[1]</td></tr>
+	  <tr><td>&lt;&lt;"eat">></td><td>[2]</td></tr>
+	  <tr><td>&lt;&lt;"module">></td><td>[1,2,3]</td></tr>
+	  <tr><td>&lt;&lt;"list">></td><td>[2]</td></tr>
+	  <tr><td>&lt;&lt;"export">></td><td>[3]</td></tr>
+	  <tr><td>1</td><td>"one.erl"</td></tr>
+	  <tr><td>2</td><td>"lib_misc.erl"</td></tr>
+	  <tr><td>3</td><td>"app1.erl"</td></tr>
+	</table>
+      </div>
+  </div>
+  
+  <div class="slide">
+    <h1>Running a query</h1>
+    <pre>
+      query("exporting a module")
+      lookup &lt;&lt;"export">> => [3]
+      lookup &lt;&lt;"module">> => [1,2,3]
+      Union => 3
+      lookup 3 => "app1.erl"
+    </pre>
+  </div>
+
+  <div class='slide'>
+    <h1>Index Compression</h1>
+    <p>A common word (for example <b>append</b>) will be found
+    in thousands of Erlang files</p>
+    <p>So the dets entry is <b>&lt;&lt;"append>> => [1,2,3,5,6,7,9, ...]</b></p>
+    <p>Let's see how to compress <b>[1,2,3,5,6,7,9]</b>
+    <ol>
+      <li>Remember the first value <b>1</b></li>
+      <li>Take the differences  <b>1,1,2,1,1,2</b></li>
+      <li>Gamma Compress the differences
+      <a href="/supported/tagger/html/elib1_gamma.html">elib1_gamma.erl</a>
+      <br><b>[&lt;&lt;0:1>>,&lt;&lt;0:1>>,&lt;&lt;3:100>>,&lt;&lt;0:1>>,&lt;&lt;0:1>>,&lt;&lt;3:100>>]</b> which is 10 bits long.</li>
+      <li>The value stored in dets is<br>
+      <b>term_to_binary({dlist,0,&lt;&lt;0010000100:10>>})</b></br>
+    </ol>
+  </div>
+
+  <div class='slide'>
+    <h1>Gamma Compression is wonderful</h1>
+      <pre>
+%% 1 0
+%% 2 100
+%% 3 101
+%% 4 11000
+%% 5 11001
+%% 6 11010
+%% 7 11011
+%% 8 1110000
+%% 9 1110001
+      </pre>
+      <p>How do we decode this: Let's decode <b>111000111000</b>
+      <ol>
+	<li>Add some dots to show the boundaries
+	<b>1110.001.110.00</b></li>
+	<li>1110 is a <i>unary encoded integer</i> (base 1) representing
+	N = 3 (count the one bits)</li>
+	<li>Take the next N bits in <i>binary</i> ie (001) 
+	this gives B = 1.</li>
+	<li>The first number is 2^N + B = 9</li>
+	<li>The next number is 2^2 + 0 = 4</li>
+      </ol>
+
+      <p>
+  </div>
+ 
+  <div class='slide'>
+    <h1>Crawl Files</h1>
+    <p>What I actually index is a crawl file</p>
+    <table>
+      <tr><td>{FileName1::string(), Md51::binary(), CompressedContent1::binary()} </td></tr>
+      <tr><td>{FileName2::string(), Md52::binary(), CompressedContent2::binary()} </td></tr>
+      <tr><td>{FileName3::string(), Md53::binary(), CompressedContent3::binary()} </td></tr>
+      <tr><td>{FileName4::string(), Md54::binary(), CompressedContent4::binary()} </td></tr>
+      <tr><td>...</td></tr>
+    </table>
+  </div>
+  <div class='slide'>
+    <h1>Crawling</h1>
+    <pre>
+$ cat <font color="red">medium.in</font>
+%% these paths get added to $HOME
+{"code/elib2-1/lib", ".erl"}.
+{"code/elib2-1/supported", ".erl"}.
+{"code/elib2-1/unsupported", ".erl"}.
+<font color="red">$ eindex -crawl medium</font>
+crawling files:[{"code/elib2-1/lib",".erl"},
+                {"code/elib2-1/supported",".erl"},
+                {"code/elib2-1/unsupported",".erl"}]
+listing: a scanning from /home/ejoearm/code/elib2-1/lib
+listing: a scanning from /home/ejoearm/code/elib2-1/supported
+listing: a scanning from /home/ejoearm/code/elib2-1/unsupported
+listing: Found 87 files
+listing: Created medium.files size:5399 bytes
+listing: Took 53 ms.
+Packing data ...
+pack: 87 files (583518 bytes) read
+pack: 87 files (184847 bytes) written
+pack: Size of input (medium.files): 5399 bytes
+pack: Created (<font color="red">medium.crawl</font>): 184847 bytes
+pack: Compression ratio for data = 0.31678028784030654
+pack: Took 34 ms.
+    </pre>
+
+  </div>
+  <div class='slide'>
+    <h1>Indexing</h1>
+<pre>
+<font color="red">eindex -index medium</font>
+keywords: building word table
+indexing: 215830 words loaded
+keywords: analysing files (can take a while) ...
+keywords: Number of files indexed: 88
+keywords: Inverting word table
+keywords: Took 2994 ms.
+pack index: sorting
+pack index: sorting done
+pack index: outputting index
+pack index: Size of temporary pair map:107814 bytes
+pack index: Size of serialised word table:6337174 bytes
+pack index: Number of words in word table:216549
+pack index: Created <font color="red">medium.index</font>: 169724 bytes
+pack index: Took 303 ms.
+indexing: Took 3298 ms.
+</pre>
+  </div>
+  <div class='slide'>
+    <h1>Digging deeper</h1>
+    <pre>
+$ eindex -statistics medium
+** dumping to statistics.tmp
+...
+{gamma,34095,term_to_binary,15894,optimal,15444,
+       [{<<"strquotechar">>,11,5,"O"},
+        {<<"deeplist">>,20,6,[28,37]},
+        {<<"associ">>,23,12,[12,15,17,28,37,38,42,43]},
+    </pre>
+  </div>
+
+  <div class='slide'>
+    <h1>Commands</h1>
+    <pre>
+eindex -help
+eindex -crawl Name
+   build Name.crawl from Name.in
+eindex -index Name
+   build Name.index from Name.crawl
+eindex -debug Name
+   output a symbolic version of name
+   example eindex -debuf test2.crawl
+eindex -debug Name
+   output a symbolic version of name
+   example eindex -debuf test2.crawl
+eindex -dumpIndex Name
+   output a symbolic version of Name.index
+eindex -statistics Name
+   output some statistics about Name.index
+eindex -search Name Str
+   Search Name.index for Str
+    </pre>
+  </div>
+
+  <div class='slide'>
+    <h1>It's a small program</h1>
+    <pre>
+  640  2334 20514 elib1_indexer.erl
+  120   410  3485 elib1_fast_read.erl
+   75   185  1741 elib1_fast_write.erl
+  248   673  6261 elib1_gamma.erl
+  114   383  3626 elib1_indexer_plugin_erl.erl
+  375  1312 10589 elib1_porter.erl
+   22    59   788 elib1_webquery.erl
+ 1594  5356 47004 total
+    </pre>
+  </div>
+
+  <div class='slide'>
+    <h1>Performance</h1>
+    <p>Two bottlenecks.</p>
+    <ul>
+      <li>Finding words in Erlang
+      <a href="/supported/tagger/html/elib1_indexer_plugin_erl.html">elib1_indexer_plugin_erl.erl</a></li>
+      <li>Fast tuple I/O 
+      <a href="/supported/tagger/html/elib1_fast_read.html">elib1_fast_read.erl</a> and <a href="/supported/tagger/html/elib1_fast_write.html">elib1_fast_write.erl</a></li>
+      <li>Say a lot about fast tuple I/O and the <i>amazing</i>
+      <b>file_sorter.erl</b></li>
+    </ul>
+  </div>
+
+  <div class='slide'>
+    <h1>Outstanding Problems</h1>
+    <ul>
+      <li>Keyword extraction, better algorithm for defining "keywords"</li>
+      <li>Search order presentation. We know which files match but which
+      order do we present them to the user?</li>
+      <li>Matching file presentation. Which part of the result file
+      do we show the user?</li>
+      <li>Scaling. What happens when we scale to large crawls? 
+      I think the answer is one machine per crawl + map reduce.</li>
+    </ul>
+  </div>
+
+
+</body>
+
+

@@ -1,0 +1,220 @@
+<style>
+  /* set the padding here to match with the size of the top and right
+     sidebars */
+ 
+body{
+  padding-top:120px;
+  padding-left:100px;
+  padding-right:320px;
+ }
+
+p {text-align:justify}
+
+div#header{
+  background-color:#aabbcc;
+  position:fixed;
+  padding-left:10px;
+  top:0;
+  left:0;
+  width:500%;
+  height:30px;   /* so padding-left:70px */
+ }
+
+ * html body{
+  overflow:hidden;
+ } 
+
+ * html div.content{
+  height:100%;
+  overflow:auto;
+ }
+
+</style>
+<script src="/include/jquery-1.3.2.min.js"></script>
+<link href='../../include/elib1.css' type='text/css' rel='stylesheet'/>
+
+<script>
+
+var editing;
+var c;
+var guid;
+
+function setup()
+{
+    c=$("#content");
+    var editButtons = 
+       $("<div id='editButtons' class='buttons'></div>");
+    $("#buttons").append(editButtons);
+    // note ${file} is expanded and so is not jquery code
+    add_regular_button(editButtons, "save", 
+        function(){save_edit("${file}")});
+    $(editButtons).append("&nbsp;");   
+    add_edit_button(editButtons, "Q",   "insertHTML", "&ldquo;quotes&rdquo;"); 
+    add_edit_button(editButtons, "I",   "italic", null);
+    add_edit_button(editButtons, "S",   "strikethrough", null);
+    add_edit_button(editButtons, "C",   "bold", null);
+    add_edit_button(editButtons, "ol",  "insertHTML", "<ol><li>one</ol>\n");
+    add_edit_button(editButtons, "ul",  "insertHTML", "<ul><li>one</ul>\n");
+    add_edit_button(editButtons, "pre", "insertHTML", "<pre></pre>");
+    add_edit_button(editButtons, "h2",  "insertHTML", "<h2>H2</h2>");
+    add_edit_button(editButtons, "h1",  "insertHTML", "<h1>H</h1>");
+    add_edit_button(editButtons, "p",  "insertHTML", "<p>para</p>");
+    add_edit_button(editButtons, "todo",  "insertHTML", 
+		    "<h3>To Do</h3><ul><li>one</li>");
+
+    add_edit_button(editButtons, "image",  "insertHTML", 
+		    "<center><img onclick='cimage(1);' width='200' src='p2.jpg'/></center>");
+    set_edit_on();
+}
+
+function cimage(x)
+{
+    alert(x);
+    alert($(this));
+    $(this).hide();
+}
+
+function save_edit(f)
+{
+    // send data back to the server
+    val = $("#content").html();
+    $.get("mod", 
+      {mod:"elib1_content_edit",
+       func:"save",
+       file:f, value:val}, 
+       // function(x){done_save(x)}, 'json'); 
+       function(x){done_save(f)}); 
+}
+
+function load_content(g)
+{
+   $.get("load_content", {id:g}, function(x){done_load(x)}, 'json'); 
+   // $.get("load_content", {id:g}, function(x){done_load(x)}); 
+}
+
+function done_save(f)
+{
+    // done_load(x);
+    // $("#versions").html(x.versions);
+    //    alert("saved="+f);
+    window.location.href = "/doc/" + f + ".html";
+    // $().load(f + ".html");
+}
+
+function done_load(x)
+{
+    $("#header").html("guid=" + x.guid + " last modified=" + x.mod
+		      + " editable=" + x.edit);
+    guid = x.guid;
+    $("#content").html(x.val);
+    switch(x.edit){
+    case true:
+	set_edit_on();
+	break;
+    case false:
+	set_edit_off();
+	break;
+    };
+}
+
+function toggle_edit()
+{
+    switch(editing){
+    case true:
+	set_edit_off();
+	break;
+    case false:
+	set_edit_on();
+	break;
+    };
+}
+
+
+function load_content_old(type, G)
+{
+    // alert("load content type=" + type + " guid=" + G);
+    // $("#header").html("Guid=" + G);
+    $("#content").load("load_content",{id:G});
+    guid=G;
+    switch(type){
+    case "edit":
+	set_edit_on();
+	break;
+    case "lock":
+	set_edit_off();
+	break;
+    default:
+	alert("????????");
+    };}
+
+function load_versions(Guid)
+{
+    // load the toolbar with versions ...
+    $("#versions").load("get_versions", 
+			{"id":Guid});
+    
+}
+
+function toggle_class(x)
+{
+    $(x).toggle();
+}
+
+function set_edit_off()
+{
+    c.get(0).contentEditable = false;
+    c.css({background:"white"});
+    editing=false;
+    $("#header").html("No status is good status");
+    $("#editButtons").hide();
+}
+
+function set_edit_on()
+{
+    c.get(0).contentEditable = true;
+    // c.css({background:"#eeeeee"});
+    editing=true;
+    $("#editButtons").show();
+}
+
+function add_regular_button(x, text, callback)
+{
+    var button = $("<button>" + text + "</button>").
+	click(callback);
+    x.append(button);
+}  
+
+function add_div(x)
+{
+    var y = "." + x;
+    $(x).show();
+    document.execCommand("insertHTML",
+			 false,
+			 "<div class='" + x +"'>Add " + x + "here</div>");
+}
+
+function add_edit_button(x, text, cmd, val)
+{
+    var button = $("<button>" + text + "</button>").
+	click(function(){
+		document.execCommand(cmd, false, val);
+	    });
+    x.append(button);
+}
+
+$(document).ready(function(){setup()});
+
+</script>
+
+<body>
+
+<div id="header">
+  <div id="buttons">
+  </div>
+</div>
+
+<div id="content">
+${content}
+</div>
+
+</body>

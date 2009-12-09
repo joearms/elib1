@@ -1,0 +1,2 @@
+<? M=simple_web_server, M:header() ?>
+<? M:library() ?>

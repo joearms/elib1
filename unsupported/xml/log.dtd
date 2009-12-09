@@ -1,0 +1,23 @@
+<!ENTITY  % inline "#PCDATA|e|emph|ic|latex|iq">
+<!ENTITY  % flow   "e|code|p|pre|ol|ul|dl">
+
+<!ELEMENT log (entry)* >
+<!ELEMENT entry (date, (%flow; | sect1)* )>
+<!ELEMENT title (#PCDATA)>
+<!ELEMENT sect1 (title, (%flow; | sect2)* )>
+<!ELEMENT sect2 (title, (%flow;)* )>
+<!ELEMENT p (%inline;)*>
+<!ELEMENT date (#PCDATA)>
+<!ELEMENT ic (#PCDATA) >
+<!ELEMENT dt (%inline;)* >
+<!ELEMENT dd (%flow;)* >
+<!ELEMENT dl (dt,dd)* >
+<!ELEMENT ol (li)* >
+<!ELEMENT ul (li)*>
+<!ELEMENT pre (#PCDATA)>
+<!ELEMENT li (%flow;)* >
+<!ELEMENT code (#PCDATA) >
+<!ELEMENT latex (#PCDATA) >
+<!ELEMENT iq (#PCDATA) >
+<!ELEMENT emph (#PCDATA) >
+<!ELEMENT e (#PCDATA)>

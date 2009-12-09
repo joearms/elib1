@@ -1,0 +1,4 @@
+<!ELEMENT story (title, (section|p)+)>
+<!ELEMENT title (#PCDATA)>
+<!ELEMENT section (#PCDATA)>
+<!ELEMENT p (#PCDATA)>

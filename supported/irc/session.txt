@@ -1,0 +1,184 @@
+   I used 
+
+   pircd-beta-one.tar.gz 
+
+   telnet localhost 6667
+
+USER armstrong
+  no reply
+
+NICK joe
+   :irc.perl.org 001 joe :Welcome to the Internet Relay Network joe
+   :irc.perl.org 002 joe :Your host is irc.perl.org, running version 0
+   :irc.perl.org 003 joe :This server was created Wed Dec  9 13:32:17 2009
+   :irc.perl.org 004 joe irc.perl.org 0 dioswkg biklmnopstv
+   :irc.perl.org 251 joe :There are 2 users and 0 invisible on 1 server(s)
+   :irc.perl.org 252 joe 0 :operator(s) online
+   :irc.perl.org 253 joe 0 :channels formed
+   :irc.perl.org 255 joe :I have 2 user(s) and 0 server(s)
+   
+   :irc.perl.org NOTICE joe :Highest connection count: 3 (3 clients)
+   :irc.perl.org 375 joe :- irc.perl.org Message of the Day -
+   :irc.perl.org 372 joe :- pircd Beta One
+   :irc.perl.org 372 joe :- If you can't do it in Perl, you don't want to do it.
+   :irc.perl.org 376 joe :End of /MOTD command.
+  
+       001    RPL_WELCOME
+              "Welcome to the Internet Relay Network
+               <nick>!<user>@<host>"
+       002    RPL_YOURHOST
+              "Your host is <servername>, running version <ver>"
+       003    RPL_CREATED
+              "This server was created <date>"
+       004    RPL_MYINFO
+              "<servername> <version> <available user modes>
+               <available channel modes>"
+ 
+       251    RPL_LUSERCLIENT
+              ":There are <integer> users and <integer>
+               services on <integer> servers"
+       252    RPL_LUSEROP
+              "<integer> :operator(s) online"
+       253    RPL_LUSERUNKNOWN
+              "<integer> :unknown connection(s)"
+       255    RPL_LUSERME
+              ":I have <integer> clients and <integer>
+                servers"
+
+
+       375 = start of MOD (message of the day)
+       372 = MOD content
+       376 = MOD end
+
+
+NICK joe
+   :irc.perl.org 433 * joe :Nickname already in use
+  
+    433    ERR_NICKNAMEINUSE
+           "<nick> :Nickname is already in use"
+
+         - Returned when a NICK message is processed that results
+           in an attempt to change to a currently existing
+           nickname.
+
+
+JPIN #erlang
+   :irc.perl.org 421 joe JPIN :Unknown command
+  
+   421    ERR_UNKNOWNCOMMAND
+              "<command> :Unknown command"
+
+         - Returned to a registered client to indicate that the
+           command sent is unknown by the server.
+   
+    Names are something like 
+    * nickname!ident@hostname.domain
+    * nickname!~username@hostname.domain
+
+
+
+JOIN #erlang
+   :joe!~armstrong@localhost JOIN :#erlang
+   :irc.perl.org 353 joe = #erlang :@joe
+   :irc.perl.org 366 joe #erlang :End of /NAMES list.
+
+      353    RPL_NAMREPLY
+              "( "=" / "*" / "@" ) <channel>
+               :[ "@" / "+" ] <nick> *( " " [ "@" / "+" ] <nick> )
+         - "@" is used for secret channels, "*" for private
+           channels, and "=" for others (public channels).
+
+       366    RPL_ENDOFNAMES
+              "<channel> :End of NAMES list"
+
+         - To reply to a NAMES message, a reply pair consisting
+           of RPL_NAMREPLY and RPL_ENDOFNAMES is sent by the
+           server back to the client.  If there is no channel
+           found as in the query, then only RPL_ENDOFNAMES is
+
+
+join #cats\r\n"
+   :joe!~armstrong@localhost JOIN :#cats
+   :irc.perl.org 353 joe = #cats :@joe
+   :irc.perl.org 366 joe #cats :End of /NAMES list.
+
+Mike joins
+   :irc.perl.org NOTICE mike :Highest connection count: 3 (3 clients)
+
+Mike says 
+
+JOIN #erlang
+   Mike gets
+     :mike!~williams@localhost JOIN :#erlang
+     :irc.perl.org 353 mike = #erlang :mike @joe
+     :irc.perl.org 366 mike #erlang :End of /NAMES list.
+   Joe gets
+     :mike!~williams@localhost JOIN :#erlang
+
+Joe says:
+    PRIVMSG #erlang : hi from me\r\n"
+    Joe gets no reply
+    Mike gets
+      :joe!~armstrong@localhost PRIVMSG #erlang : More for me
+
+Joe sends to a non existant channel
+
+    PRIVMSG #erl : More for me\r\n"
+    :irc.perl.org 403 joe #erl :No such channel
+
+
+       403    ERR_NOSUCHCHANNEL
+              "<channel name> :No such channel"
+
+         - Used to indicate the given channel name is invalid.
+
+
+But joe can send to a channel that he has not joined
+   
+    PRIVMSG #dogs :hello
+      Mike (who by now has joind dogs) gets
+      :joe!~armstrong@localhost PRIVMSG #dogs :hello
+
+    PRIVMSG mike : Hi mike
+    Mike sees
+      :joe!~armstrong@localhost PRIVMSG mike : Hi mike
+
+ LIST (Joe does this)
+
+:irc.perl.org 321 joe Channel Users :Name
+:irc.perl.org 322 joe #cats 1
+:irc.perl.org 322 joe #dogs 1
+:irc.perl.org 322 joe #erlang 2
+:irc.perl.org 323 joe :End of /LIST
+
+If mike does a list he sees this
+
+LIST
+
+:irc.perl.org 321 mike Channel Users :Name
+:irc.perl.org 322 mike #cats 1
+:irc.perl.org 322 mike #dogs 1
+:irc.perl.org 322 mike #erlang 2
+:irc.perl.org 323 mike :End of /LIST
+
+       321    RPL_LISTSTART
+              Obsolete. Not used.
+       322    RPL_LIST
+              "<channel> <# visible> :<topic>"
+       323    RPL_LISTEND
+              ":End of LIST"
+
+Joe leaves #erlang
+
+PART #erlang
+
+Joe sees this
+:joe!~armstrong@localhost PART #erlang
+
+Mike sees this
+:joe!~armstrong@localhost PART #erlang
+
+At any time
+
+   PING :abcdef
+   PONG :abcdef

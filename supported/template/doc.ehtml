@@ -1,0 +1,9 @@
+<? simple_web_server:header() ?>
+
+<body>
+  <h1>Template</h1> 
+
+  <p>This is an empty template. This entire directory is a	
+  a template that the other applications in the system can be based on.
+ </body>
+

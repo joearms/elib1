@@ -1,0 +1,37 @@
+<html>
+  <h1>Glossary</h1>
+
+  <h2>Binary Term Sequence File</h2>
+
+  <p>A BTSF file is a sequence of terms <b>T1, T2, ...</b>
+  encoded as follows:</p>
+
+  <table>
+    <tr><td>encode_term(T1)</td></tr>
+    <tr><td>encode_term(T2)</td></tr>
+    <tr><td>...</td></tr>
+  </table>
+  
+  <p>Where:</p>
+
+  <pre>
+    encode_term(Term) ->
+        Bin = term_to_binary(Term),
+	Len = size(Bin),
+	&lt;&lt;Len:32/big,Bin/binary>>.
+  </pre>
+
+  <p>An individual term <b>T</b> is represented by a length count <b>Len</b>
+  <i>(A 32 bit big endian integer)</i> followed by a <b>Len</b>
+  byte binary. The binary is made by calling <b>term_to_binary(T)</b>.</p>
+
+  <p>
+    Files of encoded binary terms can be read and written extremely
+    efficiently using the routines in <b>elib1_fast_read</b>
+    and <b>elib1_fast_write</b>.
+  </p>
+
+  <p>Library modules like <b>sort_file</b> make use of buffered I/O to
+  sort BTSF file very efficiently.</p>
+</html>
+

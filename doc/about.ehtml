@@ -1,0 +1,46 @@
+<html>
+  
+  <h1>About</h1>
+
+  <h2>Restrictions</h2>
+
+  <p>All documentation <i>must be in a fixed directory</i>
+  <b>${ROOT}/doc</b> documentation is written with the extension
+  <b>.ehtml</b></p>
+    
+  <p>Elib1 is a library of Erlang modules, together with a number of
+  complete applications built using the library. The applications have
+  been co-developed with the library. The test of any library is
+  <i>are the library functions useful?</i> The only way to answer
+  this is to write a largish number of applications using the library
+  functions.  If the applications are useful and if they reuse large
+  amounts of library code then the library is probably OK, otherwise
+  not.</p>
+
+  <p>Usually when we write an application we often get to a point
+  where we think, "Oh dear the libraries are wrong." What we should
+  really do is stop work on the application, fix up the libraries then
+  return to the application. Now while this is what we <i>should</i>
+  do, we rarely do this in practice since we are keen to get the
+  application finished.</p>
+
+  <p>In writing the applications I have strictly followed the
+  principle: <i>If In find anything wrong with the libraries, then go
+  fix the libraries and return to the application</i>. This of course
+  breaks all the other application that depend on the libraries, so
+  I've had a spend end a lot of time fixing up the breakages.</p>
+
+  <h2>Organization</h2>
+
+  <pre>    ${ROOT}/lib/src       -- the library
+                      /ebin      -- compiled code
+           /bin                  -- runnable programs
+	   /examples/XXX         -- application XXX written using the
+                                    library
+           /doc                  -- documentation
+  </pre>
+  
+
+
+
+</html>

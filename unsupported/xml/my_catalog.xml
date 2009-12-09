@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE catalog PUBLIC 
+   "-//OASIS//DTD Entity Resolution XML Catalog V1.0//EN" 
+   "http://www.oasis-open.org/committees/entity/release/1.0/catalog.dtd">
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+  <system systemId="test1" 
+	  uri="/Users/joe/code/elib2-1/examples/doc/content/story.dtd"/>
+  <public publicId="story" 
+	  uri="/Users/joe/code/elib2-1/examples/doc/content/story.dtd"/>
+  <uri name="story" 
+	  uri="/Users/joe/code/elib2-1/examples/doc/content/story.dtd"/>
+</catalog>

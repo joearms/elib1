@@ -1,0 +1,14 @@
+<html>
+
+
+  <h1>Trawl files</h1>
+  <p> <img light="right" wodth="100" src="./trawl.jpg">A trawler at
+  work. The trawler catches fish. Our trawler catches files. A trawl
+  file is created with top-level
+  command <br></p><pre><br></pre><p>&gt; trawl Name Top</p><p>This
+  will tug along for a while collecting a large number of files. These
+  files are compressed ad appended to the trawl file. Trawl files are
+  tuple files which contain {FileName, MD5, B} tuples, where B
+  is <br></p>
+
+</html>

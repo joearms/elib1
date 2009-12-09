@@ -1,0 +1,53 @@
+<html>
+
+  <h1>Web Server</h1>
+
+  <p>
+    The web server described here is used for all my experiments. It
+    is not a fully-featured can-do-everything web
+    server <comment>refer to yaws ... here</comment> But it is
+    sufficient for most of my rather modest needs.
+  </p>
+
+  <h2>Starting the web server</h2>
+  
+  <pre>    &gt; elib1_webkit:start_web_server(Port, Root)
+  </pre>
+
+  <h2>Urls and callbacks</h2>
+  
+  <dl>
+    <dt>Path/to/FileName</dt>
+    <dd>
+      <p>will try and retreive <b>Path/to/FileName</b>. The path to
+      the filename can be absolute (starting with "/") or relatiove
+      (starting with anything else). ".." in a path is permitted,
+      thjough you cannout use this to climb outside root of the
+      server.</p>
+    </dd>
+    <dt>/mod?mod=ModName&amp;func=Func&amp;arg1=...</dt>
+    <dd>
+      <p>This is where life gets interesting.
+      <b>/mod?mod=foo?func=bar&amp;x=1&amp;y=2</b> will try to
+      evaluate the code in <b>foo.beam</b> (which will be autoloaded)
+      necessary. It will call <b>foo:bar(...)handle/3</b></p>
+    </dd>
+  </dl>
+  
+  <h2>handle/3</h2>
+
+  <dl>
+    <dt>handle(Op, Headers, Uri, Args)</dt>
+    <dd>
+      <p>This must return:</p>
+      <ul>
+	<li><p><b>{ok, Type, Content}</b></p></li>
+	<li><p><b>{error, Code}</b></p></li>
+      </ul>
+    </dd>
+  </dl>
+ 
+
+
+
+</html>

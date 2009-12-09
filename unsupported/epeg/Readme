@@ -1,0 +1,15 @@
+epeg.erl          -- the output of running epeg:file("epeg.peg").
+epeg.peg          -- a peg grammar for epeg
+epeg_pc.erl       -- parser combinators used by epeg
+epeg_compiler.erl -- epeg compiler
+samples.peg       -- simple peg samples
+erlparse.peg      -- parsing Erlang forms
+epg_boot.erl      -- the bootstrap that created epeg.erl from epeg.peg
+Makefile         -- makefile
+
+Make targets are:
+
+make    -- compiles epeg.peg using the bootstrap compiler
+                 runs test cases
+     
+

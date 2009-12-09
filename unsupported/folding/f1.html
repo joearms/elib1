@@ -1,0 +1,297 @@
+<script language="JavaScript" 
+        SRC="../../include/jquery-1.3.2.min.js"></script>
+<script>
+$(document).ready(function(){
+
+    var data = [
+        {header:"Commands",
+	 show:false,
+	 data:"<p>u d - move selection up or down (org mode)<p>esc change mode<p>up,down arrow move selection (org mode)<p>h help<p>e edit (org mode)"},
+	{header:"Header1",
+	 show: false,
+	 data:"<p>Hello joe. <font color='red'>How are you</font>"},
+	{header: "Item 2",
+	 show: false,
+	 data:"<p>I am the second fold"},
+	{header:"And the third title",
+	 show:false,
+	 data:"<p>And this is yet more stuff</p>"},
+	{header:"Number 4",
+	 show:false,
+	 data:"<p>Jquery is pretty ok</p>"}
+    ];
+
+    // global varibles
+    var selected;    // which row is selected
+    var display;  // true = display the text
+    // false organise
+    var html; // id of the html region
+    var org; // id of the org region
+    var orgtab; // id of the organiser table
+
+    function init_html(){
+	// render all folds
+	var i,max,id;
+	max = data.length;
+	html.html("");
+	for(i=0; i<max; i++){
+	    html.append("<h2>"+data[i].header+"</h2>").
+		append(data[i].data);
+	}
+    };
+
+    function init_org(){
+	orgtab.html("");
+	for(i=0;i<data.length;i++){
+	    orgtab.append("<tr><td>"+data[i].header+"</td></tr>");
+	};
+	$("#orgtab tr:even").addClass("zebra1");
+	$("#orgtab tr:odd").addClass("zebra2");
+	$("#orgtab tr").eq(selected).addClass("selected");
+    };
+
+   
+    function move_row_up(){
+	// swap selected with selected + 1 in the data array
+	if(selected > 0){
+	    var tmp = data[selected];
+	    data[selected] = data[selected-1];
+	    data[selected-1] = tmp;
+	    selected -= 1;
+	    init_org();
+	    init_html();
+	};
+    };
+    
+    function move_row_down(){
+	// swap selected with selected + 1 in the data array
+	if(selected < data.length - 1){
+	    var tmp = data[selected];
+	    data[selected] = data[selected+1];
+	    data[selected+1] = tmp;
+	    selected += 1;
+	    init_org();
+	    init_html();
+	};
+    };
+
+    function debug(x){
+	$("#debug").append("<br>"+x);
+    };
+    
+    function move_selection_down(){
+	if(selected < data.length - 1){
+	    selected += 1;
+	    $("#orgtab tr").eq(selected).addClass("selected");
+	    $("#orgtab tr").eq(selected-1).removeClass("selected");
+	};
+    };
+    
+    function move_selection_up(){
+	if(selected > 0){ 
+	    selected -= 1;
+	    $("#orgtab tr").eq(selected).addClass("selected");
+	    $("#orgtab tr").eq(selected+1).removeClass("selected");
+	};
+    };
+    
+    function edit_selected(){
+	debug("edit");
+	$("body").css("background", "#cccccc");
+	$("#title").html(data[selected].header);
+	$("#content").html(data[selected].data);
+
+	$("#mynote").show();
+    };
+    
+    // off we go
+    // start by rendering the text and the organiser boxes
+    // then display the HTMNL box
+
+    $(document).keypress(function(e){ 
+	if ( e.keyCode == 27) {
+	    if (display){
+		html.hide();
+		org.show();
+	    } else {
+		org.hide();
+		html.show();
+	    };
+	    display = !display;
+	} else {
+	    if (!display){
+		do_org_cmd(e);
+	    }
+	}});
+
+    function do_org_cmd(e){
+	// do a command in organise mode
+	switch(e.keyCode) {
+	case 38:
+	    // arrow up
+	    move_selection_up();
+	    break;
+	case 40:
+	    // arrow down
+	    move_selection_down();
+	    break;
+	default:
+	    var k = e.which;
+	    $("#debug").append("<br>e="+k+" "+e.keyCode);
+	    switch(k) {
+	    case 117:
+		// key 'u' move title up
+		move_row_up();
+		break;
+	    case 100:
+		// key 'd' move title down
+		move_row_down();
+		break;
+	    case 101:
+		// 'e'
+		edit_selected();
+		break;
+	    default:
+		// alert("non"+key);
+		break;
+	    };
+	};
+    };
+    
+    selected = 0;
+    display = true;
+    html = $("#html");
+    org = $("#org");
+    orgtab = $("#orgtab");
+    org.hide();
+    html.html("<h1>ready ...</h1>");
+    init_html();
+    init_org();
+});
+
+</script>
+
+<style>
+/* some styles */
+
+body { margin-left:10%; background-color: #f0f0f0;}
+
+
+.content {
+  padding: 1em;
+}
+
+.bar {
+  background-color: #008080;
+  color: #ffffff;
+  font-weight: bold;
+  padding: 2px 1em 2px 1em;
+}
+
+.box {
+  background-color: #ffff00;
+  border: 1px solid #000000;
+  color: #000000;
+  padding: 0px;
+  position: absolute;
+}
+
+.zebra1 { padding-left:7px;
+         background-color:#eeeeee;
+         border-left: 1px solid black; 
+	 border-bottom: 1px solid black; }
+
+.zebra2 { padding-left:7px;
+    background-color:#cccccc;
+         border-left: 1px solid black; 
+	 border-bottom: 1px solid black; }
+
+.selected { padding-left:40px; 
+         border-left: 1px solid black; 
+	 border-bottom: 1px solid black;
+         background-color: orange }
+
+
+.table1 {border-top: solid 1px #000000;
+          border-right: solid 1px #000000;}
+
+p	 {color:black}
+p i	 {color: black}
+p tt	 {font-weight: bold}
+h1       {color:  #394d7f;}
+h2	 {color:   #394d7f;}
+pre	 {color: green; font-weight:bold}
+ul	 {margin-left: 120px}
+
+div#mynote {
+display: none;
+position: fixed; 
+padding:10px;
+top:100; 
+left:100; 
+width:600;
+height:400;
+background-color:white;
+border: 2px solid black;
+}
+
+a.but {text-decoration:none;
+   font-size:0.8em;
+   font-family:sans}
+
+a.but:hover {background-color:yellow;
+         border: solid thin #666666; }
+
+
+.title {color:blue; padding-left:5px;
+        border:1px solid black; background-color:#ddffff}
+
+</style>
+
+<body>
+  <!-- this div is a hidden editor div -->
+  <div id="mynote">
+    <center>
+      <table width="100%">
+	<tr>
+	  <td align="left">
+	    <a class="but" href="#" onclick="add_button()">button</a>
+	    <a class="but" href="#" onclick="add_pre()">pre</a>
+	    <a class="but" href="#" onclick="add_link()">link</a>
+	    <a class="but" href="#" onclick="add_link1()">new link</a>
+	  </td>
+	  <td align="right">
+	    <a class="but" href="#" onclick="run()">run</a>
+	    <a class="but" href="#" onclick="check()">check</a>
+	    <a class="but" href="#" onclick="save()">save</a>
+	    <a class="but" href="#" onclick="revert()">revert</a>
+	    <a class="but" href="#" onclick="quit()">quit</a>
+	  </td>
+	</tr>
+	<tr>
+	  <td colspan="2">
+	    <div contenteditable="true">
+	      <p id="title" class="title">Title</p>
+	      <div id="content">
+		<p>I am a hidden window</p>
+	      </div>
+	    </div>
+	  </td>
+	</tr>
+      </table>
+    </center>
+  </div>
+  
+  <!-- define two top regions. Only one is visable -->
+  <div id="org">
+    <table class="table1" border=1 id="orgtab" width="800px" cellspacing=0>
+    </table>
+  </div>
+  <!-- html stuff -->
+  <div id="html">
+  </div>
+  <!-- debug is always on -->
+  <h2>debug</h2>
+  <div id="debug">
+  </div>
+</body>

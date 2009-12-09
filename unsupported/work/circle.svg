@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+    "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd" [
+    <!ATTLIST svg
+              xmlns:a3 CDATA #IMPLIED
+              a3:scriptImplementation CDATA #IMPLIED>
+    <!ATTLIST script
+              a3:scriptImplementation CDATA #IMPLIED>
+]>
+<svg onload="makeShape(evt)"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:a3="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
+     a3:scriptImplementation="Adobe">
+    <script type="text/ecmascript" a3:scriptImplementation="Adobe"><![CDATA[
+        var svgns = "http://www.w3.org/2000/svg";
+
+        function makeShape(evt) {
+            if ( window.svgDocument == null )
+                svgDocument = evt.target.ownerDocument;
+
+            var shape = svgDocument.createElementNS(svgns, "circle");
+            shape.setAttributeNS(null, "cx", 25);
+            shape.setAttributeNS(null, "cy", 25);
+            shape.setAttributeNS(null, "r",  20);
+            shape.setAttributeNS(null, "fill", "green");
+            
+            svgDocument.documentElement.appendChild(shape);
+        }
+    ]]></script>
+</svg>
