@@ -5,9 +5,9 @@
 
   <div class='slide'>
     <h1>Indexer</h1>
-     
+
     <p>How to build an index of all Erlang files:</p>
-    
+
     <ol>
       <li>Crawl the file system. Collect all *.erl files and
       pack into a single file <b>erl.crawl</b></li>
@@ -32,7 +32,7 @@
   <div class='slide'>
 
     <h1>Building the index 1/2</h1>
-    
+
     <p>Data</p>
     <table>
       <tr><td><b>FileNumber</b></td>
@@ -44,7 +44,7 @@
       <tr><td>3</td><td>app1.erl</td>
       <td>module exported</td></tr>
     </table>
-    
+
     <p>Extract stem and number the words</p>
 
     <table>
@@ -114,7 +114,7 @@
 	</table>
       </div>
   </div>
-  
+
   <div class="slide">
     <h1>Running a query</h1>
     <pre>
@@ -162,7 +162,7 @@
 	<b>1110.001.110.00</b></li>
 	<li>1110 is a <i>unary encoded integer</i> (base 1) representing
 	N = 3 (count the one bits)</li>
-	<li>Take the next N bits in <i>binary</i> ie (001) 
+	<li>Take the next N bits in <i>binary</i> ie (001)
 	this gives B = 1.</li>
 	<li>The first number is 2^N + B = 9</li>
 	<li>The next number is 2^2 + 0 = 4</li>
@@ -170,7 +170,7 @@
 
       <p>
   </div>
- 
+
   <div class='slide'>
     <h1>Crawl Files</h1>
     <p>What I actually index is a crawl file</p>
@@ -287,7 +287,7 @@ eindex -search Name Str
     <ul>
       <li>Finding words in Erlang
       <a href="/supported/tagger/html/elib1_indexer_plugin_erl.html">elib1_indexer_plugin_erl.erl</a></li>
-      <li>Fast tuple I/O 
+      <li>Fast tuple I/O
       <a href="/supported/tagger/html/elib1_fast_read.html">elib1_fast_read.erl</a> and <a href="/supported/tagger/html/elib1_fast_write.html">elib1_fast_write.erl</a></li>
       <li>Say a lot about fast tuple I/O and the <i>amazing</i>
       <b>file_sorter.erl</b></li>
@@ -302,7 +302,7 @@ eindex -search Name Str
       order do we present them to the user?</li>
       <li>Matching file presentation. Which part of the result file
       do we show the user?</li>
-      <li>Scaling. What happens when we scale to large crawls? 
+      <li>Scaling. What happens when we scale to large crawls?
       I think the answer is one machine per crawl + map reduce.</li>
     </ul>
   </div>

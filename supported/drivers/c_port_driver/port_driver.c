@@ -26,7 +26,7 @@ int write_cmd(byte *buf, int len)
 
   li = (len >> 8) & 0xff;
   write_exact(&li, 1);
-  
+
   li = len & 0xff;
   write_exact(&li, 1);
 

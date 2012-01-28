@@ -21,8 +21,8 @@ timer() ->
     {T2, L2} = timer:tc(?MODULE, dft, [L]),
     Frames = 44000/1024,
     Tot = Frames * T1 / 1000000,
-    {{test,is,equals(L1, L2)}, {timeFor1secAnalysis,Tot,sec}, 
-     {fft,for,1024,points,took,T1,us}, {dft,took,T2}, 
+    {{test,is,equals(L1, L2)}, {timeFor1secAnalysis,Tot,sec},
+     {fft,for,1024,points,took,T1,us}, {dft,took,T2},
      {speedup,T2/T1}}.
 
 
@@ -69,12 +69,12 @@ test_dft(X) ->
     {E, X, D, I}.
 
 equals(L1, L2) ->
-    L = lists:zip(L1, L2), 
+    L = lists:zip(L1, L2),
     %% io:format("L=~p~n",[L]),
     lists:all(fun near/1, L).
 
 near({{R1,I1},{R2,I2}}) ->
-    X1 = (R1 - R2), 
+    X1 = (R1 - R2),
     X2 = (I1 - I2),
     X1*X1 + X2*X2 < 1.0e-6.
 
@@ -100,7 +100,7 @@ mult([O|T], K, M) -> [cmult(O, e(K*M))|mult(T, K+1, M)].
 
 split([H1,H2|T], E, O) -> split(T, [H1|E], [H2|O]);
 split([], E, O)        -> {reverse(E), reverse(O)}.
-    
+
 
 
 

@@ -12,7 +12,7 @@ qu([{"name",Collection},{"query",Str}], Root) ->
     L2 = [["<li><a href='/mod?mod=elib1_webquery&func=show_file&name=",
 	   Collection,"&pos=",
 	   integer_to_list(Pos),"'>",Loc,"</a></li>"] || {Pos,Loc} <- Pages],
-    {response, html, 
+    {response, html,
      ["<p>Root:",Root,"<p>Query collection:",Collection," str:",Str,
       "<p>",L1,"<p>",L2]}.
 

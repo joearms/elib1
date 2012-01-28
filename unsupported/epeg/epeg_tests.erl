@@ -6,7 +6,7 @@
 -compile(export_all).
 -import(lists, [map/2, reverse/1]).
 -import(epeg_pc,
-	[alt/1, any/0, bang/1, block/1, cc/1, char/1, 
+	[alt/1, any/0, bang/1, block/1, cc/1, char/1,
 	 do/2, lit/1, plus/1, question/1, star/1, seq/1]).
 
 %% leg parse - no (sensible parse tree)
@@ -24,13 +24,13 @@
 %% Typically 3 micro seconds/byte
 
 test0() ->
-    X = (catch (epeg_pc:bang(epeg_pc:lit("%{")))("%{")), 
-    Z = (catch (bang(lit("%{")))("%{")), 
+    X = (catch (epeg_pc:bang(epeg_pc:lit("%{")))("%{")),
+    Z = (catch (bang(lit("%{")))("%{")),
     Y = (catch (ed1())("%{")),
     {X,Z,Y}.
 
 ed1() -> (bang(lit("%{"))).
-    
+
 
 test() ->
     {{lit,"123"},"abc"} = run(alit("123"), "123abc"),
@@ -98,7 +98,7 @@ run(F, Str) ->
 	{'EXIT', _} -> fail;
 	Val -> Val
     end.
-	    
+
 %% # Hierarchical syntax
 %% grammar=	- ( code | definition )+ endOfFile
 
@@ -131,41 +131,41 @@ skip(S) ->
     {skipped,S1}.
 
 %% grammar= - ( code | definition | skip )+ end-of-file
-%% 
+%%
 egrammar(S) ->
-    {[_,D,_],S1} = (seq([fun eSpaces/1, 
-			 plus(alt([fun ecode/1, 
+    {[_,D,_],S1} = (seq([fun eSpaces/1,
+			 plus(alt([fun ecode/1,
 				   fun edefinition/1])),
 			 fun eEndOfFile/1]))(S),
     {{gram,D}, S1}.
 
 %% eccode = '%{' < ( !'%}' . )* > RPERCENT
 ecode(S) ->
-    {[_,B,_],S1} = (seq([lit("%{"), 
-			 block(star(seq([bang(lit("%}")), 
-					 any()]))), 
+    {[_,B,_],S1} = (seq([lit("%{"),
+			 block(star(seq([bang(lit("%}")),
+					 any()]))),
 			 fun eRPERCENT/1]))(S),
     io:format("decl~n"),
     {{code,B}, S1}.
 
 ed(S) ->
-    (seq([ 
-	  star(seq([bang(lit("%}")), 
-		    any()])) 
+    (seq([
+	  star(seq([bang(lit("%}")),
+		    any()]))
 	  ]))(S).
 
 %% RPERCENT = '%}' -
 eRPERCENT(S)  -> (seq([lit("%}"), fun eSpaces/1]))(S).
 
-%% definition=	identifier EQUAL expression { ... } 	SEMICOLON?		
+%% definition=	identifier EQUAL expression { ... } 	SEMICOLON?
 edefinition(S) ->
-    {[Id,_,E,_],S1} = (seq([fun eident/1, 
-			    fun eEQUAL/1, 
-			    fun eexpression/1, 
+    {[Id,_,E,_],S1} = (seq([fun eident/1,
+			    fun eEQUAL/1,
+			    fun eexpression/1,
 			    question(fun eSEMICOLON/1)]))(S),
     io:format("~p ",[Id]),
     {{defn,Id,E}, S1}.
-     
+
 
 %% trailer=	'%%' < .* >				{ makeTrailer(yytext); }
 etrailer(S) ->
@@ -174,12 +174,12 @@ etrailer(S) ->
 
 %% expression=	sequence  (BAR sequence { ... } )*
 eexpression(S) ->
-    (do(seq([fun esequence/1, 
+    (do(seq([fun esequence/1,
 	     star(
-	       do(seq([fun eBAR/1, 
+	       do(seq([fun eBAR/1,
 		       fun esequence/1]),
 		  fun([_,Seq]) -> Seq end))]),
-	fun([U,B]) -> 
+	fun([U,B]) ->
 		wrapalt([U|B])
 	end))(S).
 
@@ -196,7 +196,7 @@ esequence(S) ->
 wrapseq([X]) -> X;
 wrapseq(L) -> {seq,L}.
 
-    
+
 
 %% prefix=	AND action  {land,P(A)}
 %% |		AND suffix  {land,P(A)}
@@ -211,19 +211,19 @@ eprefix(S) ->
 %% suffix = primary (QUESTION | STAR | PLUS)?
 
 esuffix(S) ->
-    {[X,Y],S1} = (seq([fun eprimary/1, 
+    {[X,Y],S1} = (seq([fun eprimary/1,
 		       question(
-			 alt([fun eQUESTION/1, 
-			      fun eSTAR/1, 
+			 alt([fun eQUESTION/1,
+			      fun eSTAR/1,
 			      fun ePLUS/1]))]))(S),
     case Y of
 	[] -> {X, S1};
 	[Op] -> {{Op, X},S1}
     end.
-	    
+
 
 %% primary=	identifier COLON identifier !EQUAL
-%% |		identifier !EQUAL			
+%% |		identifier !EQUAL
 %% |		OPEN expression CLOSE
 %% |		literal
 %% |		class
@@ -233,9 +233,9 @@ esuffix(S) ->
 
 eprimary(S) ->
     (alt([
-	  do(seq([fun eident/1, 
-		  fun eCOLON/1, 
-		  fun eident/1, 
+	  do(seq([fun eident/1,
+		  fun eCOLON/1,
+		  fun eident/1,
 		  bang(fun eEQUAL/1)]),
 	     fun([Var,_,Expr,_]) ->
 		     {var,Var,Expr}
@@ -264,7 +264,7 @@ eident(S) ->
 equoted(S) ->
     (do(seq([char(39),
 	     star(do(seq([bang(char(39)), any()]),fun([_,X]) -> X end)),
-	     char(39), 
+	     char(39),
 	     fun eSpaces/1]),
 	fun([_,X,_,_]) -> [39|X] ++ [39] end))(S).
 
@@ -275,10 +275,10 @@ elit1(S) ->
     (do(seq([char(39),
 	     star(do(seq([bang(char(39)),fun echar/1]),
 		     fun([_,X]) -> X end)),
-	     char(39), 
+	     char(39),
 	     fun eSpaces/1]),
-	fun([_,B,_,_]) -> 
-		{litthenspace, B} 
+	fun([_,B,_,_]) ->
+		{litthenspace, B}
 	end))(S).
 
 %% 34 = "" this is the double quoted literal
@@ -287,11 +287,11 @@ elit2(S) ->
     (do(seq([char(34),
 	     star(do(seq([bang(char(34)),fun echar/1]),
 		     fun([_,X]) -> X end)),
-	     char(34), 
+	     char(34),
 	     fun eSpaces/1]),
 	fun([_,B,_,_]) ->
 		%% io:format("read lit=|~s|~n",[B]),
-		{lit, B} 
+		{lit, B}
 	end))(S).
 
 %% class = '['  ( !']' range )* ']' -
@@ -323,7 +323,7 @@ erange(S) ->
 %%      | !'\\' .
 
 echar(S) ->
-    (alt([	      
+    (alt([
 	  do(seq([char($\\),cc("enrtv'\"[]\\")]),
 	     fun([_,C]) ->
 		     case C of
@@ -382,20 +382,20 @@ eBAR(S) ->  (seq([char($|), fun eSpaces/1]))(S).
 eAND(S) ->  (seq([char($&), fun eSpaces/1]))(S).
 
 %% NOT = '!' -
-eNOT(S) -> (seq([char($!), fun eSpaces/1]))(S). 
+eNOT(S) -> (seq([char($!), fun eSpaces/1]))(S).
 
 %% QUESTION = '?' -
-eQUESTION(S) ->  
+eQUESTION(S) ->
     {_, S1} = (seq([char($?), fun eSpaces/1]))(S),
     {question, S1}.
 
 %% STAR = '*' -
-eSTAR(S) ->  
+eSTAR(S) ->
     {_, S1} = (seq([char($*), fun eSpaces/1]))(S),
     {star, S1}.
 
 %% PLUS = '+' -
-ePLUS(S) -> 
+ePLUS(S) ->
     {_, S1} = (seq([char($+), fun eSpaces/1]))(S),
     {plus, S1}.
 
@@ -406,7 +406,7 @@ eOPEN(S) -> (seq([char($(), fun eSpaces/1]))(S).
 eCLOSE(S) -> (seq([char($)), fun eSpaces/1]))(S).
 
 %% DOT =	'.' -
-eDOT(S) -> 
+eDOT(S) ->
     {_, S1} = (seq([char($.), fun eSpaces/1]))(S),
     {any,S1}.
 
@@ -436,7 +436,7 @@ eEndOfLine(S) ->
 eEndOfFile(S) ->
     (bang(any()))(S).
 
-alit(X) ->    
+alit(X) ->
     fun(S1) ->
 	    {Val, S2} = (lit(X))(S1),
 	    {{lit,Val}, S2}

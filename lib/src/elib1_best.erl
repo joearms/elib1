@@ -40,5 +40,5 @@ fac_test() ->  %% [9]
 
 %% end of module
 
-    
-    
+
+

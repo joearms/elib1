@@ -12,11 +12,11 @@
 	 run/1,
 	 batch/1,
 	 break_into_paras/1,
-	 fetch/2,  
-	 search/2, 
-	 parse_file/1, 
-	 parse_binary/1, 
-	 parse_string/1, 
+	 fetch/2,
+	 search/2,
+	 parse_file/1,
+	 parse_binary/1,
+	 parse_string/1,
 	 parse_para/1]).
 
 -import(lists, [member/2, map/2, reverse/1, reverse/2]).
@@ -64,7 +64,7 @@ fetch(Key, Assoc) ->
     ok(search(Key, Assoc)).
 
 ok({ok, X}) -> X.
-    
+
 search(Key, [{Key,Val}|_]) -> {ok, Val};
 search(Key, [_|T])         -> search(Key, T);
 search(_, [])              -> error.
@@ -92,7 +92,7 @@ parse_string(Str) ->
     case Nerrors of
 	0 ->
 	    {ok, Parse1};
-	N -> 
+	N ->
 	    {error, N}
     end.
 
@@ -123,7 +123,7 @@ trim_junk([$\s|T]) -> trim_junk(T);
 trim_junk([$\r|T]) -> trim_junk(T);
 trim_junk([$\n|T]) -> trim_junk(T);
 trim_junk(X) -> X.
-    
+
 parse_chunk({N, [$@|T]}) ->
     case collect_header(T) of
 	{ok, Tag, T1} ->
@@ -169,13 +169,13 @@ tokenise(T, N) ->
     end.
 
 tokenise([$}|T], 1, N, L) ->
-    %% top level } -- finishes the tokens 
+    %% top level } -- finishes the tokens
     {reverse([{'}',N}|L]), N, T};
 tokenise([$}|T], Level, N, L) ->
-    %% top level } -- finishes the tokens 
+    %% top level } -- finishes the tokens
     tokenise1(T, Level-1,N, [{'}',N}|L]);
 tokenise([${|T], Level, N, L) ->
-    %% top level } -- finishes the tokens 
+    %% top level } -- finishes the tokens
     tokenise1(T, Level+1,N, [{'{',N}|L]);
 tokenise([H|T], Level, N, L) when ?IN(H, $0, $9) ->
     {Int, T1} = collect_integer(T, H - $0),
@@ -227,7 +227,7 @@ skip_blanks(X)       -> X.
 skip_to_eol(X=[$\n|_]) -> X;
 skip_to_eol([_|T])     -> skip_to_eol(T);
 skip_to_eol(X)         -> X.
-    
+
 collect_integer([H|T], N) when ?IN(H, $0, $9) ->
     collect_integer(T, N*10+H-$0);
 collect_integer(S, N) ->
@@ -248,7 +248,7 @@ collect_chunk("\n@" ++ T, N, L)   -> {reverse(L), N+1, [$@|T]};
 collect_chunk([], N, L)           -> {reverse(L), N, []};
 collect_chunk([$\n|T], N, L)      -> collect_chunk(T, N+1, [$\n|L]);
 collect_chunk([H|T], N, L)        -> collect_chunk(T, N, [H|L]).
-    
+
 collect_atom([H|T], L) when ?IN(H,$a,$z) -> collect_atom(T, [H|L]);
 collect_atom([H|T], L) when ?IN(H,$A,$Z) -> collect_atom(T, [H|L]);
 collect_atom([H|T], L) when ?IN(H,$0,$9) -> collect_atom(T, [H|L]);
@@ -259,8 +259,8 @@ collect_atom(T, L)      -> {list_to_atom(reverse(L)), T}.
 %% within a string we can quote only the stop character
 
 collect_string([S|T], S, N, L)     -> {reverse(L), N, T};
-collect_string([$\\,S|T], S, N, L) -> collect_string(T, S, N, [S,$\\|L]);  
-collect_string([$\n|T], S, N, L)   -> collect_string(T, S, N+1, [$\n|L]);  
+collect_string([$\\,S|T], S, N, L) -> collect_string(T, S, N, [S,$\\|L]);
+collect_string([$\n|T], S, N, L)   -> collect_string(T, S, N+1, [$\n|L]);
 collect_string([H|T], S, N, L)     -> collect_string(T, S, N, [H|L]);
 collect_string([], S, N, L) ->
     io:format("** Warning missing stop character (~c) at end of string in line:~w~n",
@@ -367,4 +367,4 @@ collect_link([$\\,H|T], L) -> collect_link(T, [H|L]);
 collect_link("~" ++ T, L)  -> {reverse(L), T};
 collect_link([H|T], L)     -> collect_link(T, [H|L]);
 collect_link([], L)        -> {reverse(L), []}.
-    
+

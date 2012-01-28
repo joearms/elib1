@@ -2,7 +2,7 @@
 %% See MIT-LICENSE for licensing information.
 
 -module(elib1_indexer_plugin_erl).
-%% 
+%%
 -export([file/1, strings/1, frequencies/1, tokenise_string/1]).
 -import(lists, [foldl/3, member/2, reverse/1]).
 
@@ -74,13 +74,13 @@ tokenise_string(Str) -> string2toks(Str, 1, [], []).
 
 string2toks([$%|T], Ln, Cs, As) ->
     {Comment,T1} = collect_comment(T, []),
-    string2toks(T1, Ln, [{Ln,Comment}|Cs], As);	     
+    string2toks(T1, Ln, [{Ln,Comment}|Cs], As);
 string2toks([H|T], Ln, Cs, As) when ?IS_LOWER(H) ->
-    {Atom, T1} = collect_atom(T, [H]),				   
+    {Atom, T1} = collect_atom(T, [H]),
     string2toks(T1, Ln, Cs, [{Ln,Atom}|As]);
 string2toks([H|T], Ln, Cs, As) when ?IS_UPPER(H) ->
     %% variable -- treat like an atom and throw away the rest
-    {_Atom, T1} = collect_atom(T, [H]),				   
+    {_Atom, T1} = collect_atom(T, [H]),
     string2toks(T1, Ln, Cs, As);
 string2toks([$"|T], Ln, Cs, As) ->
     {Ln1, T1} = skip_string(T, $", Ln),
@@ -106,7 +106,7 @@ collect_comment("\r\n" ++ T, L) -> {reverse(L), T};
 collect_comment("\n" ++ T, L)   -> {reverse(L), T};
 collect_comment([], L)          -> {reverse(L), []};
 collect_comment([H|T], L)       -> collect_comment(T, [H|L]).
-    
+
 skip_string([H|T], H, Ln)      -> {Ln, T};
 skip_string([], _, Ln)         -> {Ln, []};
 skip_string([$\n|T], Stop, Ln) -> skip_string(T, Stop, Ln+1);

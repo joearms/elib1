@@ -11,7 +11,7 @@
 test12() ->
     Str = io:get_line(' ready > '),
     io:format("Str=~p~n",[Str]),
-    test12().    
+    test12().
 
 start() ->
     Pid = spawn(fun() -> handler() end),
@@ -98,9 +98,9 @@ running(Pid, Me, S) ->
 %% code 375 = modStart
 %% code 372* = mod
 %% code 376 = modEnd
-    
+
 connector(Parent) ->
-    %% Host = "irc.freenode.net", 
+    %% Host = "irc.freenode.net",
     %% Host = "irc.webchat.org",
     Host = "irc.efnet.net",
     Port = 6667,
@@ -113,7 +113,7 @@ connector(Parent) ->
 	Other ->
 	    io:format("Error:~p~n",[Other])
     end.
-   
+
 raw_loop(Parent, Socket, Buff) ->
     receive
 	{send, M} ->

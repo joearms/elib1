@@ -24,7 +24,7 @@ fix(T, [C1,C2], File) ->
 create(File, L) ->
     io:format("Updating:~p~n",[File]),
     file:write_file(File, L).
-    
+
 
 copyright() ->
     ["%% Copyright (c) 2006-2009 Joe Armstrong\n",

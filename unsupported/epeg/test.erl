@@ -10,7 +10,7 @@
 
 %% Abstract syntax:
 %%   {star,{lit," "}}
-%% 
+%%
 
 parse_s(S)->
     {Val, S1} =
@@ -24,7 +24,7 @@ parse_s(S)->
 
 %% Abstract syntax:
 %%   {seq,[{nt,"s"},{star,{seq,[{nt,"token"},{nt,"s"}]}}]}
-%% 
+%%
 
 parse_line(S)->
     {Val, S1} =
@@ -44,7 +44,7 @@ parse_line(S)->
 %%   {alt,[{nt,"peglib","float"},
 %%         {nt,"peglib","int"},
 %%         {nt,"atom"}]}
-%% 
+%%
 
 parse_token(S)->
     {Val, S1} =
@@ -61,7 +61,7 @@ parse_token(S)->
 
 %% Abstract syntax:
 %%   {plus,{class,[{97,122}]}}
-%% 
+%%
 
 parse_atom(S)->
     {Val, S1} =
@@ -81,9 +81,9 @@ test() ->
     io:format("test:test worked~n"),
     init:stop().
 
-final(line, [_,L]) -> 
+final(line, [_,L]) ->
     [I || [I,_] <- L];
-final(Tag, Val) -> 
+final(Tag, Val) ->
     {Tag, Val}.
 
 

@@ -4,7 +4,7 @@
 %%% SHA-1 module
 %%% Author: Nicolas Favre-Felix - n.favrefelix#gmail.com
 %%% License: Lesser GPL (LGPL) v2
-%%% 
+%%%
 %%% exports binstring(Str), hexstring(Str). binstring/1 returns the hash as
 %%% a binary, hexstring/1 as an erlang string, uppercase.
 %%% in case of failure, the returned value is {error, Something}.
@@ -22,7 +22,7 @@ hexstring(S) -> fun_apply(S, fun list_to_binary/1, fun bin2hex/1).
 %hexfile(S) -> fun_apply(S, fun read_unsafe/1, fun bin2hex/1).
 
 fun_apply(S, FunRead, FunTransform) ->
-	case catch binstring_unsafe(FunRead(S)) of 
+	case catch binstring_unsafe(FunRead(S)) of
 		{'EXIT', Stuff} -> {error, Stuff};
 		Data -> FunTransform(Data)
 	end.
@@ -55,7 +55,7 @@ compute(<<>>, 0, {H0,H1,H2,H3,H4}) -> <<H0:32, H1:32, H2:32, H3:32, H4:32>>;
 
 compute(<<Bin:512, Other/binary>>, I, {H0,H1,H2,H3,H4} = Hs) ->
 	W0_15 = compute_ws(<<Bin:512>>),
-	Ws = compute_wt(W0_15), 
+	Ws = compute_wt(W0_15),
 	{A,B,C,D,E} = inner_loop(0, Hs, Ws),
 	compute(Other, I-1, {add([H0,A]), add([H1,B]), add([H2,C]),
 		add([H3,D]),add([H4,E])}).
@@ -71,7 +71,7 @@ f(T, B,C,D) when  0 =< T, T =< 19 -> (B band C) bor ((bnot B) band D);
 f(T, B,C,D) when 20 =< T, T =< 39 -> B bxor C bxor D;
 f(T, B,C,D) when 40 =< T, T =< 59 -> (B band C) bor (B band D) bor (C band D);
 f(T, B,C,D) when 60 =< T, T =< 79 -> B bxor C bxor D.
- 
+
 %% rotates S bytes to the left on 32 bits
 rotl(S, Num) ->
 	Max = 16#ffffffff,
@@ -86,10 +86,10 @@ rotl(S, Num) ->
 compute_ws(<<>>) -> [];
 compute_ws(<<Wi:32, Other/binary>>) -> [Wi] ++ compute_ws(Other).
 
-%% generates W_t. 
+%% generates W_t.
 compute_wt(Ws) -> compute_wt(Ws, 16).
 compute_wt(Ws, 80) -> Ws;
-compute_wt(Ws, T) -> 
+compute_wt(Ws, T) ->
 	Wp = map(fun(X)->nth(1 + T - X, Ws) end, [3,8,14,16]),
 	Wt_pre = foldl(fun(X,Y)->X bxor Y end, 0, Wp),
 	Wt = rotl(1, Wt_pre),

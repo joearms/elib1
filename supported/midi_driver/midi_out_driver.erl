@@ -13,12 +13,12 @@ test() ->
 
 %% K = number of the midi device to open
 
-start(K) -> 
+start(K) ->
     S = self(),
     Pid = spawn(fun() -> run(S) end),
     receive
-	{Pid, ack} ->	
-	    Pid ! {play,[K]},    
+	{Pid, ack} ->
+	    Pid ! {play,[K]},
 	    wait_ready(Pid),
 	    Pid
     end.

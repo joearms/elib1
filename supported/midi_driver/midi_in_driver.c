@@ -6,7 +6,7 @@
 typedef unsigned char byte;
 
 void   printPacketInfo          (const MIDIPacket* packet);
-void   myReadProc               (const MIDIPacketList *packetList, 
+void   myReadProc               (const MIDIPacketList *packetList,
                                  void* readProcRefCon, void* srcConnRefCon);
 
 int read_cmd(byte *buf);
@@ -32,7 +32,7 @@ int write_cmd(byte *buf, int len)
 
   li = (len >> 8) & 0xff;
   write_exact(&li, 1);
-  
+
   li = len & 0xff;
   write_exact(&li, 1);
 
@@ -75,21 +75,21 @@ send_string(char *str){
 int main() {
   int fn, arg1, arg2, result, n;
   byte buff[100];
-  
+
   // Prepare MIDI Interface Client/Port for writing MIDI data:
   MIDIClientRef midiclient  = NULL;
   MIDIPortRef   midiin     = NULL;
   OSStatus status;
 
   fprintf(stderr,"starting\r\n");
-  
+
   if (status = MIDIClientCreate(CFSTR("TeStInG"), NULL, NULL, &midiclient)) {
     fprintf(stderr,"Error trying to create MIDI Client structure: %d\r\n", status);
     fprintf(stderr,"%s\r\n", GetMacOSStatusErrorString(status));
     exit(status);
   }
-  
-  if (status = MIDIInputPortCreate(midiclient, CFSTR("InPuT"), myReadProc, 
+
+  if (status = MIDIInputPortCreate(midiclient, CFSTR("InPuT"), myReadProc,
 				   NULL, &midiin)) {
     fprintf(stderr,"Error trying to create MIDI output port: %d\r\n", status);
     fprintf(stderr,"%s\r\n", GetMacOSStatusErrorString(status));

@@ -1,7 +1,7 @@
 body {margin-left:2in; width:60%; font-size:1.2em}
 
 @font-face{
-font-family: 'handwriting'; 
+font-family: 'handwriting';
 src: url('dkg.ttf');
 font-style:normal;
 font-weight:normal}
@@ -12,9 +12,9 @@ b {font-weight:bold; font-family: courier}
 
 h1, h2, h3, p, td { font-family: serif;}
 
-h1{font-size:2.5em; 
+h1{font-size:2.5em;
 	  text-align:right;
-	  margin-top:1.5in; 
+	  margin-top:1.5in;
 	  margin-bottom:0.8in}
 
 h2{ font-size:1em; display:block; clear:both; }
@@ -28,7 +28,7 @@ h3 + p{ margin-top:0;}
 
 tt { font-weight:bold }
 
-// td { border: 1px solid black } 
+// td { border: 1px solid black }
 // table {border-collapse:collapse}
 
 p {  text-align:justify }
@@ -36,10 +36,10 @@ p {  text-align:justify }
 p:hover, li:hover
 {  	text-shadow: #ccc 2px 2px 5px;
 	color:#E20074;
-}   
+}
 
 div.note { background-color: silver;
-	   border: solid thin #666666; 
+	   border: solid thin #666666;
 	   margin: 35px;
 	   padding: 12px}
 
@@ -47,7 +47,7 @@ div.author {color: blue}
 
 div.ed {color: red}
 
-pre {margin: 30px; 
+pre {margin: 30px;
 	  font-family:courier;
 	  font-size:0.8em;
 	  font-weight: bold}

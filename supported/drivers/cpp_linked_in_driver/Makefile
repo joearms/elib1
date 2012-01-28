@@ -1,7 +1,7 @@
 driver: example_drv.so erl
 
-example_drv.so: port_driver.cpp 
-	g++ -o example_drv.so -fpic -shared port_driver.cpp 
+example_drv.so: port_driver.cpp
+	g++ -o example_drv.so -fpic -shared port_driver.cpp
 
 erl: complex.beam
 	@erl -noshell -s complex test

@@ -16,11 +16,11 @@ void print_devices(){
   printf("[");
   for(i=0; i<n;i++){
     endpoint = MIDIGetDestination(i);
-    str = cm_get_full_endpoint_name(endpoint); 
+    str = cm_get_full_endpoint_name(endpoint);
     printf("{dest,%d,\"%s\"},\n", i, str);
- 
+
   };
-  
+
   n = MIDIGetNumberOfDevices();
   // printf("number of devices = %d \n", n);
   for(i=0; i<n;i++){
@@ -29,11 +29,11 @@ void print_devices(){
     printf("{device,%d,\"%s\"},\n", i, str);
   };
   printf("done]\n");
-  
+
 }
 
 int main(void) {
   print_devices();
 }
 
-  
+

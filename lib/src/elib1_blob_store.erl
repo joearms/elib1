@@ -38,6 +38,6 @@ keys() ->
     %% I guess there is a better way of doing this ...
     dets:foldl(fun({K,_},A) -> [K|A] end,[],?MODULE).
 
-		       
-    
-			   
+
+
+

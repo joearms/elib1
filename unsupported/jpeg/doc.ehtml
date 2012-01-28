@@ -1,7 +1,7 @@
 <? simple_web_server:header() ?>
 
 <body>
-  <h1>Image manipulation in Erlang</h1> 
+  <h1>Image manipulation in Erlang</h1>
 
   <p>Yes it is possible</p>
 

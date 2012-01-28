@@ -23,7 +23,7 @@
 
 -import(lists, [foreach/2, member/2, reverse/1, reverse/2, sort/1]).
 
--define(in(X,Low,Hi), Low =< X, X =< Hi).          
+-define(in(X,Low,Hi), Low =< X, X =< Hi).
 -define(white(X), X==$ ; X==$\n ; X == $\t; X == $\r ).
 
 %% Fun is a fun that knows how to get UTF32 charcters from some input stream
@@ -87,13 +87,13 @@ get_next_token1("<![CDA" = X, Ln, F1)     -> get_next_token2(X, Ln, F1);
 get_next_token1("<![CDAT" = X, Ln, F1)    -> get_next_token2(X, Ln, F1);
 get_next_token1("<![CDATA" = X, Ln, F1)   -> get_next_token2(X, Ln, F1);
 get_next_token1("<" = X, Ln, F1)          -> get_next_token2(X, Ln, F1);
-get_next_token1("<!" ++ _, Ln, _) -> 
+get_next_token1("<!" ++ _, Ln, _) ->
     error(Ln,"expecting comment, DOCTYPE or CDATA");
 get_next_token1("<" ++ T, Ln, F1) -> get_tag(T, Ln, F1);
 get_next_token1(eos, _Ln, _F1)    -> eos;
 get_next_token1(S, Ln, F1)        -> get_CharData(S, Ln, F1).
 
-%% get_next_token2+ is called when we have insufficient data in 
+%% get_next_token2+ is called when we have insufficient data in
 %% Str
 
 get_next_token2(Str, Ln, F1) ->
@@ -120,7 +120,7 @@ get_pi([], L, Ln, F1)          ->
 
 
 %% % ----------------------------------------------------------------------
-%% Comments 
+%% Comments
 
 get_comment(">"++T,"--"++L,Ln,F1) -> {ok, {comment,Ln,reverse(L)}, T, Ln, F1};
 get_comment([$\n|T], L, Ln, F1)   -> get_comment(T, [$\n|L], Ln+1, F1);
@@ -130,14 +130,14 @@ get_comment([], L, Ln, F1)        ->
 	{Data, F1a} -> get_comment(Data, L, Ln, F1a);
 	eos         -> error(Ln, "eof in comment")
     end.
-    
+
 %% % ----------------------------------------------------------------------
-%% CDATA 
+%% CDATA
 
 get_cdata(">" ++ T, "]]"++L, Ln, F1) -> {ok, {cdata, Ln,reverse(L)}, T, Ln, F1};
 get_cdata([$\n|T], L, Ln, F1)        -> get_cdata(T, [$\n|L], Ln+1, F1);
 get_cdata([H|T], L, Ln, F1)          -> get_cdata(T, [H|L], Ln, F1);
-get_cdata([], L, Ln, F1)             -> 
+get_cdata([], L, Ln, F1)             ->
     case F1() of
 	{Data, F1a} -> get_cdata(Data, L, Ln, F1a);
 	eos         -> error(Ln, "eof in CDATA")
@@ -185,7 +185,7 @@ get_q_doctype(Stop, [], L, Level, Ln, F1) ->
 
 %% Cut from:  REC-xml-19980210
 %%  http://www.w3.org/TR/REC-xml/#sec-cdata-sect
-%% 
+%%
 %% [39] element      ::= EmptyElemTag | STag content ETag
 %% [40] STag         ::= '<' Name (S Attribute)* S? '>'
 %  [42] ETag         ::= '</' Name S? '>'
@@ -200,31 +200,31 @@ get_q_doctype(Stop, [], L, Level, Ln, F1) ->
 %% [40] STag         ::= '<' Name (S Attribute)* S? '>'
 %% [41] Attribute    ::= Name Eq AttValue
 %% [25] Eq           ::= S? '=' S?
-%% [84] Letter	     ::= BaseChar | Ideographic  
+%% [84] Letter	     ::= BaseChar | Ideographic
 %% [85] BaseChar     ::= [#x0041-#x005A] | .. etc.. (see later)
-%% [86]	Ideographic  ::= [#x4E00-#x9FA5] | #x3007 | [#x3021-#x3029] 
-%% 
+%% [86]	Ideographic  ::= [#x4E00-#x9FA5] | #x3007 | [#x3021-#x3029]
+%%
 %% [87] CombiningChar ::= [#x0300-#x0345] | [#x0360-#x0361] ..etc... see later
 %% [88]	Digit	      ::= [#x0030-#x0039] .. etc ... see later
 %% [89]	Extender      ::= #x00B7 .. etc .. see later
 %% [67] Reference     ::=  EntityRef | CharRef
 %% [68] EntityRef     ::=  '&' Name <#NT-Name> ';'
 %% [69] PEReference   ::=  '%' Name <#NT-Name> ';'
-%% [43]	content	      ::=  CharData? ((element | Reference | CDSect | PI | 
+%% [43]	content	      ::=  CharData? ((element | Reference | CDSect | PI |
 %%                         Comment) CharData?)*
 %% [14] CharData      ::=  [^<&]* - ([^<&]* ']]>' [^<&]*)
-%% 
+%%
 %%
 %% reent_test breaks the input string at all possible places
 %% and checks that the parser correctly re-enters.
 
 
 %% % ----------------------------------------------------------------------
-%% In parse_tag we know that we have 
+%% In parse_tag we know that we have
 %% enough characters for a complete
 %% parse so the code does not have to be re-entrant
 
-%% get tag is called after we have seen "$<$" 
+%% get tag is called after we have seen "$<$"
 
 get_tag("/" ++ S, Ln, F1) ->
     {Name, S1, F1a} = get_Name(S, [], F1),
@@ -299,7 +299,7 @@ get_NameChars([H|T]=S, L, Ln, F1) ->
 	false -> {reverse(L), S, F1}
     end;
 get_NameChars([], L, Ln, F1) ->
-    case F1() of 
+    case F1() of
 	{Data, F1a} -> get_NameChars(Data, L, Ln, F1a);
 	eos         -> error(Ln, "eos in Name")
     end.
@@ -311,8 +311,8 @@ is_NameChar($.) -> true;
 is_NameChar($-) -> true;
 is_NameChar($_) -> true;
 is_NameChar($:) -> true;
-is_NameChar(X)  -> 
-    is_Letter(X) orelse is_Digit(X) orelse is_CombiningChar(X) 
+is_NameChar(X)  ->
+    is_Letter(X) orelse is_Digit(X) orelse is_CombiningChar(X)
 	orelse is_Extender(X).
 
 %% get_args collects the (S Attribute)* bit
@@ -349,7 +349,7 @@ get_args(S, L, Ln, F1) ->
 get_AttValue([$"|T], Ln, F1) -> collect_AttVal($", T, [], Ln, F1);
 get_AttValue([$'|T], Ln, F1) -> collect_AttVal($', T, [], Ln, F1);
 get_AttValue([_|_], Ln, _)  -> error(Ln, "expecting ' or \"");
-get_AttValue([], Ln, F1)     -> 
+get_AttValue([], Ln, F1)     ->
     case F1() of
 	{Data, F1a} -> get_AttValue(Data, Ln, F1a);
 	eos         -> error(Ln, "eof in attribute value")
@@ -358,14 +358,14 @@ get_AttValue([], Ln, F1)     ->
 collect_AttVal(S, [S|T], L, Ln, F1)   -> {reverse(L), T, Ln, F1};
 collect_AttVal(S, [$\n|T], L, Ln, F1) -> collect_AttVal(S, T, [$\n|L], Ln+1, F1);
 collect_AttVal(_, [$<|_], _, Ln, _)  -> error(Ln, "< in attribute value");
-collect_AttVal(S, [$&|_]=T, L, Ln, F1)  -> 
+collect_AttVal(S, [$&|_]=T, L, Ln, F1)  ->
     {Ref, T1, F1a} = get_reference(T, Ln, F1),
     collect_AttVal(S, T1, add_ref(Ref, L), Ln, F1a);
-collect_AttVal(S, [$%|_]=T, L, Ln, F1)  -> 
+collect_AttVal(S, [$%|_]=T, L, Ln, F1)  ->
     {Ref, T1, F1a} = get_reference(T, Ln, F1),
     collect_AttVal(S, T1, add_ref(Ref, L), Ln, F1a);
 collect_AttVal(S, [H|T], L, Ln, F1)   -> collect_AttVal(S, T, [H|L], Ln, F1);
-collect_AttVal(S, [], L, Ln, F1)      -> 
+collect_AttVal(S, [], L, Ln, F1)      ->
     case F1() of
 	{Data, F1a} -> collect_AttVal(S, Data, L, Ln, F1a);
 	eos         -> error(Ln, "eos in attribute")
@@ -379,7 +379,7 @@ collect_AttVal(S, [], L, Ln, F1)      ->
 
 get_reference("&#" ++ T, Ln, F1) ->
     {Val, T1, F1} = get_hex_entity(T, [], Ln, F1),
-    {{entity, Val}, T1, F1}; 
+    {{entity, Val}, T1, F1};
 get_reference("&" ++ T, Ln, F1) ->
     {Name, T1, F1a} = get_Name(T, Ln, F1),
     case T1 of
@@ -414,19 +414,19 @@ skip_white([$\s|T], Ln, F1)  -> skip_white(T, Ln, F1);
 skip_white([$\t|T], Ln, F1)  -> skip_white(T, Ln, F1);
 skip_white([$\n|T], Ln, F1)  -> skip_white(T, Ln+1, F1);
 skip_white([13|T], Ln, F1)   -> skip_white(T, Ln+1, F1);
-skip_white([], Ln, F1)       -> 
+skip_white([], Ln, F1)       ->
     case F1() of
 	{Data, F1a} -> skip_white(Data, Ln, F1a);
 	eos         -> {[], Ln, F1}
     end;
 skip_white(Str, Ln, F1)      -> {Str, Ln, F1}.
- 
+
 %% % is_MiscName($.) -> true;
 %% % is_MiscName($-) -> true;
 %% % is_MiscName($_) -> true;
 %% % is_MiscName($:) -> true;
 %% % is_MiscName(_)  -> false.
- 
+
 %% get_CharData (this is a tail call from the top level)
 
 get_CharData(Str, Ln, F1) -> get_CharData(Str, [], Ln, F1).
@@ -436,7 +436,7 @@ get_CharData([$\n|T], L, Ln, F1)    -> get_CharData(T, [$\n|L], Ln+1, F1);
 get_CharData([13|T], L, Ln, F1)     -> get_CharData(T, [$\n|L], Ln+1, F1);
 get_CharData([$&|_]=T, L, Ln, F1)   -> get_amp(T, L, Ln, F1);
 get_CharData([H|T], L, Ln, F1)      -> get_CharData(T, [H|L], Ln, F1);
-get_CharData([], L, Ln, F1)         -> 
+get_CharData([], L, Ln, F1)         ->
     case F1() of
 	{Data, F1a} -> get_CharData(Data, L, Ln, F1a);
 	eos         -> found_raw(2, eos, L, Ln, F1)
@@ -577,331 +577,331 @@ all_blank(_) -> false.
 %% | #x0E46 | #x0EC6 | #x3005 | [#x3031-#x3035] | [#x309D-#x309E]
 %% | [#x30FC-#x30FE] |
 
-is_BaseChar(X) when ?in(X, 16#0041, 16#005A) -> true; 
-is_BaseChar(X) when ?in(X, 16#0061, 16#007A) -> true; 
-is_BaseChar(X) when ?in(X, 16#00C0, 16#00D6) -> true; 
-is_BaseChar(X) when ?in(X, 16#00D8, 16#00F6) -> true; 
-is_BaseChar(X) when ?in(X, 16#00F8, 16#00FF) -> true; 
-is_BaseChar(X) when ?in(X, 16#0100, 16#0131) -> true; 
-is_BaseChar(X) when ?in(X, 16#0134, 16#013E) -> true; 
-is_BaseChar(X) when ?in(X, 16#0141, 16#0148) -> true; 
-is_BaseChar(X) when ?in(X, 16#014A, 16#017E) -> true; 
-is_BaseChar(X) when ?in(X, 16#0180, 16#01C3) -> true; 
-is_BaseChar(X) when ?in(X, 16#01CD, 16#01F0) -> true; 
-is_BaseChar(X) when ?in(X, 16#01F4, 16#01F5) -> true; 
-is_BaseChar(X) when ?in(X, 16#01FA, 16#0217) -> true; 
-is_BaseChar(X) when ?in(X, 16#0250, 16#02A8) -> true; 
-is_BaseChar(X) when ?in(X, 16#02BB, 16#02C1) -> true; 
+is_BaseChar(X) when ?in(X, 16#0041, 16#005A) -> true;
+is_BaseChar(X) when ?in(X, 16#0061, 16#007A) -> true;
+is_BaseChar(X) when ?in(X, 16#00C0, 16#00D6) -> true;
+is_BaseChar(X) when ?in(X, 16#00D8, 16#00F6) -> true;
+is_BaseChar(X) when ?in(X, 16#00F8, 16#00FF) -> true;
+is_BaseChar(X) when ?in(X, 16#0100, 16#0131) -> true;
+is_BaseChar(X) when ?in(X, 16#0134, 16#013E) -> true;
+is_BaseChar(X) when ?in(X, 16#0141, 16#0148) -> true;
+is_BaseChar(X) when ?in(X, 16#014A, 16#017E) -> true;
+is_BaseChar(X) when ?in(X, 16#0180, 16#01C3) -> true;
+is_BaseChar(X) when ?in(X, 16#01CD, 16#01F0) -> true;
+is_BaseChar(X) when ?in(X, 16#01F4, 16#01F5) -> true;
+is_BaseChar(X) when ?in(X, 16#01FA, 16#0217) -> true;
+is_BaseChar(X) when ?in(X, 16#0250, 16#02A8) -> true;
+is_BaseChar(X) when ?in(X, 16#02BB, 16#02C1) -> true;
 is_BaseChar(16#0386) -> true;
-is_BaseChar(X) when ?in(X, 16#0388, 16#038A) -> true; 
+is_BaseChar(X) when ?in(X, 16#0388, 16#038A) -> true;
 is_BaseChar(16#038C) -> true;
-is_BaseChar(X) when ?in(X, 16#038E, 16#03A1) -> true; 
-is_BaseChar(X) when ?in(X, 16#03A3, 16#03CE) -> true; 
-is_BaseChar(X) when ?in(X, 16#03D0, 16#03D6) -> true; 
+is_BaseChar(X) when ?in(X, 16#038E, 16#03A1) -> true;
+is_BaseChar(X) when ?in(X, 16#03A3, 16#03CE) -> true;
+is_BaseChar(X) when ?in(X, 16#03D0, 16#03D6) -> true;
 is_BaseChar(16#03DA) -> true;
 is_BaseChar(16#03DC) -> true;
 is_BaseChar(16#03DE) -> true;
 is_BaseChar(16#03E0) -> true;
-is_BaseChar(X) when ?in(X, 16#03E2, 16#03F3) -> true; 
-is_BaseChar(X) when ?in(X, 16#0401, 16#040C) -> true; 
-is_BaseChar(X) when ?in(X, 16#040E, 16#044F) -> true; 
-is_BaseChar(X) when ?in(X, 16#0451, 16#045C) -> true; 
-is_BaseChar(X) when ?in(X, 16#045E, 16#0481) -> true; 
-is_BaseChar(X) when ?in(X, 16#0490, 16#04C4) -> true; 
-is_BaseChar(X) when ?in(X, 16#04C7, 16#04C8) -> true; 
-is_BaseChar(X) when ?in(X, 16#04CB, 16#04CC) -> true; 
-is_BaseChar(X) when ?in(X, 16#04D0, 16#04EB) -> true; 
-is_BaseChar(X) when ?in(X, 16#04EE, 16#04F5) -> true; 
-is_BaseChar(X) when ?in(X, 16#04F8, 16#04F9) -> true; 
-is_BaseChar(X) when ?in(X, 16#0531, 16#0556) -> true; 
+is_BaseChar(X) when ?in(X, 16#03E2, 16#03F3) -> true;
+is_BaseChar(X) when ?in(X, 16#0401, 16#040C) -> true;
+is_BaseChar(X) when ?in(X, 16#040E, 16#044F) -> true;
+is_BaseChar(X) when ?in(X, 16#0451, 16#045C) -> true;
+is_BaseChar(X) when ?in(X, 16#045E, 16#0481) -> true;
+is_BaseChar(X) when ?in(X, 16#0490, 16#04C4) -> true;
+is_BaseChar(X) when ?in(X, 16#04C7, 16#04C8) -> true;
+is_BaseChar(X) when ?in(X, 16#04CB, 16#04CC) -> true;
+is_BaseChar(X) when ?in(X, 16#04D0, 16#04EB) -> true;
+is_BaseChar(X) when ?in(X, 16#04EE, 16#04F5) -> true;
+is_BaseChar(X) when ?in(X, 16#04F8, 16#04F9) -> true;
+is_BaseChar(X) when ?in(X, 16#0531, 16#0556) -> true;
 is_BaseChar(16#0559) -> true;
-is_BaseChar(X) when ?in(X, 16#0561, 16#0586) -> true; 
-is_BaseChar(X) when ?in(X, 16#05D0, 16#05EA) -> true; 
-is_BaseChar(X) when ?in(X, 16#05F0, 16#05F2) -> true; 
-is_BaseChar(X) when ?in(X, 16#0621, 16#063A) -> true; 
-is_BaseChar(X) when ?in(X, 16#0641, 16#064A) -> true; 
-is_BaseChar(X) when ?in(X, 16#0671, 16#06B7) -> true; 
-is_BaseChar(X) when ?in(X, 16#06BA, 16#06BE) -> true; 
-is_BaseChar(X) when ?in(X, 16#06C0, 16#06CE) -> true; 
-is_BaseChar(X) when ?in(X, 16#06D0, 16#06D3) -> true; 
+is_BaseChar(X) when ?in(X, 16#0561, 16#0586) -> true;
+is_BaseChar(X) when ?in(X, 16#05D0, 16#05EA) -> true;
+is_BaseChar(X) when ?in(X, 16#05F0, 16#05F2) -> true;
+is_BaseChar(X) when ?in(X, 16#0621, 16#063A) -> true;
+is_BaseChar(X) when ?in(X, 16#0641, 16#064A) -> true;
+is_BaseChar(X) when ?in(X, 16#0671, 16#06B7) -> true;
+is_BaseChar(X) when ?in(X, 16#06BA, 16#06BE) -> true;
+is_BaseChar(X) when ?in(X, 16#06C0, 16#06CE) -> true;
+is_BaseChar(X) when ?in(X, 16#06D0, 16#06D3) -> true;
 is_BaseChar(16#06D5) -> true;
-is_BaseChar(X) when ?in(X, 16#06E5, 16#06E6) -> true; 
-is_BaseChar(X) when ?in(X, 16#0905, 16#0939) -> true; 
+is_BaseChar(X) when ?in(X, 16#06E5, 16#06E6) -> true;
+is_BaseChar(X) when ?in(X, 16#0905, 16#0939) -> true;
 is_BaseChar(16#093D) -> true;
-is_BaseChar(X) when ?in(X, 16#0958, 16#0961) -> true; 
-is_BaseChar(X) when ?in(X, 16#0985, 16#098C) -> true; 
-is_BaseChar(X) when ?in(X, 16#098F, 16#0990) -> true; 
-is_BaseChar(X) when ?in(X, 16#0993, 16#09A8) -> true; 
-is_BaseChar(X) when ?in(X, 16#09AA, 16#09B0) -> true; 
+is_BaseChar(X) when ?in(X, 16#0958, 16#0961) -> true;
+is_BaseChar(X) when ?in(X, 16#0985, 16#098C) -> true;
+is_BaseChar(X) when ?in(X, 16#098F, 16#0990) -> true;
+is_BaseChar(X) when ?in(X, 16#0993, 16#09A8) -> true;
+is_BaseChar(X) when ?in(X, 16#09AA, 16#09B0) -> true;
 is_BaseChar(16#09B2) -> true;
-is_BaseChar(X) when ?in(X, 16#09B6, 16#09B9) -> true; 
-is_BaseChar(X) when ?in(X, 16#09DC, 16#09DD) -> true; 
-is_BaseChar(X) when ?in(X, 16#09DF, 16#09E1) -> true; 
-is_BaseChar(X) when ?in(X, 16#09F0, 16#09F1) -> true; 
-is_BaseChar(X) when ?in(X, 16#0A05, 16#0A0A) -> true; 
-is_BaseChar(X) when ?in(X, 16#0A0F, 16#0A10) -> true; 
-is_BaseChar(X) when ?in(X, 16#0A13, 16#0A28) -> true; 
-is_BaseChar(X) when ?in(X, 16#0A2A, 16#0A30) -> true; 
-is_BaseChar(X) when ?in(X, 16#0A32, 16#0A33) -> true; 
-is_BaseChar(X) when ?in(X, 16#0A35, 16#0A36) -> true; 
-is_BaseChar(X) when ?in(X, 16#0A38, 16#0A39) -> true; 
-is_BaseChar(X) when ?in(X, 16#0A59, 16#0A5C) -> true; 
+is_BaseChar(X) when ?in(X, 16#09B6, 16#09B9) -> true;
+is_BaseChar(X) when ?in(X, 16#09DC, 16#09DD) -> true;
+is_BaseChar(X) when ?in(X, 16#09DF, 16#09E1) -> true;
+is_BaseChar(X) when ?in(X, 16#09F0, 16#09F1) -> true;
+is_BaseChar(X) when ?in(X, 16#0A05, 16#0A0A) -> true;
+is_BaseChar(X) when ?in(X, 16#0A0F, 16#0A10) -> true;
+is_BaseChar(X) when ?in(X, 16#0A13, 16#0A28) -> true;
+is_BaseChar(X) when ?in(X, 16#0A2A, 16#0A30) -> true;
+is_BaseChar(X) when ?in(X, 16#0A32, 16#0A33) -> true;
+is_BaseChar(X) when ?in(X, 16#0A35, 16#0A36) -> true;
+is_BaseChar(X) when ?in(X, 16#0A38, 16#0A39) -> true;
+is_BaseChar(X) when ?in(X, 16#0A59, 16#0A5C) -> true;
 is_BaseChar(16#0A5E) -> true;
-is_BaseChar(X) when ?in(X, 16#0A72, 16#0A74) -> true; 
-is_BaseChar(X) when ?in(X, 16#0A85, 16#0A8B) -> true; 
+is_BaseChar(X) when ?in(X, 16#0A72, 16#0A74) -> true;
+is_BaseChar(X) when ?in(X, 16#0A85, 16#0A8B) -> true;
 is_BaseChar(16#0A8D) -> true;
-is_BaseChar(X) when ?in(X, 16#0A8F, 16#0A91) -> true; 
-is_BaseChar(X) when ?in(X, 16#0A93, 16#0AA8) -> true; 
-is_BaseChar(X) when ?in(X, 16#0AAA, 16#0AB0) -> true; 
-is_BaseChar(X) when ?in(X, 16#0AB2, 16#0AB3) -> true; 
-is_BaseChar(X) when ?in(X, 16#0AB5, 16#0AB9) -> true; 
+is_BaseChar(X) when ?in(X, 16#0A8F, 16#0A91) -> true;
+is_BaseChar(X) when ?in(X, 16#0A93, 16#0AA8) -> true;
+is_BaseChar(X) when ?in(X, 16#0AAA, 16#0AB0) -> true;
+is_BaseChar(X) when ?in(X, 16#0AB2, 16#0AB3) -> true;
+is_BaseChar(X) when ?in(X, 16#0AB5, 16#0AB9) -> true;
 is_BaseChar(16#0ABD) -> true;
 is_BaseChar(16#0AE0) -> true;
-is_BaseChar(X) when ?in(X, 16#0B05, 16#0B0C) -> true; 
-is_BaseChar(X) when ?in(X, 16#0B0F, 16#0B10) -> true; 
-is_BaseChar(X) when ?in(X, 16#0B13, 16#0B28) -> true; 
-is_BaseChar(X) when ?in(X, 16#0B2A, 16#0B30) -> true; 
-is_BaseChar(X) when ?in(X, 16#0B32, 16#0B33) -> true; 
-is_BaseChar(X) when ?in(X, 16#0B36, 16#0B39) -> true; 
+is_BaseChar(X) when ?in(X, 16#0B05, 16#0B0C) -> true;
+is_BaseChar(X) when ?in(X, 16#0B0F, 16#0B10) -> true;
+is_BaseChar(X) when ?in(X, 16#0B13, 16#0B28) -> true;
+is_BaseChar(X) when ?in(X, 16#0B2A, 16#0B30) -> true;
+is_BaseChar(X) when ?in(X, 16#0B32, 16#0B33) -> true;
+is_BaseChar(X) when ?in(X, 16#0B36, 16#0B39) -> true;
 is_BaseChar(16#0B3D) -> true;
-is_BaseChar(X) when ?in(X, 16#0B5C, 16#0B5D) -> true; 
-is_BaseChar(X) when ?in(X, 16#0B5F, 16#0B61) -> true; 
-is_BaseChar(X) when ?in(X, 16#0B85, 16#0B8A) -> true; 
-is_BaseChar(X) when ?in(X, 16#0B8E, 16#0B90) -> true; 
-is_BaseChar(X) when ?in(X, 16#0B92, 16#0B95) -> true; 
-is_BaseChar(X) when ?in(X, 16#0B99, 16#0B9A) -> true; 
+is_BaseChar(X) when ?in(X, 16#0B5C, 16#0B5D) -> true;
+is_BaseChar(X) when ?in(X, 16#0B5F, 16#0B61) -> true;
+is_BaseChar(X) when ?in(X, 16#0B85, 16#0B8A) -> true;
+is_BaseChar(X) when ?in(X, 16#0B8E, 16#0B90) -> true;
+is_BaseChar(X) when ?in(X, 16#0B92, 16#0B95) -> true;
+is_BaseChar(X) when ?in(X, 16#0B99, 16#0B9A) -> true;
 is_BaseChar(16#0B9C) -> true;
-is_BaseChar(X) when ?in(X, 16#0B9E, 16#0B9F) -> true; 
-is_BaseChar(X) when ?in(X, 16#0BA3, 16#0BA4) -> true; 
-is_BaseChar(X) when ?in(X, 16#0BA8, 16#0BAA) -> true; 
-is_BaseChar(X) when ?in(X, 16#0BAE, 16#0BB5) -> true; 
-is_BaseChar(X) when ?in(X, 16#0BB7, 16#0BB9) -> true; 
-is_BaseChar(X) when ?in(X, 16#0C05, 16#0C0C) -> true; 
-is_BaseChar(X) when ?in(X, 16#0C0E, 16#0C10) -> true; 
-is_BaseChar(X) when ?in(X, 16#0C12, 16#0C28) -> true; 
-is_BaseChar(X) when ?in(X, 16#0C2A, 16#0C33) -> true; 
-is_BaseChar(X) when ?in(X, 16#0C35, 16#0C39) -> true; 
-is_BaseChar(X) when ?in(X, 16#0C60, 16#0C61) -> true; 
-is_BaseChar(X) when ?in(X, 16#0C85, 16#0C8C) -> true; 
-is_BaseChar(X) when ?in(X, 16#0C8E, 16#0C90) -> true; 
-is_BaseChar(X) when ?in(X, 16#0C92, 16#0CA8) -> true; 
-is_BaseChar(X) when ?in(X, 16#0CAA, 16#0CB3) -> true; 
-is_BaseChar(X) when ?in(X, 16#0CB5, 16#0CB9) -> true; 
+is_BaseChar(X) when ?in(X, 16#0B9E, 16#0B9F) -> true;
+is_BaseChar(X) when ?in(X, 16#0BA3, 16#0BA4) -> true;
+is_BaseChar(X) when ?in(X, 16#0BA8, 16#0BAA) -> true;
+is_BaseChar(X) when ?in(X, 16#0BAE, 16#0BB5) -> true;
+is_BaseChar(X) when ?in(X, 16#0BB7, 16#0BB9) -> true;
+is_BaseChar(X) when ?in(X, 16#0C05, 16#0C0C) -> true;
+is_BaseChar(X) when ?in(X, 16#0C0E, 16#0C10) -> true;
+is_BaseChar(X) when ?in(X, 16#0C12, 16#0C28) -> true;
+is_BaseChar(X) when ?in(X, 16#0C2A, 16#0C33) -> true;
+is_BaseChar(X) when ?in(X, 16#0C35, 16#0C39) -> true;
+is_BaseChar(X) when ?in(X, 16#0C60, 16#0C61) -> true;
+is_BaseChar(X) when ?in(X, 16#0C85, 16#0C8C) -> true;
+is_BaseChar(X) when ?in(X, 16#0C8E, 16#0C90) -> true;
+is_BaseChar(X) when ?in(X, 16#0C92, 16#0CA8) -> true;
+is_BaseChar(X) when ?in(X, 16#0CAA, 16#0CB3) -> true;
+is_BaseChar(X) when ?in(X, 16#0CB5, 16#0CB9) -> true;
 is_BaseChar(16#0CDE) -> true;
-is_BaseChar(X) when ?in(X, 16#0CE0, 16#0CE1) -> true; 
-is_BaseChar(X) when ?in(X, 16#0D05, 16#0D0C) -> true; 
-is_BaseChar(X) when ?in(X, 16#0D0E, 16#0D10) -> true; 
-is_BaseChar(X) when ?in(X, 16#0D12, 16#0D28) -> true; 
-is_BaseChar(X) when ?in(X, 16#0D2A, 16#0D39) -> true; 
-is_BaseChar(X) when ?in(X, 16#0D60, 16#0D61) -> true; 
-is_BaseChar(X) when ?in(X, 16#0E01, 16#0E2E) -> true; 
+is_BaseChar(X) when ?in(X, 16#0CE0, 16#0CE1) -> true;
+is_BaseChar(X) when ?in(X, 16#0D05, 16#0D0C) -> true;
+is_BaseChar(X) when ?in(X, 16#0D0E, 16#0D10) -> true;
+is_BaseChar(X) when ?in(X, 16#0D12, 16#0D28) -> true;
+is_BaseChar(X) when ?in(X, 16#0D2A, 16#0D39) -> true;
+is_BaseChar(X) when ?in(X, 16#0D60, 16#0D61) -> true;
+is_BaseChar(X) when ?in(X, 16#0E01, 16#0E2E) -> true;
 is_BaseChar(16#0E30) -> true;
-is_BaseChar(X) when ?in(X, 16#0E32, 16#0E33) -> true; 
-is_BaseChar(X) when ?in(X, 16#0E40, 16#0E45) -> true; 
-is_BaseChar(X) when ?in(X, 16#0E81, 16#0E82) -> true; 
+is_BaseChar(X) when ?in(X, 16#0E32, 16#0E33) -> true;
+is_BaseChar(X) when ?in(X, 16#0E40, 16#0E45) -> true;
+is_BaseChar(X) when ?in(X, 16#0E81, 16#0E82) -> true;
 is_BaseChar(16#0E84) -> true;
-is_BaseChar(X) when ?in(X, 16#0E87, 16#0E88) -> true; 
+is_BaseChar(X) when ?in(X, 16#0E87, 16#0E88) -> true;
 is_BaseChar(16#0E8A) -> true;
 is_BaseChar(16#0E8D) -> true;
-is_BaseChar(X) when ?in(X, 16#0E94, 16#0E97) -> true; 
-is_BaseChar(X) when ?in(X, 16#0E99, 16#0E9F) -> true; 
-is_BaseChar(X) when ?in(X, 16#0EA1, 16#0EA3) -> true; 
+is_BaseChar(X) when ?in(X, 16#0E94, 16#0E97) -> true;
+is_BaseChar(X) when ?in(X, 16#0E99, 16#0E9F) -> true;
+is_BaseChar(X) when ?in(X, 16#0EA1, 16#0EA3) -> true;
 is_BaseChar(16#0EA5) -> true;
 is_BaseChar(16#0EA7) -> true;
-is_BaseChar(X) when ?in(X, 16#0EAA, 16#0EAB) -> true; 
-is_BaseChar(X) when ?in(X, 16#0EAD, 16#0EAE) -> true; 
+is_BaseChar(X) when ?in(X, 16#0EAA, 16#0EAB) -> true;
+is_BaseChar(X) when ?in(X, 16#0EAD, 16#0EAE) -> true;
 is_BaseChar(16#0EB0) -> true;
-is_BaseChar(X) when ?in(X, 16#0EB2, 16#0EB3) -> true; 
+is_BaseChar(X) when ?in(X, 16#0EB2, 16#0EB3) -> true;
 is_BaseChar(16#0EBD) -> true;
-is_BaseChar(X) when ?in(X, 16#0EC0, 16#0EC4) -> true; 
-is_BaseChar(X) when ?in(X, 16#0F40, 16#0F47) -> true; 
-is_BaseChar(X) when ?in(X, 16#0F49, 16#0F69) -> true; 
-is_BaseChar(X) when ?in(X, 16#10A0, 16#10C5) -> true; 
-is_BaseChar(X) when ?in(X, 16#10D0, 16#10F6) -> true; 
+is_BaseChar(X) when ?in(X, 16#0EC0, 16#0EC4) -> true;
+is_BaseChar(X) when ?in(X, 16#0F40, 16#0F47) -> true;
+is_BaseChar(X) when ?in(X, 16#0F49, 16#0F69) -> true;
+is_BaseChar(X) when ?in(X, 16#10A0, 16#10C5) -> true;
+is_BaseChar(X) when ?in(X, 16#10D0, 16#10F6) -> true;
 is_BaseChar(16#1100) -> true;
-is_BaseChar(X) when ?in(X, 16#1102, 16#1103) -> true; 
-is_BaseChar(X) when ?in(X, 16#1105, 16#1107) -> true; 
+is_BaseChar(X) when ?in(X, 16#1102, 16#1103) -> true;
+is_BaseChar(X) when ?in(X, 16#1105, 16#1107) -> true;
 is_BaseChar(16#1109) -> true;
-is_BaseChar(X) when ?in(X, 16#110B, 16#110C) -> true; 
-is_BaseChar(X) when ?in(X, 16#110E, 16#1112) -> true; 
+is_BaseChar(X) when ?in(X, 16#110B, 16#110C) -> true;
+is_BaseChar(X) when ?in(X, 16#110E, 16#1112) -> true;
 is_BaseChar(16#113C) -> true;
 is_BaseChar(16#113E) -> true;
 is_BaseChar(16#1140) -> true;
 is_BaseChar(16#114C) -> true;
 is_BaseChar(16#114E) -> true;
 is_BaseChar(16#1150) -> true;
-is_BaseChar(X) when ?in(X, 16#1154, 16#1155) -> true; 
+is_BaseChar(X) when ?in(X, 16#1154, 16#1155) -> true;
 is_BaseChar(16#1159) -> true;
-is_BaseChar(X) when ?in(X, 16#115F, 16#1161) -> true; 
+is_BaseChar(X) when ?in(X, 16#115F, 16#1161) -> true;
 is_BaseChar(16#1163) -> true;
 is_BaseChar(16#1165) -> true;
 is_BaseChar(16#1167) -> true;
 is_BaseChar(16#1169) -> true;
-is_BaseChar(X) when ?in(X, 16#116D, 16#116E) -> true; 
-is_BaseChar(X) when ?in(X, 16#1172, 16#1173) -> true; 
+is_BaseChar(X) when ?in(X, 16#116D, 16#116E) -> true;
+is_BaseChar(X) when ?in(X, 16#1172, 16#1173) -> true;
 is_BaseChar(16#1175) -> true;
 is_BaseChar(16#119E) -> true;
 is_BaseChar(16#11A8) -> true;
 is_BaseChar(16#11AB) -> true;
-is_BaseChar(X) when ?in(X, 16#11AE, 16#11AF) -> true; 
-is_BaseChar(X) when ?in(X, 16#11B7, 16#11B8) -> true; 
+is_BaseChar(X) when ?in(X, 16#11AE, 16#11AF) -> true;
+is_BaseChar(X) when ?in(X, 16#11B7, 16#11B8) -> true;
 is_BaseChar(16#11BA) -> true;
-is_BaseChar(X) when ?in(X, 16#11BC, 16#11C2) -> true; 
+is_BaseChar(X) when ?in(X, 16#11BC, 16#11C2) -> true;
 is_BaseChar(16#11EB) -> true;
 is_BaseChar(16#11F0) -> true;
 is_BaseChar(16#11F9) -> true;
-is_BaseChar(X) when ?in(X, 16#1E00, 16#1E9B) -> true; 
-is_BaseChar(X) when ?in(X, 16#1EA0, 16#1EF9) -> true; 
-is_BaseChar(X) when ?in(X, 16#1F00, 16#1F15) -> true; 
-is_BaseChar(X) when ?in(X, 16#1F18, 16#1F1D) -> true; 
-is_BaseChar(X) when ?in(X, 16#1F20, 16#1F45) -> true; 
-is_BaseChar(X) when ?in(X, 16#1F48, 16#1F4D) -> true; 
-is_BaseChar(X) when ?in(X, 16#1F50, 16#1F57) -> true; 
+is_BaseChar(X) when ?in(X, 16#1E00, 16#1E9B) -> true;
+is_BaseChar(X) when ?in(X, 16#1EA0, 16#1EF9) -> true;
+is_BaseChar(X) when ?in(X, 16#1F00, 16#1F15) -> true;
+is_BaseChar(X) when ?in(X, 16#1F18, 16#1F1D) -> true;
+is_BaseChar(X) when ?in(X, 16#1F20, 16#1F45) -> true;
+is_BaseChar(X) when ?in(X, 16#1F48, 16#1F4D) -> true;
+is_BaseChar(X) when ?in(X, 16#1F50, 16#1F57) -> true;
 is_BaseChar(16#1F59) -> true;
 is_BaseChar(16#1F5B) -> true;
 is_BaseChar(16#1F5D) -> true;
-is_BaseChar(X) when ?in(X, 16#1F5F, 16#1F7D) -> true; 
-is_BaseChar(X) when ?in(X, 16#1F80, 16#1FB4) -> true; 
-is_BaseChar(X) when ?in(X, 16#1FB6, 16#1FBC) -> true; 
+is_BaseChar(X) when ?in(X, 16#1F5F, 16#1F7D) -> true;
+is_BaseChar(X) when ?in(X, 16#1F80, 16#1FB4) -> true;
+is_BaseChar(X) when ?in(X, 16#1FB6, 16#1FBC) -> true;
 is_BaseChar(16#1FBE) -> true;
-is_BaseChar(X) when ?in(X, 16#1FC2, 16#1FC4) -> true; 
-is_BaseChar(X) when ?in(X, 16#1FC6, 16#1FCC) -> true; 
-is_BaseChar(X) when ?in(X, 16#1FD0, 16#1FD3) -> true; 
-is_BaseChar(X) when ?in(X, 16#1FD6, 16#1FDB) -> true; 
-is_BaseChar(X) when ?in(X, 16#1FE0, 16#1FEC) -> true; 
-is_BaseChar(X) when ?in(X, 16#1FF2, 16#1FF4) -> true; 
-is_BaseChar(X) when ?in(X, 16#1FF6, 16#1FFC) -> true; 
+is_BaseChar(X) when ?in(X, 16#1FC2, 16#1FC4) -> true;
+is_BaseChar(X) when ?in(X, 16#1FC6, 16#1FCC) -> true;
+is_BaseChar(X) when ?in(X, 16#1FD0, 16#1FD3) -> true;
+is_BaseChar(X) when ?in(X, 16#1FD6, 16#1FDB) -> true;
+is_BaseChar(X) when ?in(X, 16#1FE0, 16#1FEC) -> true;
+is_BaseChar(X) when ?in(X, 16#1FF2, 16#1FF4) -> true;
+is_BaseChar(X) when ?in(X, 16#1FF6, 16#1FFC) -> true;
 is_BaseChar(16#2126) -> true;
-is_BaseChar(X) when ?in(X, 16#212A, 16#212B) -> true; 
+is_BaseChar(X) when ?in(X, 16#212A, 16#212B) -> true;
 is_BaseChar(16#212E) -> true;
-is_BaseChar(X) when ?in(X, 16#2180, 16#2182) -> true; 
-is_BaseChar(X) when ?in(X, 16#3041, 16#3094) -> true; 
-is_BaseChar(X) when ?in(X, 16#30A1, 16#30FA) -> true; 
-is_BaseChar(X) when ?in(X, 16#3105, 16#312C) -> true; 
+is_BaseChar(X) when ?in(X, 16#2180, 16#2182) -> true;
+is_BaseChar(X) when ?in(X, 16#3041, 16#3094) -> true;
+is_BaseChar(X) when ?in(X, 16#30A1, 16#30FA) -> true;
+is_BaseChar(X) when ?in(X, 16#3105, 16#312C) -> true;
 is_BaseChar(X) when ?in(X, 16#AC00, 16#D7A3) -> true;
 is_BaseChar(_) -> false.
 
 %% [86] Ideographic	   ::= ...
-   	
-is_Ideographic(X) when ?in(X, 16#4E00, 16#9FA5) -> true; 
+
+is_Ideographic(X) when ?in(X, 16#4E00, 16#9FA5) -> true;
 is_Ideographic(16#3007) -> true;
 is_Ideographic(X) when ?in(X, 16#3021, 16#3029) -> true;
 is_Ideographic(_) -> false.
 
 %% [87] CombiningChar	   ::= ...
 
-is_CombiningChar(X) when ?in(X, 16#0300, 16#0345) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0360, 16#0361) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0483, 16#0486) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0591, 16#05A1) -> true; 
-is_CombiningChar(X) when ?in(X, 16#05A3, 16#05B9) -> true; 
-is_CombiningChar(X) when ?in(X, 16#05BB, 16#05BD) -> true; 
+is_CombiningChar(X) when ?in(X, 16#0300, 16#0345) -> true;
+is_CombiningChar(X) when ?in(X, 16#0360, 16#0361) -> true;
+is_CombiningChar(X) when ?in(X, 16#0483, 16#0486) -> true;
+is_CombiningChar(X) when ?in(X, 16#0591, 16#05A1) -> true;
+is_CombiningChar(X) when ?in(X, 16#05A3, 16#05B9) -> true;
+is_CombiningChar(X) when ?in(X, 16#05BB, 16#05BD) -> true;
 is_CombiningChar(16#05BF) -> true;
-is_CombiningChar(X) when ?in(X, 16#05C1, 16#05C2) -> true; 
+is_CombiningChar(X) when ?in(X, 16#05C1, 16#05C2) -> true;
 is_CombiningChar(16#05C4) -> true;
-is_CombiningChar(X) when ?in(X, 16#064B, 16#0652) -> true; 
+is_CombiningChar(X) when ?in(X, 16#064B, 16#0652) -> true;
 is_CombiningChar(16#0670) -> true;
-is_CombiningChar(X) when ?in(X, 16#06D6, 16#06DC) -> true; 
-is_CombiningChar(X) when ?in(X, 16#06DD, 16#06DF) -> true; 
-is_CombiningChar(X) when ?in(X, 16#06E0, 16#06E4) -> true; 
-is_CombiningChar(X) when ?in(X, 16#06E7, 16#06E8) -> true; 
-is_CombiningChar(X) when ?in(X, 16#06EA, 16#06ED) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0901, 16#0903) -> true; 
+is_CombiningChar(X) when ?in(X, 16#06D6, 16#06DC) -> true;
+is_CombiningChar(X) when ?in(X, 16#06DD, 16#06DF) -> true;
+is_CombiningChar(X) when ?in(X, 16#06E0, 16#06E4) -> true;
+is_CombiningChar(X) when ?in(X, 16#06E7, 16#06E8) -> true;
+is_CombiningChar(X) when ?in(X, 16#06EA, 16#06ED) -> true;
+is_CombiningChar(X) when ?in(X, 16#0901, 16#0903) -> true;
 is_CombiningChar(16#093C) -> true;
-is_CombiningChar(X) when ?in(X, 16#093E, 16#094C) -> true; 
+is_CombiningChar(X) when ?in(X, 16#093E, 16#094C) -> true;
 is_CombiningChar(16#094D) -> true;
-is_CombiningChar(X) when ?in(X, 16#0951, 16#0954) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0962, 16#0963) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0981, 16#0983) -> true; 
+is_CombiningChar(X) when ?in(X, 16#0951, 16#0954) -> true;
+is_CombiningChar(X) when ?in(X, 16#0962, 16#0963) -> true;
+is_CombiningChar(X) when ?in(X, 16#0981, 16#0983) -> true;
 is_CombiningChar(16#09BC) -> true;
 is_CombiningChar(16#09BE) -> true;
 is_CombiningChar(16#09BF) -> true;
-is_CombiningChar(X) when ?in(X, 16#09C0, 16#09C4) -> true; 
-is_CombiningChar(X) when ?in(X, 16#09C7, 16#09C8) -> true; 
-is_CombiningChar(X) when ?in(X, 16#09CB, 16#09CD) -> true; 
+is_CombiningChar(X) when ?in(X, 16#09C0, 16#09C4) -> true;
+is_CombiningChar(X) when ?in(X, 16#09C7, 16#09C8) -> true;
+is_CombiningChar(X) when ?in(X, 16#09CB, 16#09CD) -> true;
 is_CombiningChar(16#09D7) -> true;
-is_CombiningChar(X) when ?in(X, 16#09E2, 16#09E3) -> true; 
+is_CombiningChar(X) when ?in(X, 16#09E2, 16#09E3) -> true;
 is_CombiningChar(16#0A02) -> true;
 is_CombiningChar(16#0A3C) -> true;
 is_CombiningChar(16#0A3E) -> true;
 is_CombiningChar(16#0A3F) -> true;
-is_CombiningChar(X) when ?in(X, 16#0A40, 16#0A42) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0A47, 16#0A48) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0A4B, 16#0A4D) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0A70, 16#0A71) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0A81, 16#0A83) -> true; 
+is_CombiningChar(X) when ?in(X, 16#0A40, 16#0A42) -> true;
+is_CombiningChar(X) when ?in(X, 16#0A47, 16#0A48) -> true;
+is_CombiningChar(X) when ?in(X, 16#0A4B, 16#0A4D) -> true;
+is_CombiningChar(X) when ?in(X, 16#0A70, 16#0A71) -> true;
+is_CombiningChar(X) when ?in(X, 16#0A81, 16#0A83) -> true;
 is_CombiningChar(16#0ABC) -> true;
-is_CombiningChar(X) when ?in(X, 16#0ABE, 16#0AC5) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0AC7, 16#0AC9) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0ACB, 16#0ACD) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0B01, 16#0B03) -> true; 
+is_CombiningChar(X) when ?in(X, 16#0ABE, 16#0AC5) -> true;
+is_CombiningChar(X) when ?in(X, 16#0AC7, 16#0AC9) -> true;
+is_CombiningChar(X) when ?in(X, 16#0ACB, 16#0ACD) -> true;
+is_CombiningChar(X) when ?in(X, 16#0B01, 16#0B03) -> true;
 is_CombiningChar(16#0B3C) -> true;
-is_CombiningChar(X) when ?in(X, 16#0B3E, 16#0B43) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0B47, 16#0B48) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0B4B, 16#0B4D) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0B56, 16#0B57) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0B82, 16#0B83) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0BBE, 16#0BC2) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0BC6, 16#0BC8) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0BCA, 16#0BCD) -> true; 
+is_CombiningChar(X) when ?in(X, 16#0B3E, 16#0B43) -> true;
+is_CombiningChar(X) when ?in(X, 16#0B47, 16#0B48) -> true;
+is_CombiningChar(X) when ?in(X, 16#0B4B, 16#0B4D) -> true;
+is_CombiningChar(X) when ?in(X, 16#0B56, 16#0B57) -> true;
+is_CombiningChar(X) when ?in(X, 16#0B82, 16#0B83) -> true;
+is_CombiningChar(X) when ?in(X, 16#0BBE, 16#0BC2) -> true;
+is_CombiningChar(X) when ?in(X, 16#0BC6, 16#0BC8) -> true;
+is_CombiningChar(X) when ?in(X, 16#0BCA, 16#0BCD) -> true;
 is_CombiningChar(16#0BD7) -> true;
-is_CombiningChar(X) when ?in(X, 16#0C01, 16#0C03) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0C3E, 16#0C44) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0C46, 16#0C48) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0C4A, 16#0C4D) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0C55, 16#0C56) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0C82, 16#0C83) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0CBE, 16#0CC4) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0CC6, 16#0CC8) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0CCA, 16#0CCD) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0CD5, 16#0CD6) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0D02, 16#0D03) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0D3E, 16#0D43) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0D46, 16#0D48) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0D4A, 16#0D4D) -> true; 
+is_CombiningChar(X) when ?in(X, 16#0C01, 16#0C03) -> true;
+is_CombiningChar(X) when ?in(X, 16#0C3E, 16#0C44) -> true;
+is_CombiningChar(X) when ?in(X, 16#0C46, 16#0C48) -> true;
+is_CombiningChar(X) when ?in(X, 16#0C4A, 16#0C4D) -> true;
+is_CombiningChar(X) when ?in(X, 16#0C55, 16#0C56) -> true;
+is_CombiningChar(X) when ?in(X, 16#0C82, 16#0C83) -> true;
+is_CombiningChar(X) when ?in(X, 16#0CBE, 16#0CC4) -> true;
+is_CombiningChar(X) when ?in(X, 16#0CC6, 16#0CC8) -> true;
+is_CombiningChar(X) when ?in(X, 16#0CCA, 16#0CCD) -> true;
+is_CombiningChar(X) when ?in(X, 16#0CD5, 16#0CD6) -> true;
+is_CombiningChar(X) when ?in(X, 16#0D02, 16#0D03) -> true;
+is_CombiningChar(X) when ?in(X, 16#0D3E, 16#0D43) -> true;
+is_CombiningChar(X) when ?in(X, 16#0D46, 16#0D48) -> true;
+is_CombiningChar(X) when ?in(X, 16#0D4A, 16#0D4D) -> true;
 is_CombiningChar(16#0D57) -> true;
 is_CombiningChar(16#0E31) -> true;
-is_CombiningChar(X) when ?in(X, 16#0E34, 16#0E3A) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0E47, 16#0E4E) -> true; 
+is_CombiningChar(X) when ?in(X, 16#0E34, 16#0E3A) -> true;
+is_CombiningChar(X) when ?in(X, 16#0E47, 16#0E4E) -> true;
 is_CombiningChar(16#0EB1) -> true;
-is_CombiningChar(X) when ?in(X, 16#0EB4, 16#0EB9) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0EBB, 16#0EBC) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0EC8, 16#0ECD) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0F18, 16#0F19) -> true; 
+is_CombiningChar(X) when ?in(X, 16#0EB4, 16#0EB9) -> true;
+is_CombiningChar(X) when ?in(X, 16#0EBB, 16#0EBC) -> true;
+is_CombiningChar(X) when ?in(X, 16#0EC8, 16#0ECD) -> true;
+is_CombiningChar(X) when ?in(X, 16#0F18, 16#0F19) -> true;
 is_CombiningChar(16#0F35) -> true;
 is_CombiningChar(16#0F37) -> true;
 is_CombiningChar(16#0F39) -> true;
 is_CombiningChar(16#0F3E) -> true;
 is_CombiningChar(16#0F3F) -> true;
-is_CombiningChar(X) when ?in(X, 16#0F71, 16#0F84) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0F86, 16#0F8B) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0F90, 16#0F95) -> true; 
+is_CombiningChar(X) when ?in(X, 16#0F71, 16#0F84) -> true;
+is_CombiningChar(X) when ?in(X, 16#0F86, 16#0F8B) -> true;
+is_CombiningChar(X) when ?in(X, 16#0F90, 16#0F95) -> true;
 is_CombiningChar(16#0F97) -> true;
-is_CombiningChar(X) when ?in(X, 16#0F99, 16#0FAD) -> true; 
-is_CombiningChar(X) when ?in(X, 16#0FB1, 16#0FB7) -> true; 
+is_CombiningChar(X) when ?in(X, 16#0F99, 16#0FAD) -> true;
+is_CombiningChar(X) when ?in(X, 16#0FB1, 16#0FB7) -> true;
 is_CombiningChar(16#0FB9) -> true;
-is_CombiningChar(X) when ?in(X, 16#20D0, 16#20DC) -> true; 
+is_CombiningChar(X) when ?in(X, 16#20D0, 16#20DC) -> true;
 is_CombiningChar(16#20E1) -> true;
-is_CombiningChar(X) when ?in(X, 16#302A, 16#302F) -> true; 
+is_CombiningChar(X) when ?in(X, 16#302A, 16#302F) -> true;
 is_CombiningChar(16#3099) -> true;
 is_CombiningChar(16#309A) -> true;
 is_CombiningChar(_) -> false.
 
-%% Digit	   ::=  
-is_Digit(X) when ?in(X, 16#0030, 16#0039) -> true; 
-is_Digit(X) when ?in(X, 16#0660, 16#0669) -> true; 
-is_Digit(X) when ?in(X, 16#06F0, 16#06F9) -> true; 
-is_Digit(X) when ?in(X, 16#0966, 16#096F) -> true; 
-is_Digit(X) when ?in(X, 16#09E6, 16#09EF) -> true; 
-is_Digit(X) when ?in(X, 16#0A66, 16#0A6F) -> true; 
-is_Digit(X) when ?in(X, 16#0AE6, 16#0AEF) -> true; 
-is_Digit(X) when ?in(X, 16#0B66, 16#0B6F) -> true; 
-is_Digit(X) when ?in(X, 16#0BE7, 16#0BEF) -> true; 
-is_Digit(X) when ?in(X, 16#0C66, 16#0C6F) -> true; 
-is_Digit(X) when ?in(X, 16#0CE6, 16#0CEF) -> true; 
-is_Digit(X) when ?in(X, 16#0D66, 16#0D6F) -> true; 
-is_Digit(X) when ?in(X, 16#0E50, 16#0E59) -> true; 
-is_Digit(X) when ?in(X, 16#0ED0, 16#0ED9) -> true; 
+%% Digit	   ::=
+is_Digit(X) when ?in(X, 16#0030, 16#0039) -> true;
+is_Digit(X) when ?in(X, 16#0660, 16#0669) -> true;
+is_Digit(X) when ?in(X, 16#06F0, 16#06F9) -> true;
+is_Digit(X) when ?in(X, 16#0966, 16#096F) -> true;
+is_Digit(X) when ?in(X, 16#09E6, 16#09EF) -> true;
+is_Digit(X) when ?in(X, 16#0A66, 16#0A6F) -> true;
+is_Digit(X) when ?in(X, 16#0AE6, 16#0AEF) -> true;
+is_Digit(X) when ?in(X, 16#0B66, 16#0B6F) -> true;
+is_Digit(X) when ?in(X, 16#0BE7, 16#0BEF) -> true;
+is_Digit(X) when ?in(X, 16#0C66, 16#0C6F) -> true;
+is_Digit(X) when ?in(X, 16#0CE6, 16#0CEF) -> true;
+is_Digit(X) when ?in(X, 16#0D66, 16#0D6F) -> true;
+is_Digit(X) when ?in(X, 16#0E50, 16#0E59) -> true;
+is_Digit(X) when ?in(X, 16#0ED0, 16#0ED9) -> true;
 is_Digit(X) when ?in(X, 16#0F20, 16#0F29) -> true;
 is_Digit(_) -> false.
 
@@ -915,9 +915,9 @@ is_Extender(16#0640) -> true;
 is_Extender(16#0E46) -> true;
 is_Extender(16#0EC6) -> true;
 is_Extender(16#3005) -> true;
-is_Extender(X) when ?in(X, 16#3031, 16#3035) -> true; 
-is_Extender(X) when ?in(X, 16#309D, 16#309E) -> true; 
-is_Extender(X) when ?in(X, 16#30FC, 16#30FE) -> true; 
+is_Extender(X) when ?in(X, 16#3031, 16#3035) -> true;
+is_Extender(X) when ?in(X, 16#309D, 16#309E) -> true;
+is_Extender(X) when ?in(X, 16#30FC, 16#30FE) -> true;
 is_Extender(_) -> false.
 
 %% test_tokenize()
@@ -946,19 +946,19 @@ test(N, L, F2, Toks) ->
 	Toks ->
 	    test(N-1, L, F2, Toks);
 	_ ->
-	    lib_misc:dump("debug", {toks, Toks, toks1, Toks1}), 
-	    {error, N} 
+	    lib_misc:dump("debug", {toks, Toks, toks1, Toks1}),
+	    {error, N}
     end.
 
-get_data(_, []) -> 
+get_data(_, []) ->
     eos;
-get_data(N, L) -> 
+get_data(N, L) ->
     {A, B} = take(N, L),
-    F1  =fun() -> get_data(N, B) end,    
+    F1  =fun() -> get_data(N, B) end,
     %% io:format("A=~p (next)=~p ~n",[A, F1()]),
     {A, F1}.
 
-take(N, L) ->			   
+take(N, L) ->
     take(N, L, []).
 
 take(_, [], L) ->
@@ -991,7 +991,7 @@ get_body(F1, Ln, Tag, L, Errs) ->
 	    io:format("** dropping bad tag ~p found in line:~p~n"
 		      "start tag in line:~p was ~p~n",
 		      [OtherTag, Ln1, Ln, Tag]),
-	    get_body(F2, Ln, Tag, L, 
+	    get_body(F2, Ln, Tag, L,
 		     [{badTag,OtherTag,inLine,Ln1,startTag,Tag,inLine,Ln}|Errs]);
 	eof ->
 	    io:format("** unexpected eof~n"
@@ -1025,7 +1025,7 @@ parse_string(Str) ->
 parse_stream(F1) ->
     F2 = fun(Tok, State) -> [Tok|State] end,
     Toks = reverse(tokenize(F1, F2, [])),
-    %% lib_misc:dump("debug", {toks, Toks}), 
+    %% lib_misc:dump("debug", {toks, Toks}),
     GetNextTok = fun() -> get_tok(Toks) end,
     Result = parse_loop(GetNextTok, [], []),
     %% lib_misc:dump("parsed", {tree, Tree}),
@@ -1033,7 +1033,7 @@ parse_stream(F1) ->
 
 parse_loop(F, L, Errs) ->
     {Val, F1, Errs1} = parse(F, Errs),
-    case Val of 
+    case Val of
 	eof -> {reverse(L), reverse(Errs1)};
 	_   -> parse_loop(F1, [Val|L], Errs1)
     end.

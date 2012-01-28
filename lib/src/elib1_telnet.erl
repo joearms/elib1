@@ -11,7 +11,7 @@
 -import(mom_utils, [remove_prefix/2, longest_common_prefix/1]).
 
 -define(IAC, 255). %% Interpret as command
--define(DO, 253).  %% 
+-define(DO, 253).  %%
 -define(WILL, 251).
 -define(SB, 250). %% sub negociation Begin
 -define(SE, 240). %% Sub negociation End
@@ -28,7 +28,7 @@ start() ->
 run() ->
     Cmd = case os:cmd("uname") of
 	      "Darwin\n" ->
-		  "./term_osx.sh -x telnet localhost 2000"; 
+		  "./term_osx.sh -x telnet localhost 2000";
 	      _ ->
 		  "gnome-terminal -x telnet localhost 2000"
 		      end,
@@ -48,7 +48,7 @@ handler(Pid, Where) ->
 
 goto(X,Y) -> [$\e,$[,integer_to_list(X),$;,integer_to_list(Y),$H].
 clear_screen() -> "\e[2J".
-    
+
 
 for(I, I, F) -> F(I);
 for(I, Max, F) -> F(I),for(I+1,Max,F).
@@ -69,12 +69,12 @@ loop(Pid) ->
 start(Port, Fun) ->
     io:format("Starting a telnet server on Port:~w ~n",
 	      [Port]),
-    {ok, Listen} = gen_tcp:listen(Port, 
+    {ok, Listen} = gen_tcp:listen(Port,
 				  [binary,
 				   %% {dontroute, true},
 				   {nodelay,true},
 				   {packet, 0},
-				   {reuseaddr, true}, 
+				   {reuseaddr, true},
 				   {active, true}]),
     io:format("listen port:~p~n",[Port]),
     spawn_link(fun() -> par_connect(Listen, Fun) end).
@@ -89,9 +89,9 @@ par_connect(Listen, Fun) ->
     Where = inet:peername(Socket),
     %% The handler owns the socket - but it has to spawn
     %% a control process
-    Self = self(),   
+    Self = self(),
     Pid = spawn_link(fun() -> Fun(Self, Where) end),
-    self() ! [?IAC, ?WILL, ?ECHO, 
+    self() ! [?IAC, ?WILL, ?ECHO,
 	      ?IAC, ?WILL, ?SURPRESS_GO_AHEAD,
 	      ?IAC, ?DO, ?NAWS  %% this causes window resize events
 	     ],

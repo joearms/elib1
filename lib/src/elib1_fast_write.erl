@@ -10,12 +10,12 @@
 %% write(Buffer, Term) -> Buffer'
 %% close(Buff) -> {#TermsWritten,#bytesWritten}
 
--type stream() :: {iow, 
-		   file:io_device(), 
-		   integer(), 
-		   integer(), 
-		   integer(), 
-		   integer(), 
+-type stream() :: {iow,
+		   file:io_device(),
+		   integer(),
+		   integer(),
+		   integer(),
+		   integer(),
 		   [byte()]}.
 
 %%----------------------------------------------------------------------
@@ -51,7 +51,7 @@ write({iow,Stream,N,W,T,Max,L}, Term) ->
     N1 = N + Size + 4,
     W1 = W + Size + 4,
     T1 = T + 1,
-    if 
+    if
 	N1 > Max ->
 	    ok = file:write(Stream, L1),
 	    {iow, Stream,0,W1,T1,Max,[]};

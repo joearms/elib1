@@ -60,7 +60,7 @@ test2(Str) ->
 test3() ->
     encode("bug.erl", "joe.pub", "bug.x"),
     decode("bug.x",   "joe.pri", "bug.y").
-    
+
 test4() ->
     Str = "12345",
     Md5 = erlang:md5(Str),
@@ -73,11 +73,11 @@ test4() ->
     Int1 = elib1_lin:list2int(Str2, 62),
     Int2 = codeWithKeyFile(Int1, "joe.pub"),
     S1 = elib1_lin:int2str(Int2).
-		
+
 get_key(File) ->
     {ok, B} = file:read_file(File),
     binary_to_term(B).
-       
+
 test5() ->
     {Priv,_Pub} = make_sig_len(77),
     io:format("~p~n",[Priv]),
@@ -95,11 +95,11 @@ int2short(BigInt) ->
 
 enc(X) when 0 =< X, X =< 9 -> X+$0;
 enc(X) when 10 =< X, X =< 35 -> X+$a-10;
-enc(X) when 36 =< X, X =< 61 -> X+$A-36.    
+enc(X) when 36 =< X, X =< 61 -> X+$A-36.
 
 dec(X) when $0 =< X, X =< $9 -> X-$0;
 dec(X) when $a =< X, X =< $z -> X-$a+10;
-dec(X) when $A =< X, X =< $Z -> X-$A+36.    
+dec(X) when $A =< X, X =< $Z -> X-$A+36.
 
 codeWithKeyFile(Str, KeyFile) ->
     Int = elib1_lin:str2int(Str),
@@ -163,7 +163,7 @@ b(Phi) ->
 b(Try, K, Phi) ->
     io:format("."),
     B = elib1_ran:make(K),
-    if 
+    if
 	B < Phi ->
 	    case elib1_lin:gcd(B, Phi) of
 		1 -> B;
@@ -211,7 +211,7 @@ decode(In, KeyFile, Out) ->
 		{ok, Bin1} ->
 		    Key = binary_to_term(Bin1),
 		    statistics(runtime),
-		    Str = dec(binary_to_term(Bin), Key, []),		    
+		    Str = dec(binary_to_term(Bin), Key, []),
 		    NBytes = length(Str),
 		    {_,Time} = statistics(runtime),
 		    Rate = NBytes/(Time/1000),

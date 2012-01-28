@@ -19,14 +19,14 @@
 start(Port, ServerPid) ->
     spawn(fun() -> server(Port, ServerPid) end).
 
-server(Port, Server) ->   
+server(Port, Server) ->
     process_flag(trap_exit, true),
     io:format("Starting a port server on ~p...~n",[Port]),
     {ok, Listen} = gen_tcp:listen(Port, [binary,
 					 %% {dontroute, true},
 					 {nodelay,true},
 					 {packet, 0},
-					 {reuseaddr, true}, 
+					 {reuseaddr, true},
 					 {active, true}]),
     io:format("got a listening socket well done~n"),
     spawn(fun() -> par_connect(Listen, Server) end),
@@ -36,7 +36,7 @@ server(Port, Server) ->
 par_connect(Listen, Server) ->
     {ok, Socket} = gen_tcp:accept(Listen),
     spawn(fun() -> par_connect(Listen, Server) end),
-    %% Tell the server we have started a new session 
+    %% Tell the server we have started a new session
     Where = inet:peername(Socket),
     Server ! {self(), start, Where},
     relay(Socket, Server, {header, []}).
@@ -55,7 +55,7 @@ relay(Socket, Server, State) ->
 	    B1 = list_to_binary(Data),
 	    Len = size(B1),
 	    Headers1 = Headers ++ ["Content-Length: ",integer_to_list(Len),
-				   "\r\n"] 
+				   "\r\n"]
 		++ ["\r\n"],
 	    %% io:format("--> ~p ~p~n", [Headers1, B1]),
     	    gen_tcp:send(Socket, [Headers1, B1]),
@@ -112,10 +112,10 @@ collect_chunk(N, [], Buff)    -> {no, Buff, N}.
 scan_header([$\n|T], [$\r,$\n,$\r|L]) -> {yes, reverse(L), T};
 scan_header([H|T],  L)                -> scan_header(T, [H|L]);
 scan_header([], L)                    -> {no, L}.
-				
+
 %%----------------------------------------------------------------------
 
-header(X) when is_atom(X) -> 
+header(X) when is_atom(X) ->
     ["HTTP/1.0 200 Ok\r\n", powered_by(), content_type(mime_type(X))];
 header({redirect,To}) ->
     ["HTTP/1.0 302 Come and get it!\r\n",
@@ -179,7 +179,7 @@ parse_request(Str) ->
 	    {post, parse_vsn(Vsn) ,parse_uri(URI)};
 	["GET", URI, Vsn] ->
 	    {get, parse_vsn(Vsn), parse_uri(URI)};
-	_  -> 
+	_  ->
 	    oops
     end.
 
@@ -239,7 +239,7 @@ mime_type(X) when is_atom(X) -> mime_type(html);
 mime_type(FileName) -> mime_type(classify_file(FileName)).
 
 %% classify_file(Filename) -> MimeType
-%%   try to figure out the mime type depending upon the 
+%%   try to figure out the mime type depending upon the
 %%   filename
 
 classify_file(FileName) ->

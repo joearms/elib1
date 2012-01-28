@@ -5,15 +5,15 @@
 
 %% File:         mysql2.erl
 %% Description:  MySQL driver
-%% Started:      4 Aug 2005 
+%% Started:      4 Aug 2005
 %% Time-stamp:   <2009-09-22 21:04:13 joe>
-%% Notes 
+%% Notes
 %% Origonal author:    Magnus Ahltorp
 %% Origonal Copyright: (c) 2001-2004 Kungliga Tekniska Högskolan
 %% Modifications:      Fredrik Thulin <ft@it.su.se>
 %%                     Joe Armstrong  <erlang@gamil.com>
-%% 
-%% Testing: 
+%%
+%% Testing:
 %%   run mysql2:test(1), ... etc.
 %% Notes:
 %%   1)
@@ -26,15 +26,15 @@
 %%
 %%   2) You must me able to access mysql with the above username
 %%      and password.
-%%        Try the command:   
+%%        Try the command:
 %%           $ mysql -u <User> -p
 %%           Enter password: <Password>
 %%     If this is ok then your passwords etc are correctly setup
 
-%% 
+%%
 %% -compile(export_all).
 
--export([start/2, start/3, start/4, cmd/2, 
+-export([start/2, start/3, start/4, cmd/2,
 	 insert/2,
 	 quote/1,
 	 stop/1, test/1, debug/2]).
@@ -52,7 +52,7 @@
 -define(MYSQL_QUERY_OP, 3).
 
 test(1) ->
-    {ok, Pid} = start("localhost", 3306, 
+    {ok, Pid} = start("localhost", 3306,
 		      password:username(mysql), password:password(mysql)),
     cmd(Pid, "show databases"),
     cmd(Pid, "use test"),
@@ -62,7 +62,7 @@ test(1) ->
     stop(Pid);
 
 test(2) ->
-    {ok, Pid} = start("localhost", 3306, 
+    {ok, Pid} = start("localhost", 3306,
 		      password:username(mysql), password:password(mysql)),
     cmd(Pid, "use test"),
     cmd(Pid, "drop table if exists hash"),
@@ -71,7 +71,7 @@ test(2) ->
              "val longblob not null)"),
     cmd(Pid, "show tables"),
     cmd(Pid, "insert into hash values ('abc','123')"),
-    cmd(Pid, insert("hash", [test,seq(0,255)])), 
+    cmd(Pid, insert("hash", [test,seq(0,255)])),
     V1 = cmd(Pid, "select * from hash"),
     cmd(Pid, "select val from hash where k='test'"),
     cmd(Pid, "update hash set val='123' where k='test'"),
@@ -110,7 +110,7 @@ stop(Pid) ->
 start(User, Pass) -> start("localhost", 3306, User, Pass).
 
 start(Host, User, Pass) -> start(Host, 3306, User, Pass).
-    
+
 
 start(Host, Port, User, Pass) ->
     S = self(),
@@ -156,7 +156,7 @@ top_loop(Vsn, Driver, Debug) ->
 %%    try to open a socket to <Host,Port>
 %%    send Parent ! {self(), ok}           if this succeeds
 %%                  {self(), {error, Why}} if this fails
-    
+
 socket_driver(Host, Port, Parent) ->
     case gen_tcp:connect(Host, Port, [binary, {packet, 0}]) of
 	{ok, Sock} ->
@@ -209,9 +209,9 @@ sendpacket(Pid, Bin) ->
 %%----------------------------------------------------------------------
 %% do_query(...)
 
-do_query(Pid, Vsn, Debug, Query) ->   
+do_query(Pid, Vsn, Debug, Query) ->
     Packet = list_to_binary([?MYSQL_QUERY_OP, Query]),
-    Pid ! {send, Packet, 0}, 
+    Pid ! {send, Packet, 0},
     Response = get_query_response(Pid, Vsn),
     case Response of
 	{error, Str} ->
@@ -223,7 +223,7 @@ do_query(Pid, Vsn, Debug, Query) ->
 
 debug(false, _, _)        -> void;
 debug(true, Format, Data) -> io:format(Format, Data).
-    
+
 get_query_response(Pid, Vsn) ->
     <<Fieldcount:8, Rest/binary>>  = do_recv(Pid),
     %% io:format("Fieldcount:~p~n",[Fieldcount]),
@@ -284,12 +284,12 @@ get_fields(Pid, Res, my_sql_41) ->
 	    {Field, Rest5} = get_with_length(Rest4),
 	    %% OrgField is the real field name if Field is an alias
 	    {_OrgField, Rest6} = get_with_length(Rest5),
-	    
+
 	    <<_Metadata:8/little, _Charset:16/little,
 	     Length:32/little, Type:8/little,
 	     _Flags:16/little, _Decimals:8/little,
 	     _Rest7/binary>> = Rest6,
-	    
+
 	    This = {binary_to_list(Database),
 		    binary_to_list(Table),
 		    binary_to_list(Field),
@@ -346,15 +346,15 @@ do_auth(Pid, User, Password) ->
 		{ok, <<0:8, _Rest/binary>>, _RecvNum} ->
 		    {ok, Version};
 		{ok, <<255:8, Code:16/little, Message/binary>>, _RecvNum} ->
-		    io:format("mysql_conn: init error ~p: ~p~n", 
+		    io:format("mysql_conn: init error ~p: ~p~n",
 			      [Code, binary_to_list(Message)]),
 		    {error, binary_to_list(Message)};
 		{ok, RecvPacket, _RecvNum} ->
-		    io:format("mysql_conn: init unknown error ~p~n", 
+		    io:format("mysql_conn: init unknown error ~p~n",
 			      [binary_to_list(RecvPacket)]),
 		    {error, binary_to_list(RecvPacket)};
 		{error, Reason} ->
-		    io:format("mysql_conn: init failed receiving data : ~p~n", 
+		    io:format("mysql_conn: init failed receiving data : ~p~n",
 			      [Reason]),
 		    {error, Reason}
 	    end;
@@ -511,10 +511,10 @@ rnd(N, List, Seed1, Seed2) ->
     rnd(N-1, [Val|List], NSeed1, NSeed2).
 
 bxor_binary(B1, B2) ->
-    list_to_binary(zipwith(fun (E1, E2) ->  E1 bxor E2 end, 
+    list_to_binary(zipwith(fun (E1, E2) ->  E1 bxor E2 end,
 			   binary_to_list(B1), binary_to_list(B2))).
 
-send_mysql(Pid, Packet, Seq) when is_binary(Packet), 
+send_mysql(Pid, Packet, Seq) when is_binary(Packet),
 				  is_integer(Seq) ->
     Pid ! {send, Packet, Seq}.
 
@@ -579,7 +579,7 @@ quote([0|T], L)   -> quote(T, [$0,  $\\|L]);
 quote([10|T], L)  -> quote(T, [$n,  $\\|L]);
 quote([13|T], L)  -> quote(T, [$r,  $\\|L]);
 quote([$\\|T], L) -> quote(T, [$\\, $\\|L]);
-quote([$'|T], L)  -> quote(T, [$',  $\\|L]);	
+quote([$'|T], L)  -> quote(T, [$',  $\\|L]);
 quote([$"|T], L)  -> quote(T, [$",  $\\|L]);
 quote([26|T], L)  -> quote(T, [$Z,  $\\|L]);
 quote([H|T], L)   -> quote(T, [H|L]).

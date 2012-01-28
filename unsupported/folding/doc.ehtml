@@ -1,7 +1,7 @@
 <? simple_web_server:header() ?>
 
 <body>
-  <h1>A folding editor</h1> 
+  <h1>A folding editor</h1>
 
   <p>Nothing to do with Erlang.</p>
 
@@ -16,7 +16,7 @@
   <ul>
     <li>Run the latest version <a href="f3.html">f3</a></li>
   </ul>
-  
+
   <p>Problems with this:</p>
   <ul>
     <li>Focus - when I hit down arrow a few times the focus moves off screen

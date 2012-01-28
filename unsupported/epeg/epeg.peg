@@ -41,13 +41,13 @@ grammar = - ( code | def | unexpected)+ endOfFile ;
 
 unexpected = . ;
 
-endOfFile = !. ;	  
+endOfFile = !. ;
 
 code = "%{" ( !'%}' . )* '%}' ;
 
 def = ident '=' expr ';' - ;
 
-expr = seq ('|' seq)* -; 
+expr = seq ('|' seq)* -;
 
 seq = prefix (prefix)*;
 
@@ -59,9 +59,9 @@ prefix = ( '&' action )
 suffix  = primary ('?' | '*' | '+' )?;
 
 primary = ident ':' ident ! '='
-        | ident ! '='    
-        | '(' expr ')' 
-        | literal        
+        | ident ! '='
+        | '(' expr ')'
+        | literal
         | class
         | '.' ;
 
@@ -69,15 +69,15 @@ primary = ident ':' ident ! '='
 
 int = [0-9]+;
 
-ident =  "-" - | [a-z][a-zA-Z_]* -; 
+ident =  "-" - | [a-z][a-zA-Z_]* -;
 
 literal = lit -;
 
 # literals '...'  or "..."
 # the ... are char's
 
-lit  =  ["] (!["] char )*  ["] 
-     |  ['] (!['] char )*  [']; 
+lit  =  ["] (!["] char )*  ["]
+     |  ['] (!['] char )*  ['];
 
 # chars are what we find inside strings
 # we use the Erlang quoting convention here
@@ -85,18 +85,18 @@ lit  =  ["] (!["] char )*  ["]
 # \\ is backslash
 # \C is C
 # \OOO is octal
-# \^ C is control 
+# \^ C is control
 
 ## this is horrible
 
-char = 
+char =
      "\\" [0-3][0-7][0-7]
-     | "\\" [0-7][0-7]     
+     | "\\" [0-7][0-7]
      | "\\" [0-7]
      | "\\" [bdefnrstv\'"]
      | "\\^" [a-zA-Z]
-     | "\\\\"            
-     | !"\\" . 
+     | "\\\\"
+     | !"\\" .
      | "\\" .
      | . ;
 
@@ -140,7 +140,7 @@ final(class, [_,X,_,_]) -> {class, reduce(X)};
 
 final(char, X) ->
     char1(X);
-	    
+
 final(spaces, X) ->
     {spaces, flatten(X)};
     %% {spaces, X}.
@@ -177,7 +177,7 @@ final(expr, [Seq, More, _]) ->
    L = reduce(More),
    case [Seq|L] of
      [Z] -> Z;
-     Many -> {alt, Many} 
+     Many -> {alt, Many}
    end;
 
 final(seq, [A,B]) ->
@@ -195,8 +195,8 @@ final(suffix, [X, ['?']]) -> {question, X};
 final(suffix, [X, ['+']]) -> {plus, X};
 final(suffix, [X, ['*']]) -> {star, X};
 
-final(primary, [Id, bang]) -> {nt, Id};    
-final(primary, [Mod, ':', Id, bang]) -> {nt, Mod,Id};    
+final(primary, [Id, bang]) -> {nt, Id};
+final(primary, [Mod, ':', Id, bang]) -> {nt, Mod,Id};
 final(primary, ['(',E,')']) -> E;
 final(primary, '.') -> any;
 final(primary, X) -> X;
@@ -212,7 +212,7 @@ final(erlerror, S) -> {badToken, [S]};
 
 final(dws, _) ->  dot;
 final(Tag, S) ->  {Tag, S}.
-	   
+
 reduce(L) -> [X || [_,X] <- L].
 
 char1([bang,X]) ->

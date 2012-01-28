@@ -1,14 +1,14 @@
 <? simple_web_server:header() ?>
 
 <body>
-  <h1>Tagger</h1> 
+  <h1>Tagger</h1>
 
   <p>Tagger converts Erlang to fully tagged HTML ...</p>
-  
+
   <h2>Setup</h2>
 
   <p>Type <b>make</b> in this directory.</p>
-  
+
   <p>Then start clicking on <a href="html/elib1_tagger.html">elib1_tagger</a>
   or <a href="html/elib1_misc.html">elib1_misc</a></p>
 

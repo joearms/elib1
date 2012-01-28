@@ -2,7 +2,7 @@ Nonterminals
 form kv args term  record tuple_args list_args.
 
 Terminals
-int atom string 
+int atom string
 ',' '{' '}' '[' ']' '='.
 
 Rootsymbol form.

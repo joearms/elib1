@@ -23,7 +23,7 @@ make_button_box(L) ->
 
 button_controller(L) ->
     %% process_flag(trap_exit, true),
-    elib1_wish:start(), 
+    elib1_wish:start(),
     Win = elib1_wish:make_window(self(),"test"),
     io:format("Win=~p~n",[Win]),
     L1 = make_buttons(1, Win, L),
@@ -34,7 +34,7 @@ make_buttons(N, Win, [{Name,Fun}|T]) ->
     B = Win ++ "." ++ S,
     elib1_wish:do(["button", B,"-text {", Name,"} -command ",
 		   "\"sendToErlang {event",
-		   Win,"click",S,"}\""]), 
+		   Win,"click",S,"}\""]),
     elib1_wish:do(["pack",B,"-fill both -expand 1"]),
     put({button,N}, Fun),
     make_buttons(N+1, Win, T);
@@ -56,14 +56,14 @@ bloop() ->
     end.
 
 make_list_box_test() ->
-    make_list_box(["One","two","three","four"], 
+    make_list_box(["One","two","three","four"],
 		  fun clicked_list/1).
 
 clicked_list(X) ->
     io:format("clicked list:~p~n",[X]).
 
 make_list_box(L, F) ->
-    elib1_wish:start(), 
+    elib1_wish:start(),
     Win = elib1_wish:make_window(self(),"test"),
     io:format("Win=~p~n",[Win]),
     Lb = Win ++ ".l",
@@ -71,7 +71,7 @@ make_list_box(L, F) ->
     do(["pack ",Lb,"-fill both -expand 1"]),
     do(["bind ",Lb,"<Double-1> sendToErlang",Win,"[selection get]"]),
     lbloop().
-    
+
 lbloop() ->
     receive
 	{event, "click" ++ T} ->
@@ -86,5 +86,5 @@ lbloop() ->
 	    lbloop()
     end.
 
-    
+
 

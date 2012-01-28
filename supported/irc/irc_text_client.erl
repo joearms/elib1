@@ -26,7 +26,7 @@ start(Host, Nick, User) ->
 	{Pid, Error} ->
 	    Error
     end.
-		
+
 cmd_loop(Pid) ->
     case io:get_line(' > ') of
 	"quit\n" ->
@@ -40,7 +40,7 @@ cmd_loop(Pid) ->
 
 remove_nl("\n") -> [];
 remove_nl([H|T]) -> [H|remove_nl(T)].
-    
+
 
 start(Parent, Host) ->
     io:format("trying to connect to:~p port 6669~n",[Host]),
@@ -56,7 +56,7 @@ start(Parent, Host) ->
 loop(Socket) ->
     receive
 	{send, Str} ->
-	    io:format(" >> ~p~n", [Str]), 
+	    io:format(" >> ~p~n", [Str]),
 	    gen_tcp:send(Socket, Str),
 	    loop(Socket);
 	{tcp, Socket, Str} ->
@@ -75,4 +75,4 @@ loop(Socket) ->
 	    io:format("unexpected:~p~n",[Other]),
 	    loop(Socket)
     end.
-    
+

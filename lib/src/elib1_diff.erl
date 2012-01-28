@@ -27,18 +27,18 @@ diff_files(A, B) ->
     {ok, B2} = file:read_file(B),
     diff(binary_to_list(B1), binary_to_list(B2)).
 
-%% diff(A, B) -> P 
+%% diff(A, B) -> P
 %%    computer patches P that takes B in A
 %%    ie P such that
 %% patch(B, P) -> A
 %%
 %%  The idea is that we only keep the latest version of a
 %%  file "New". Given Old and New we compute P (the patch)
-%%  then we can throw away Old. Old can be reconstructed by 
+%%  then we can throw away Old. Old can be reconstructed by
 %%  applying P to New
 
 -spec diff(A::string(), B::string()) -> [{integer(),integer()} | string()].
-     
+
 diff(Old, New) ->
     diff(str2lines(Old), str2lines(New), []).
 
@@ -97,7 +97,7 @@ extend_match([{_,S}|T1], [{L2,S}|T2], L1, _) -> extend_match(T1, T2, L1, L2);
 extend_match(X, _, L1, L2)                   -> {yes, L1, L2, X}.
 
 str2lines(L) -> str2lines(L, 1, [], []).
- 
+
 str2lines([H|T], Line, C, L) ->
     case H of
         $\n -> str2lines(T, Line+1,[],[{Line,reverse([$\n|C])}|L]);
@@ -107,4 +107,4 @@ str2lines([], _Line, [], L) ->
     reverse(L);
 str2lines([], Line, C, L) ->
     reverse([{Line,reverse(C)}|L]).
-                                   
+

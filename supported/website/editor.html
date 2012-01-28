@@ -35,7 +35,7 @@ p {text-align:justify}
 
  * html body{
   overflow:hidden;
- } 
+ }
 
  * html div.content{
   height:100%;
@@ -46,7 +46,7 @@ p {text-align:justify}
 *.myhover
 {  	text-shadow: #ccc 2px 2px 5px;
 	color:#E20074;
-}   
+}
 
 
 
@@ -67,10 +67,10 @@ function edit()
 		success: function(x){
                              // alert("x="+x);
 		var c = $("#content");
-		c.html(x); 
+		c.html(x);
 		c.get(0).contentEditable = true;
 	    }});
-}	
+}
 
 $(document).ready(function(){setup()});
 
@@ -80,7 +80,7 @@ $(document).ready(function(){setup()});
   <div id="header">
     Pos:<span id="pos"></span>
   </div>
-  
+
   <div id="sidebar">
     <b>Buttons</b><br>
     <div id="buttons">
@@ -91,7 +91,7 @@ $(document).ready(function(){setup()});
   </div>
 
   <div id="content">
-    <h1>Content</h1>    
+    <h1>Content</h1>
     </div>
 
 </body>

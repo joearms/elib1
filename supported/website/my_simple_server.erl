@@ -10,7 +10,7 @@
 
 -compile(export_all).
 
-start([AP,AD]) -> 
+start([AP,AD]) ->
     Port = list_to_integer(atom_to_list(AP)),
     Dir = filename:dirname(filename:dirname(atom_to_list(AD))),
     io:format("Starting server on port:~w Root=~p~n",[Port,Dir]),
@@ -28,7 +28,7 @@ is_prefix([], _) -> true;
 is_prefix([H|T1], [H|T2]) -> is_prefix(T1, T2);
 is_prefix(_, _) -> false.
 
-version_list(Id, Dir) ->    
+version_list(Id, Dir) ->
     {ok, L} = file:list_dir(Dir),
     L1 = order([filename:rootname(I) || I <- L, is_prefix(Id, I)]),
     %% [H|L2] = reverse(L1),
@@ -39,7 +39,7 @@ load_content(I) ->
     ["<a href='#' onclick=\"load_content('",I,"');\">",
      I,"</a><br>"].
 
-   
+
 order(L) ->
     L1 = sort([{guid_to_list(I),I}||I <- L]),
     [J || {_,J} <- L1].
@@ -73,7 +73,7 @@ handle(_, "/listRoot", Dir, _, E) ->
     HTML = "<ol>
   <li class='ui-finder-folder'><a href='DirName.html'>
   Main</a>
-  </li>	
+  </li>
   <p>Hi Joe Here we are</p>
 
   <li class='ui-finder-file'>
@@ -103,7 +103,7 @@ handle(_, "/listRoot", Dir, _, E) ->
      {response, html, HTML, E};
 
 
-handle(_, "/get_versions", [{"id",Id}], Dir, E) -> 
+handle(_, "/get_versions", [{"id",Id}], Dir, E) ->
     %% return a list of all filenames with this prefix
     H = version_list(Id, Dir),
     {response, html, H, E};
@@ -115,8 +115,8 @@ handle(_,"/initialize", [], Dir, E) ->
 			       {"doc",<<"foo123">>},
 			       {"versions",[<<"a">>,<<"b">>]}]}),
     {response, json, Ret, E};
-    
-handle(_, "/load_content", [{"id",Id}], Dir, E) -> 
+
+handle(_, "/load_content", [{"id",Id}], Dir, E) ->
     {ok, Bin} = file:read_file(Full = Id ++ ".html"),
     M = io_lib:format("~p", [filelib:last_modified(Full)]),
     %% check if the next version is free
@@ -129,7 +129,7 @@ handle(_, "/load_content", [{"id",Id}], Dir, E) ->
 			       {"val",Bin}]}),
     {response, json, Ret, E};
 
-handle(_, "/save_content", [{"id",Id},{"value",Val}], Dir, E) -> 
+handle(_, "/save_content", [{"id",Id},{"value",Val}], Dir, E) ->
     Id1 = next_rev(Id),
     Full = Id1 ++ ".html",
     Ret = case filelib:is_file(Full) of
@@ -137,7 +137,7 @@ handle(_, "/save_content", [{"id",Id},{"value",Val}], Dir, E) ->
 		  io:format("Saving to:~p~n",[Full]),
 		  file:write_file(Full, [Val]),
 		  M = io_lib:format("~p",[filelib:last_modified(Full)]),
-		  
+
 		  Stem = document(Id1),
 		  Vsns = version_list(Stem, Dir),
 		  rfc4627:encode({obj,[{"guid",list_to_binary(Id1)},
@@ -173,10 +173,10 @@ handle(Op, File0, Args, Dir, E) ->
 	    case Info#file_info.type of
 		regular ->
 		    case file:read_file(File) of
-			{ok, Bin}  -> 
+			{ok, Bin}  ->
 			    %% io:format("File ~p is ~p~n",[File,classify(File)]),
 			    {response, classify(File), [Bin], E};
-			{error, _} -> 
+			{error, _} ->
 			    io:format("** missing file:~p~n",[File]),
 			    {error, 400, E}
 		    end;

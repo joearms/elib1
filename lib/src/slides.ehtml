@@ -16,17 +16,17 @@
   <div class='slide'>
 
     <h1>Streams</h1>
-    
+
     <p>Stream parsing is very powerful technique.</p>
 
     <p>If <b>F</b> is a stream then:
     <ol>
       <li>{string(), F1} | eos = F()</li>
     </ol>
-    
+
     <p>Where F1 is a new stream</p>
     <p>Used in <a href="/supported/tagger/html/elib1_xml.html">elib1_xml.erl</a></p>
-    
+
   </div>
 </body>
 

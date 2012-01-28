@@ -5,14 +5,14 @@ wm withdraw "."
 proc puti {str} {
     .debug.txt insert end "$str\n"
  }
- 
+
 proc mkdebug {} {
     toplevel .debug
     set w .debug
-    text $w.txt -bd -0 -width 80  
+    text $w.txt -bd -0 -width 80
     scrollbar $w.scroll
     pack $w.scroll -side right -fill y
-    $w.txt config -yscrollcommand "$w.scroll set" 
+    $w.txt config -yscrollcommand "$w.scroll set"
     $w.scroll config -command "$w.txt yview"
     pack $w.txt -fill both -expand 1
 }
@@ -87,7 +87,7 @@ mkdebug
 ## puti "connect to port $argv"
 
 ## open the socket the indicated port on localhost
- 
+
 set sock [socket localhost $argv]
 
 fconfigure $sock -buffering none -blocking true \

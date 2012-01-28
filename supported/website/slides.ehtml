@@ -5,25 +5,25 @@
 
   <div class='slide'>
     <h1>Elib1</h1>
-     
-    <p>Elib1 is a <strike>large</strike> library of 
+
+    <p>Elib1 is a <strike>large</strike> library of
     <strike>well documented and tested</strike> erlang functions.
     </p>
 
     <p>The library is best examined through a web-browser. All
     demos, slide shows etc. are accessable through the web browser.</p>
-    
+
     <p>Basic principles:</p>
     <ol>
       <li>Use <i>best practise</i> for documentating and testing
       the library modules</li>
-      <li>Ship a set of <i>supported applications</i> 
+      <li>Ship a set of <i>supported applications</i>
       to test if the libray code is useful</li>
-      <li>Ship a set of <i>unsupported applications</i> 
+      <li>Ship a set of <i>unsupported applications</i>
       to promote further development of the code</li>
     </ol>
   </div>
-  
+
 
   <div class='slide'>
     <h1>Organisation</h1>
@@ -47,7 +47,7 @@
     </pre>
   </div>
 
-    
+
   <div class='slide'>
     <h1>Principles</h1>
     <ul>
@@ -60,7 +60,7 @@
       useful</li>
     </ul>
   </div>
-    
+
   <div class='slide'>
     <h1>When writing an application</h1>
     <ul>
@@ -68,7 +68,7 @@
       <li>If you discover that some code you have written should be in
       a libray, then stop what you are doing and immediately add it to
       the library.</li>
-      
+
       <li>If a libray routine is in the wrong module or has a wrong name
       then immediately stop what ylou are doping and correct the error</li>
 
@@ -88,7 +88,7 @@
       <pre>
 Number Status Assigned Date        What
 1      closed joe      2009-12-05  Make an initial release
-2      open   joe      2009-12-05  Improve it             
+2      open   joe      2009-12-05  Improve it
 
 Notes:
 

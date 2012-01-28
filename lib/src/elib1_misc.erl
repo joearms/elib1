@@ -16,7 +16,7 @@
 %% large number of small and mostly pure functions that should
 %% probably be elsewhere.
 %%
-%% elib1_misc is organised into sections. 
+%% elib1_misc is organised into sections.
 
 %% This is the largest section in elib1_misc the routines here are
 %% in alphabetic order.
@@ -24,7 +24,7 @@
 %% % -compile(export_all).
 
 -export([
-	 %% mk_tree/1, 
+	 %% mk_tree/1,
 	 added_files/2,
 	 as_bits/1,
 	 bin2hex/1,
@@ -37,7 +37,7 @@
 	 complete/2,
 	 dos2unix/1,
 	 downcase_char/1,
-	 dump/2, 
+	 dump/2,
 	 duplicates/1,
 	 ensure_started/2,
 	 eval_file/1,
@@ -56,7 +56,7 @@
 	 file2term/1,
 	 file_size_and_type/1,
 	 find_src/1,
-	 first/1, 
+	 first/1,
 	 flatten_io_list/1,
 	 flush_buffer/0,
 	 for/3,
@@ -77,12 +77,12 @@
 	 id/1,
 	 interlieve/2,
 	 is_alphanum/1,
-	 is_blank_line/1, 
+	 is_blank_line/1,
 	 is_prefix/2,
 	 is_response_correct/3,
 	 keep_alive/2,
 	 lines2para/1,
-	 list2frequency_distribution/1, 
+	 list2frequency_distribution/1,
 	 longest_common_prefix/1,
 	 lookup/2,
 	 lorem/1,
@@ -119,7 +119,7 @@
 	 show_loaded/1,
 	 skip_blanks/1,
 	 skip_to_nl/1,
-	 sleep/1, 
+	 sleep/1,
 	 spawn_monitor/3,
 	 split_at_char/2,
 	 split_list/2,
@@ -153,7 +153,7 @@
 -export([tex2pdf/1]).
 
 -import(lists, [all/2, any/2, filter/2, reverse/1, reverse/2,
-		foldl/3, foreach/2, map/2, member/2, dropwhile/2, 
+		foldl/3, foreach/2, map/2, member/2, dropwhile/2,
 		seq/2, splitwith/2, sort/1, zip/2]).
 
 -import(filename, [dirname/1]).
@@ -174,7 +174,7 @@
 %% A few random test cases -- by no means complete.
 
 %% -spec test1() -> hooray.
-    
+
 test1_test() ->
     ok = file:write_file("tmp",<<"abcdef">>),
     [<<"abc">>,<<"def">>] = foreach_chunk_in_file("tmp",3,fun id/1),
@@ -191,9 +191,9 @@ test1_test() ->
 %% in Dir again. It returns a list of the files
 %% which have been added to the directory.
 
--spec added_files(Dir::string(), fun(() -> T)) -> 
+-spec added_files(Dir::string(), fun(() -> T)) ->
       {T,[File::string()]}.
- 
+
 added_files(Dir, Fun) ->
     Before = elib1_find:files(Dir, "*", true),
     Result = Fun(),
@@ -222,7 +222,7 @@ as_bits(<<1:1,B/bits>>, N) -> [1|as_bits(B,N-1)].
 %% @doc Convert a binary to list of hex characters.
 
 -spec bin2hex(binary()) -> [byte()].
-    
+
 bin2hex(B) ->
 	L = binary_to_list(B),
 	LH0 = map(fun(X)->erlang:integer_to_list(X,16) end, L),
@@ -239,15 +239,15 @@ bin2hex_test() -> "1234ABCD" = bin2hex(<<16#1234abcd:32>>),
 %% <pre>
 %% Return values:
 %% error  - means no string will ever match
-%% {more,L}  - means there are completions 
-%%             but we need more characters. L = [Str] = a list of 
+%% {more,L}  - means there are completions
+%%             but we need more characters. L = [Str] = a list of
 %%             possible strings that might match
 %% {yes, S}  - means there is a unique completion,
 %%             S  is the largest string
 %%             such that A ++ S is a prefix of all the elements of L
 %% </pre>
 
--spec complete(A::string(), L::[string()]) -> 
+-spec complete(A::string(), L::[string()]) ->
            error | {more, [string()]} | {yes, string()}.
 
 complete(Str, L) ->
@@ -275,7 +275,7 @@ complete_test() ->
     {yes, "bal"} = complete("ver", ["verbal","noverbal"]),
     error = complete("nice", ["verbal","noverbal"]),
     {yes,"bal"} = complete("ver", ["verbal1","verbal2"]),
-    {more,["verbal","verdant"]} = complete("ver", ["verbal","verdant"]). 
+    {more,["verbal","verdant"]} = complete("ver", ["verbal","verdant"]).
 
 %%----------------------------------------------------------------------
 %% @doc replace \r\n with \n.
@@ -288,9 +288,9 @@ dos2unix([])          -> [].
 
 %%----------------------------------------------------------------------
 %% @doc Convert uppercase character to lowercase.
-    
+
 -spec downcase_char(byte()) -> byte().
-    
+
 downcase_char(X) when $A =< X, X =< $Z -> X+ $a - $A;
 downcase_char(X)                       -> X.
 
@@ -298,7 +298,7 @@ downcase_char(X)                       -> X.
 %% @doc Lowercase a string.
 
 -spec to_lower(string()) -> string().
-    
+
 to_lower(Str) -> map(fun downcase_char/1, Str).
 
 to_lower_test() ->
@@ -317,7 +317,7 @@ dump(File, Term) ->
     Out = File ++ ".tmp",
     io:format("** dumping to ~s~n",[Out]),
     {ok, S} = file:open(Out, [write]),
-    io:format(S, "~p.~n",[Term]), 
+    io:format(S, "~p.~n",[Term]),
     file:close(S).
 
 %%----------------------------------------------------------------------
@@ -334,14 +334,14 @@ duplicates([], L)            -> L.
 
 %%----------------------------------------------------------------------
 %% @doc
-%% Ensure_started modified from 
+%% Ensure_started modified from
 %% % File: eunit_server.erl
 %% % By Richard Carlsson &lt;richardc@it.uu.se>
 %% Checks if there is a registered process called Name
 %% If not spawns Fun() in a new process and registers it as Name
 
 -spec ensure_started(Name::atom(), fun(()->_)) -> pid().
-					      
+
 ensure_started(Name, Fun) -> ensure_started(Name, Fun, 10).
 
 ensure_started(Name, Fun, N) when N > 0 ->
@@ -353,8 +353,8 @@ ensure_started(Name, Fun, N) when N > 0 ->
 		{Pid, ok} ->
 		    Pid;
 		{Pid, error} ->
-		    receive after 200 -> 
-			    ensure_started(Name, Fun, N - 1) 
+		    receive after 200 ->
+			    ensure_started(Name, Fun, N - 1)
 		    end
 	    end;
 	Pid ->
@@ -491,12 +491,12 @@ fetch_test() ->
 
 -spec file2lines(FileName::string()) -> [Line::string()].
 
-file2lines(File) ->    
+file2lines(File) ->
     string2lines(file2string(File)).
 
 file2lines_test() ->
     ["-module(elib1_misc).\n",
-     "%% elib1_misc   Miscellaneous functions\n"|_] = 
+     "%% elib1_misc   Miscellaneous functions\n"|_] =
 	elib1_misc:file2lines("./elib1_misc.erl").
 
 
@@ -504,10 +504,10 @@ file2lines_test() ->
 %% @doc Read file into numbered line buffer. The \n is retained at the end of
 %% each line.
 
--spec file2numberedlines(FileName::string()) -> 
+-spec file2numberedlines(FileName::string()) ->
    [{LineNo::integer(), Line::string()}].
 
-file2numberedlines(File) ->    
+file2numberedlines(File) ->
     Lines = file2lines(File),
     zip(seq(1, length(Lines)), Lines).
 
@@ -540,20 +540,20 @@ file2md5_loop(P, C) ->
 %%----------------------------------------------------------------------
 %% @doc
 
--spec file2paras(FileName::string()) -> 
+-spec file2paras(FileName::string()) ->
     [{LineNumber::integer(), Para::string()}].
-    
+
 file2paras(File) ->
     Lines = file2numberedlines(File),
     file2paras_collect_paras(Lines).
 
 file2paras_collect_paras(L) ->
     case dropwhile(fun({_, Str})  -> is_blank_line(Str) end, L) of
-	[] -> 
+	[] ->
 	    [];
 	L1 ->
-	    {Para, L2} = splitwith(fun({_,Str}) -> 
-					   not is_blank_line(Str) end, 
+	    {Para, L2} = splitwith(fun({_,Str}) ->
+					   not is_blank_line(Str) end,
 				   L1),
 	    [file2paras_normalise_para(Para)|file2paras_collect_paras(L2)]
     end.
@@ -567,26 +567,26 @@ file2paras_normalise_para(L) ->
 %% @doc Read a file into a string.
 
 -spec file2string(FileName::string()) -> FileContent::string().
-    
+
 file2string(File) ->
     {ok, Bin} = file:read_file(File),
     binary_to_list(Bin).
 
 %%----------------------------------------------------------------------
-%% @doc Reads a file into a binary and 
+%% @doc Reads a file into a binary and
 %% does <b>binary_to_term</b> on the
 %% result.
 
 -spec file2term(FileName::string()) -> Term::any().
- 
+
 file2term(File) ->
     {ok, Bin} = file:read_file(File),
     binary_to_term(Bin).
 
 %%----------------------------------------------------------------------
-%% @doc return the file type and length in bytes 
+%% @doc return the file type and length in bytes
 
--spec file_size_and_type(File::string()) -> 
+-spec file_size_and_type(File::string()) ->
     {dir|file, Size::integer()} | error.
 
 file_size_and_type(File) ->
@@ -608,7 +608,7 @@ file_size_and_type(File) ->
 %% and look in Mod:module_info(compile).
 
 -spec find_src(Mod::atom()) -> {ok, Src::string()} | error.
-	      
+
 find_src(Mod) ->
     case code:which(Mod) of
 	non_existing ->
@@ -619,7 +619,7 @@ find_src(Mod) ->
 		true ->
 		    {ok, F1};
 		false ->
-		    %% assume it's ../src 
+		    %% assume it's ../src
 		    Dir = dirname(dirname(Root)),
 		    F2 = Dir ++ "/src/" ++ atom_to_list(Mod) ++ ".erl",
 		    case filelib:is_file(F2) of
@@ -660,7 +660,7 @@ first([H|T]) -> [H|first(T)].
 %% @doc flattens an I/O list.
 
 -spec flatten_io_list(iolist()) -> [byte()].
-    
+
 flatten_io_list(L) ->
     binary_to_list(list_to_binary(L)).
 
@@ -681,13 +681,13 @@ flush_buffer() ->
 %% @doc for(Min, Max, F) -> [F(Min), F(Min+1), ... F(Max)].
 
 -spec for(Min::integer(), Max::integer(), fun((integer()) -> T)) -> [T].
-						  
+
 for(Max, Max, F) -> [F(Max)];
 for(I, Max, F)   -> [F(I)|for(I+1, Max, F)].
 
 %%----------------------------------------------------------------------
 %% @doc Apply F(Word) to each Word contained in a given file.
-%% We extract "words" from a file and call F(Word) for each word. 
+%% We extract "words" from a file and call F(Word) for each word.
 %% this is done for its side effect. There is no return value.
 
 -spec foreach_word_in_file(FileName::string(), fun((string())->any())) -> void.
@@ -701,12 +701,12 @@ foreach_word_in_file(File, F) ->
 %%----------------------------------------------------------------------
 %% @doc Apply F(Word) to each Word contained in a string.
 
--spec foreach_word_in_string(FileName::string(), 
+-spec foreach_word_in_string(FileName::string(),
 			     fun((string())->any())) -> void.
 
 foreach_word_in_string(Str, F) ->
     case collect_word(Str) of
-	no -> 
+	no ->
 	    void;
 	{Word, Str1} ->
 	    F(Word),
@@ -719,8 +719,8 @@ foreach_word_in_string(Str, F) ->
 %% time for each chunk compute F(Bin) and return the list
 %% [F(Bin)].
 
--spec foreach_chunk_in_file(File::string(), 
-			    Len::integer(), 
+-spec foreach_chunk_in_file(File::string(),
+			    Len::integer(),
                             Fun::fun((binary()) -> X)) -> [X].
 
 foreach_chunk_in_file(File, BlockSize, Fun) ->
@@ -831,7 +831,7 @@ get_line1([], L)      -> {reverse(L), []}.
 %% @doc Get line and add to reversed line.
 
 -spec get_line(Buffer::string(),
-	      ReversedLine::string()) -> 
+	      ReversedLine::string()) ->
     {FistLine::string(), RestBuffer::string()}.
 
 get_line([$\n|T], L) -> {reverse(L), T};
@@ -842,20 +842,20 @@ get_line([], L)      -> {reverse(L), []}.
 %% @doc return the hex representation of a byte
 
 -spec byte_to_hex_string(byte()) -> [byte()].
-    
+
 byte_to_hex_string(X) ->
     [nibble_to_hex_char(X bsr 4),nibble_to_hex_char(X band 15)].
 
 byte_to_hex_string_test() ->
     "7A" = byte_to_hex_string(122),
-    "10" = byte_to_hex_string(16). 
+    "10" = byte_to_hex_string(16).
 
 %%----------------------------------------------------------------------
 %% @doc Convert an integer in 0..15 to a hex character
 
 -spec nibble_to_hex_char(0..15) -> byte().
 
-nibble_to_hex_char(X) when X < 10 -> $0 + X; 
+nibble_to_hex_char(X) when X < 10 -> $0 + X;
 nibble_to_hex_char(X) -> $A + X - 10.
 
 nibble_to_hex_char_test() ->
@@ -917,7 +917,7 @@ have_common_prefix(L) ->
 	    Heads = map(fun(I) -> hd(I) end, L),
 	    H = hd(Heads),
 	    case all(fun(X) -> hd(X) =:= H end, L) of
-		true -> 
+		true ->
 		    Tails = map(fun(I) -> tl(I) end, L),
 		    {yes, H, Tails};
 		false ->
@@ -949,7 +949,7 @@ root_dir() ->
 %% @doc Return the name of the include directory.
 
 -spec include_dir() -> DirName::string().
-    
+
 include_dir() ->
     filename:join(root_dir(), "include").
 
@@ -966,7 +966,7 @@ include_file(X) ->
 %% @doc Same as filename:dirname
 
 -spec d(string()) -> string().
-    
+
 d(X) ->
     filename:dirname(X).
 
@@ -1032,7 +1032,7 @@ is_prefix_test() ->
     false = is_prefix("ab", "a1bcdef").
 
 %%----------------------------------------------------------------------
-%% @doc if A is a prefix of B return {yes, C} where A ++ C = B 
+%% @doc if A is a prefix of B return {yes, C} where A ++ C = B
 %% otherwise no
 
 -spec extract_prefix(A::[X], B::[X]) -> {yes, Rest::[X]} | no.
@@ -1056,7 +1056,7 @@ is_response_correct(Challenge, Response, Secret) ->
 %% @doc Makwe the response for a challenge response authentication
 %% algorithm.
 
--spec make_response(Challenge::string(), Secret::string()) -> 
+-spec make_response(Challenge::string(), Secret::string()) ->
     Response::binary().
 
 make_response(Challenge, Secret) ->
@@ -1071,7 +1071,7 @@ make_response_test() ->
 %% @doc Keep a registerd process alive, restarting if necessary.
 
 -spec keep_alive(Name::atom(), fun(() -> _X)) -> any().
-					  
+
 keep_alive(Name, Fun) ->
     register(Name, Pid = spawn(Fun)),
     on_exit(Pid, fun(_Why) -> keep_alive(Name, Fun) end).
@@ -1132,7 +1132,7 @@ longest_common_prefix_test() ->
 %% Fast because it uses the internal lists:keysearch which is a BIF
 
 -spec lookup(K, [{K,V}]) -> {ok, V} | error.
-    
+
 lookup(Key, L) ->
     case lists:keysearch(Key, 1, L) of
 	{value, T} -> {ok, element(2, T)};
@@ -1163,7 +1163,7 @@ ls(Dir) ->
     end.
 
 %%----------------------------------------------------------------------
-%% @doc Make a random string to be used as a challenge in 
+%% @doc Make a random string to be used as a challenge in
 %% challenge response authentication.
 
 -spec make_challenge() -> string().
@@ -1259,14 +1259,14 @@ odd(X) ->
 %% with reason Why then Fun(Why) is evaluated.
 
 -spec on_exit(pid(), fun((_) -> Y)) -> Y.
-    
+
 on_exit(Pid, Fun) ->
-    spawn(fun() -> 
+    spawn(fun() ->
 		  process_flag(trap_exit, true),
-		  link(Pid),                    
+		  link(Pid),
 		  receive
-		      {'EXIT', Pid, Why} ->     
-			  Fun(Why) 
+		      {'EXIT', Pid, Why} ->
+			  Fun(Why)
 		  end
 	  end).
 
@@ -1274,7 +1274,7 @@ on_exit(Pid, Fun) ->
 %% @doc Change the extension of FileName to Ext.
 
 -spec outfile(File::string(), Extension::string()) -> File1::string().
-    
+
 outfile(File, Ext) ->
     filename:rootname(File) ++ Ext.
 
@@ -1368,7 +1368,7 @@ remove_duplicates_test() ->
 %% @doc remove leading and trailing white space from a string.
 
 -spec trim(string()) -> string().
-    
+
 trim(S) ->
     remove_leading_and_trailing_whitespace(S).
 
@@ -1379,8 +1379,8 @@ trim_test() ->
 %% @doc remove leading and trailing white space from a string.
 
 -spec remove_leading_and_trailing_whitespace(string()) -> string().
-    
-remove_leading_and_trailing_whitespace(X) -> 
+
+remove_leading_and_trailing_whitespace(X) ->
     remove_leading_whitespace(remove_trailing_whitespace(X)).
 
 remove_leading_and_trailing_whitespace_test() ->
@@ -1399,7 +1399,7 @@ remove_leading_whitespace(X) -> X.
 
 %%----------------------------------------------------------------------
 %% @doc remove_prefix(X, Y) -> Z finds Z such that X ++ Z = Y
-%% Note: this is only called when it is known that 
+%% Note: this is only called when it is known that
 %% X is a prefix of Y
 
 -spec remove_prefix(X::[A], Y::[A]) -> Z::[A].
@@ -1420,7 +1420,7 @@ remove_trailing_whitespace(X) ->
 
 %%----------------------------------------------------------------------
 %% @doc
-%% Replace and Key with Key,Val in the property list 
+%% Replace and Key with Key,Val in the property list
 %% Old.
 
 -spec replace(Key, Val, Old::[{Key,Val}]) -> [{Key,Val}].
@@ -1439,7 +1439,7 @@ replace(Key, Val, [], L) ->
 %% @doc Standard RPC.
 
 -spec rpc(pid(), any()) -> any().
-		 
+
 rpc(Pid, Q) ->
     Pid ! {self(), Q},
     receive
@@ -1452,7 +1452,7 @@ rpc(Pid, Q) ->
 
 -spec safe((fun(() -> X)))
  -> {error, any()} | X.
-    
+
 safe(Fun) ->
     case (catch Fun()) of
 	{'EXIT', Why} -> {error, Why};
@@ -1466,7 +1466,7 @@ safe(Fun) ->
 %%   when you evaluate Fun0().
 
 -spec show_loaded(fun( () -> _)) -> [Mod::atom()].
-			     
+
 
 show_loaded(Fun0) ->
     Mods1 = [Mod || {Mod,_} <- code:all_loaded()],
@@ -1534,7 +1534,7 @@ spawn_monitor1(Term, Parent) ->
 %% split(Fun, [X]) -> [{Header,[X]}]
 %% Splits a lists
 %% Fun(X) -> {yes, Header} | no
-%% the list L is partitioned into segments 
+%% the list L is partitioned into segments
 %% for which Fun(X) -> {yes,Header}
 %% The header '$none' is used for leading
 %% elements in the list
@@ -1549,13 +1549,13 @@ split_list_test() ->
     F = fun("?tag=" ++ T) -> {yes,T};
 	   (_) -> no
 	end,
-    [{"one",["a","b"]},{"two",["1","2"]}] = 
+    [{"one",["a","b"]},{"two",["1","2"]}] =
 	split_list(F, ["?tag=one","a","b","?tag=two","1","2"]).
 
 split_list([], _F, _Header, [], L) ->
     reverse(L);
 split_list([], _F, Header, Content, L) ->
-    Block = {Header, reverse(Content)}, 
+    Block = {Header, reverse(Content)},
     reverse([Block|L]);
 split_list([H|T], F, Header, Content, L) ->
     case F(H) of
@@ -1564,7 +1564,7 @@ split_list([H|T], F, Header, Content, L) ->
 		[] ->
 		    split_list(T, F, Header1, [], L);
 		_ ->
-		    Block = {Header, reverse(Content)}, 
+		    Block = {Header, reverse(Content)},
 		    split_list(T, F, Header1, [], [Block|L])
 	    end;
 	no ->
@@ -1574,7 +1574,7 @@ split_list([H|T], F, Header, Content, L) ->
 %%----------------------------------------------------------------------
 %% @doc Split a string at the first occurance of a given character.
 
--spec split_at_char(string(), char()) -> 
+-spec split_at_char(string(), char()) ->
     {yes, Before::string(), After::string()} | no.
 
 split_at_char(Str, C) -> split_at_char(Str, C, []).
@@ -1588,7 +1588,7 @@ split_at_char([H|T], C, L) -> split_at_char(T, C, [H|L]);
 split_at_char([], _, _)    -> no.
 
 %%----------------------------------------------------------------------
-%% @doc Convert a string contianign a number of expressions to 
+%% @doc Convert a string contianign a number of expressions to
 %% the abstract form of the expressions.
 
 -spec string2exprs(Str::string()) -> {ok, _Exprs} | error.
@@ -1630,7 +1630,7 @@ string2html("<" ++ T) -> "&lt;" ++ string2html(T);
 string2html("&" ++ T) -> "&amp;" ++ string2html(T);
 string2html([H|T])    -> [H|string2html(T)];
 string2html([])       -> [].
-    
+
 %%----------------------------------------------------------------------
 %% @doc Turn a Erlang string into a LateX string quiting where necessary.
 
@@ -1651,10 +1651,10 @@ string2latex([H|T])        -> [H|string2latex(T)];
 string2latex([])           -> [].
 
 %%----------------------------------------------------------------------
-%% @doc Convert a string to a term.  
+%% @doc Convert a string to a term.
 
 -spec string2term(string()) -> any().
-    
+
 string2term(Str) ->
     {ok,Tokens,_} = erl_scan:string(Str ++ "."),
     {ok,Term} = erl_parse:parse_term(Tokens),
@@ -1672,20 +1672,20 @@ string2term_test() ->
 
 string2toks([$%|T]) ->
     {Comment,T1} = collect_comment(T, []),
-    [{comment,Comment}|string2toks(T1)];	     
-string2toks([H|_]=L) when ?IS_DIGIT(H) -> 
-    {Int, T1} = collect_int(L),				   
+    [{comment,Comment}|string2toks(T1)];
+string2toks([H|_]=L) when ?IS_DIGIT(H) ->
+    {Int, T1} = collect_int(L),
     [{int,Int}|string2toks(T1)];
 string2toks([H|T]) when ?WHITESPACE(H) ->
     string2toks(T);
 string2toks([X|_]=L) when ?IS_ALPHA(X) ->
-    {Name, T1} = collect_atom(L),				   
+    {Name, T1} = collect_atom(L),
     [{atom,Name}|string2toks(T1)];
 string2toks([$"|T]) ->
-    {Str, T1} = collect_string(T, $", []),				   
+    {Str, T1} = collect_string(T, $", []),
     [{str,Str}|string2toks(T1)];
 string2toks([$'|T]) ->
-    {Str, T1} = collect_string(T, $', []),				   
+    {Str, T1} = collect_string(T, $', []),
     [{str,Str}|string2toks(T1)];
 string2toks([H|T]) ->
     [{punct,[H]}|string2toks(T)];
@@ -1713,7 +1713,7 @@ collect_int_test() ->
 
 %%----------------------------------------------------------------------
 %% @doc extract a base ten integer from the start of a string
-    
+
 collect_int([H|_]=L)  when ?IS_DIGIT(H) -> collect_int(L, 0).
 
 collect_int([H|T], N) when ?IS_DIGIT(H) -> collect_int(T, N*10 + H - $0);
@@ -1731,7 +1731,7 @@ is_alphanum(_) -> false.
 %%----------------------------------------------------------------------
 %% @doc Extract an atom from the start of a string.
 
--spec collect_atom(Str::string()) -> 
+-spec collect_atom(Str::string()) ->
     {Atom::string(), Str1::string()}.
 
 collect_atom(L) -> collect_atom(L, []).
@@ -1755,7 +1755,7 @@ collect_comment("\r\n" ++ T, L) -> {reverse(L), T};
 collect_comment("\n" ++ T, L)   -> {reverse(L), T};
 collect_comment([], L)          -> {reverse(L), []};
 collect_comment([H|T], L)       -> collect_comment(T, [H|L]).
-    
+
 %%----------------------------------------------------------------------%
 %% @doc collect_string(S) -> {S1, S2} such that
 %% S = S1 ++ S2. Here s1 must begin with a single or double quote.
@@ -1788,7 +1788,7 @@ eval_string(Str) ->
 eval_string_test() ->
     2 = eval_string("1+1"),
     4 = eval_string("X=2,X+X").
-    
+
 eval_string(Str, Bindings0) ->
     {ok, Tokens, _} = erl_scan:string(Str ++ "."),
     {ok, Exprs} = erl_parse:parse_exprs(Tokens),
@@ -1830,7 +1830,7 @@ split_into_lines1(_, 0, L) ->
 split_into_lines1(Str, Ln, L) ->
     {Line, Rest} = get_line(Str),
     split_into_lines1(Rest, Ln-1, [Line|L]).
-    
+
 %%----------------------------------------------------------------------
 %% @doc
 %% true if Infile was modified after OutFile.
@@ -1851,11 +1851,11 @@ last_modified(File) ->
 -spec string2lines(string()) -> [string()].
 
 string2lines(Str) -> string2lines(Str, []).
- 
+
 string2lines_test() ->
     ["abc\n",
      "def\n",
-     "123"] = string2lines("abc\ndef\n123").  
+     "123"] = string2lines("abc\ndef\n123").
 
 string2lines("\n" ++ Str, Acc) -> [reverse([$\n|Acc]) | string2lines(Str,[])];
 string2lines([H|T], Acc)       -> string2lines(T, [H|Acc]);
@@ -1874,7 +1874,7 @@ term2file(File, Term) ->
 %% @doc Convert a term to a printable string.
 
 -spec term2string(any()) -> PrintableString::string().
-    
+
 term2string(Term) ->
     lists:flatten(io_lib:format("~p",[Term])).
 
@@ -1913,19 +1913,19 @@ perms(L)  -> [[H|T] || H <- L, T <- perms(L--[H])].
 perms_test() ->
     X = perms("abc"),
     [] = X -- ["abc","acb","bac","bca", "cab", "cba"].
- 
+
 %%----------------------------------------------------------------------
 %% @doc
 %% Parallel version of map
 
--spec pmap(fun((X) -> Y), [X]) -> [Y].    
+-spec pmap(fun((X) -> Y), [X]) -> [Y].
 
-pmap(F, L) -> 
+pmap(F, L) ->
     S = self(),
     %% % make_ref() returns a unique reference
     %% %  we'll match on this later
-    Ref = erlang:make_ref(), 
-    Pids = map(fun(I) -> 
+    Ref = erlang:make_ref(),
+    Pids = map(fun(I) ->
 		       spawn(fun() -> do_f(S, Ref, F, I) end)
 	       end, L),
     %% % gather the results
@@ -1934,7 +1934,7 @@ pmap(F, L) ->
 pmap_test() ->
     [1,4,9,16] = pmap(fun(I) -> I*I end, [1,2,3,4]).
 
-do_f(Parent, Ref, F, I) ->					    
+do_f(Parent, Ref, F, I) ->
     Parent ! {self(), Ref, (catch F(I))}.
 
 gather([Pid|T], Ref) ->
@@ -1945,18 +1945,18 @@ gather([], _) ->
     [].
 
 
- 
+
 %%----------------------------------------------------------------------
 %% @doc
-%% Parallel map that is not order preserving. 
+%% Parallel map that is not order preserving.
 %% pmap1([X,Y,Z]) return any permutation of  [F(X), F(Y), F(Z)].
 
--spec pmap1(fun((X) -> Y), [X]) -> [Y].    
+-spec pmap1(fun((X) -> Y), [X]) -> [Y].
 
-pmap1(F, L) -> 
+pmap1(F, L) ->
     S = self(),
     Ref = erlang:make_ref(),
-    foreach(fun(I) -> 
+    foreach(fun(I) ->
 		    spawn(fun() -> do_f1(S, Ref, F, I) end)
 	    end, L),
     %% % gather the results
@@ -1964,9 +1964,9 @@ pmap1(F, L) ->
 
 pmap1_test() ->
     L = pmap1(fun(I) -> I*I end, [1,2,3,4]),
-    [] = L -- [1,4,9,16]. 
+    [] = L -- [1,4,9,16].
 
-do_f1(Parent, Ref, F, I) ->					    
+do_f1(Parent, Ref, F, I) ->
     Parent ! {Ref, (catch F(I))}.
 
 gather1(0, _, L) -> L;
@@ -1988,7 +1988,7 @@ is_word_char(_)  -> false.
 %%----------------------------------------------------------------------
 %% @doc Extracts the next word from the start of a string.
 
--spec collect_word(Str::string()) -> 
+-spec collect_word(Str::string()) ->
     {Word::string(), Str1::string()} | no.
 
 collect_word([H|T]) ->
@@ -2013,7 +2013,7 @@ collect_word([], L) ->
 %% padd is short for "possible add"
 
 -spec padd(X, L::[X]) -> L1::[X].
-  
+
 padd(X, L) ->
     case member(X, L) of
 	true -> L;
@@ -2037,7 +2037,7 @@ random_string(N, D) ->
 %% @doc Find the directory name where a module was loaded from.
 
 -spec which(Mod::atom()) -> Directory::string().
-    
+
 which(Mod) ->
     filename:dirname(code:which(Mod)).
 
@@ -2048,7 +2048,7 @@ which(Mod) ->
 %%    otherwise prints error
 
 -spec time_fun(Description::string(), fun(() -> T)) -> T.
-						 
+
 time_fun(Str, Fun) ->
     case timer:tc(?MODULE, force, [Fun]) of
 	{_Time, {'EXIT', Why}} ->
@@ -2069,7 +2069,7 @@ force(Fun) -> Fun().
 %% @doc return a string contining the current data and time
 
 -spec time_stamp() -> string().
-    
+
 time_stamp() ->
     {Year,Month,Day} = date(),
     Year1 = Year - 2000,
@@ -2080,10 +2080,10 @@ time_stamp() ->
 %%----------------------------------------------------------------------
 %% @doc
 %% spawn a fun and find out which additional modules get loaded.
-%% Returns the names of the new modules which have been loaded and 
+%% Returns the names of the new modules which have been loaded and
 %% where they were loaded from.
 
--spec which_added( fun(() -> any())) -> 
+-spec which_added( fun(() -> any())) ->
     [{ModuleName::atom(), DirName::string()}].
 
 which_added(Fun) ->
@@ -2107,7 +2107,7 @@ get_val(_, [])              -> [].
 %% Here's a small shell dialogue
 %% to see how templates can be used:
 
-%% 1> Str = "${who} is feeling ${how}".                                    
+%% 1> Str = "${who} is feeling ${how}".
 %% "${who} is feeling ${how}"
 %% 2> Template = elib1_misc:string2template(Str).
 %% ["who",<<" is feeling ">>,"how"]
@@ -2144,7 +2144,7 @@ expand_template(Template, Assoc) ->
     map(fun(B) when is_binary(B) -> B;
 	   (S) when is_list(S) -> get_val(S, Assoc)
 	end, Template).
- 
+
 %%----------------------------------------------------------------------
 %% @doc
 %% Parse a file containing a template.
@@ -2167,7 +2167,7 @@ string2template_test() ->
     Str = "${who} is feeling ${how}",
     Template = string2template(Str),
     ["who",<<" is feeling ">>,"how"] = Template,
-    ["Sue",<<" is feeling ">>,"happy"] = 
+    ["Sue",<<" is feeling ">>,"happy"] =
 	expand_template(Template,[{"who","Sue"},{"how","happy"}]).
 
 string2template([], L) ->
@@ -2199,7 +2199,7 @@ template_add(Str, L) -> [list_to_binary(Str)|L].
 %% Runs with output in the directory where File is
 
 -spec tex2pdf(FileName::string()) -> ok.
-    
+
 tex2pdf(File) ->
     %% io:format("tex2pdf:~p cwd:~p~n",[File,file:get_cwd()]),
     Pdf = outfile(File, ".pdf"),
@@ -2238,7 +2238,7 @@ tex2pdf(File) ->
 
 file2stream(File) ->
     %% read the file 4096 bytes at a time
-    %% so we can read infinite files 
+    %% so we can read infinite files
     case file:open(File, [binary,raw,read]) of
 	{ok, P} -> fun() -> file2stream_1(P) end;
 	_   -> exit({eNoFile, File})
@@ -2247,7 +2247,7 @@ file2stream(File) ->
 file2stream_1(P) ->
     case file:read(P, 4096) of
 	{ok, Bin} ->
-	    {binary_to_list(Bin), 
+	    {binary_to_list(Bin),
 	     fun() -> file2stream_1(P) end};
 	eof ->
 	    file:close(P),
@@ -2258,7 +2258,7 @@ file2stream_1(P) ->
 %% @doc Convert a string to a stream.
 
 -spec string2stream(string()) -> stream().
-			   
+
 string2stream(Str) ->
     fun() -> {Str, fun() -> eos end} end.
 
@@ -2271,7 +2271,7 @@ string2stream_test() ->
 %% @doc skip all characters up to and including new line
 
 -spec skip_to_nl(string()) -> string().
-    
+
 skip_to_nl([$\n|T]) -> T;
 skip_to_nl([])      -> [];
 skip_to_nl([_|T])   -> skip_to_nl(T).
@@ -2283,16 +2283,16 @@ skip_to_nl_test() ->
 %% @doc extract N lines of Lorum ipsum
 
 -spec lorem(N::integer()) -> [string()].
-    
+
 lorem(N) -> lorem(N, [], []).
 
 lorem(0, _, L)     -> reverse(L);
 lorem(N, [H|T], L) -> lorem(N-1, T, [H,$\s|L]);
 lorem(N, [], L)    -> lorem(N, lorem_data(), L).
 
-lorem_data() -> 
+lorem_data() ->
     ["Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-     "Aenean id risus ante.", 
+     "Aenean id risus ante.",
      "Integer hendrerit porta justo sed luctus.",
      "Nam vitae ligula enim, non accumsan odio.",
      "Duis viverra pharetra augue, eget tincidunt leo ornare et.",

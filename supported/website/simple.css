@@ -1,7 +1,7 @@
 body {
        margin-left:2in;
        margin-top:0.5cm;
-       width:60%; 
+       width:60%;
        font-size:1.2em}
 
 h1 { font-size:1.4em }
@@ -11,7 +11,7 @@ p {  text-align:justify }
 p:hover, li:hover
 {  	text-shadow: #ccc 2px 2px 5px;
 	color:#E20074;
-}   
+}
 
 .left {
 	position:relative;

@@ -10,7 +10,7 @@
  * SimpleModal is a lightweight jQuery plugin that provides a simple
  * interface to create a modal dialog.
  *
- * The goal of SimpleModal is to provide developers with a cross-browser 
+ * The goal of SimpleModal is to provide developers with a cross-browser
  * overlay and container that will be populated with data provided to
  * SimpleModal.
  *
@@ -26,23 +26,23 @@
  *
  * 2) As a stand-alone function, like $.modal(data). The data parameter
  * is required and an optional options object can be passed as a second
- * parameter. This method provides more flexibility in the types of data 
+ * parameter. This method provides more flexibility in the types of data
  * that are allowed. The data could be a DOM object, a jQuery object, HTML
  * or a string.
- * 
+ *
  * @example $.modal('<div>my data</div>', {options});
  * @example $.modal('my data', {options});
  * @example $.modal($('#myDiv'), {options});
  * @example $.modal(jQueryObject, {options});
- * @example $.modal(document.getElementById('myDiv'), {options}); 
- * 
- * A SimpleModal call can contain multiple elements, but only one modal 
+ * @example $.modal(document.getElementById('myDiv'), {options});
+ *
+ * A SimpleModal call can contain multiple elements, but only one modal
  * dialog can be created at a time. Which means that all of the matched
  * elements will be displayed within the modal container.
- * 
+ *
  * SimpleModal internally sets the CSS needed to display the modal dialog
  * properly in all browsers, yet provides the developer with the flexibility
- * to easily control the look and feel. The styling for SimpleModal can be 
+ * to easily control the look and feel. The styling for SimpleModal can be
  * done through external stylesheets, or through SimpleModal, using the
  * overlayCss and/or containerCss options.
  *
@@ -67,7 +67,7 @@
 
 	/*
 	 * Stand-alone function to create a modal dialog.
-	 * 
+	 *
 	 * @param {string, object} data A string, jQuery object or DOM object
 	 * @param {object} [options] An optional object containing options overrides
 	 */
@@ -84,7 +84,7 @@
 
 	/*
 	 * Chained function to create a modal dialog.
-	 * 
+	 *
 	 * @param {object} [options] An optional object containing options overrides
 	 */
 	$.fn.modal = function (options) {
@@ -93,7 +93,7 @@
 
 	/*
 	 * SimpleModal default options
-	 * 
+	 *
 	 * appendTo:		(String:'body') The jQuery selector to append the elements to. For ASP.NET, use 'form'.
 	 * focus:			(Boolean:true) Forces focus to remain on the modal dialog
 	 * opacity:			(Number:50) The opacity value for the overlay div, from 0 - 100
@@ -112,10 +112,10 @@
 	 * zIndex:			(Number: 1000) Starting z-index value
 	 * close:			(Boolean:true) If true, closeHTML, escClose and overClose will be used if set.
 	 							If false, none of them will be used.
-	 * closeHTML:		(String:'<a class="modalCloseImg" title="Close"></a>') The HTML for the 
+	 * closeHTML:		(String:'<a class="modalCloseImg" title="Close"></a>') The HTML for the
 							default close link. SimpleModal will automatically add the closeClass to this element.
 	 * closeClass:		(String:'simplemodal-close') The CSS class used to bind to the close event
-	 * escClose:		(Boolean:true) Allow Esc keypress to close the dialog? 
+	 * escClose:		(Boolean:true) Allow Esc keypress to close the dialog?
 	 * overlayClose:	(Boolean:false) Allow click on overlay to close the dialog?
 	 * position:		(Array:null) Position of container [top, left]. Can be number of pixels or percentage
 	 * persist:			(Boolean:false) Persist the data across modal calls? Only used for existing
@@ -163,7 +163,7 @@
 		 */
 		o: null,
 		/*
-		 * Contains the modal dialog elements and is the object passed 
+		 * Contains the modal dialog elements and is the object passed
 		 * back to the callback (onOpen, onShow, onClose) functions
 		 */
 		d: {},
@@ -244,7 +244,7 @@
 				s.d.iframe = $('<iframe src="javascript:false;"></iframe>')
 					.css($.extend(s.o.iframeCss, {
 						display: 'none',
-						opacity: 0, 
+						opacity: 0,
 						position: 'fixed',
 						height: w[0],
 						width: w[1],
@@ -270,27 +270,27 @@
 					zIndex: s.o.zIndex + 1
 				}))
 				.appendTo(s.o.appendTo);
-		
+
 			// create the container
 			s.d.container = $('<div></div>')
 				.attr('id', s.o.containerId)
 				.addClass('simplemodal-container')
 				.css($.extend(s.o.containerCss, {
 					display: 'none',
-					position: 'fixed', 
+					position: 'fixed',
 					zIndex: s.o.zIndex + 2
 				}))
 				.append(s.o.close && s.o.closeHTML
 					? $(s.o.closeHTML).addClass(s.o.closeClass)
 					: '')
 				.appendTo(s.o.appendTo);
-				
+
 			s.d.wrap = $('<div></div>')
 				.attr('tabIndex', -1)
 				.addClass('simplemodal-wrap')
 				.css({height: '100%', outline: 0, width: '100%'})
 				.appendTo(s.d.container);
-				
+
 			// add styling and attributes to the data
 			// append to body to get correct dimensions, then move to wrap
 			s.d.data = data
@@ -321,7 +321,7 @@
 				e.preventDefault();
 				s.close();
 			});
-			
+
 			// bind the overlay click to the close function, if enabled
 			if (s.o.close && s.o.overlayClose) {
 				s.d.overlay.bind('click.simplemodal', function (e) {
@@ -329,7 +329,7 @@
 					s.close();
 				});
 			}
-	
+
 			// bind keydown events
 			$(document).bind('keydown.simplemodal', function (e) {
 				if (s.o.focus && e.keyCode == 9) { // TAB
@@ -348,7 +348,7 @@
 
 				// reposition the dialog
 				s.setContainerDimensions(true);
-	
+
 				if (ie6 || ieQuirks) {
 					s.fixIE();
 				}
@@ -394,16 +394,16 @@
 					else {
 						var te, le;
 						if (p && p.constructor == Array) {
-							var top = p[0] 
+							var top = p[0]
 								? typeof p[0] == 'number' ? p[0].toString() : p[0].replace(/px/, '')
 								: el.css('top').replace(/px/, '');
-							te = top.indexOf('%') == -1 
+							te = top.indexOf('%') == -1
 								? top + ' + (t = ' + st + ' ? ' + st + ' : ' + bst + ') + "px"'
 								: parseInt(top.replace(/%/, '')) + ' * ((' + ch + ' || ' + bch + ') / 100) + (t = ' + st + ' ? ' + st + ' : ' + bst + ') + "px"';
 
 							if (p[1]) {
 								var left = typeof p[1] == 'number' ? p[1].toString() : p[1].replace(/px/, '');
-								le = left.indexOf('%') == -1 
+								le = left.indexOf('%') == -1
 									? left + ' + (t = ' + sl + ' ? ' + sl + ' : ' + bsl + ') + "px"'
 									: parseInt(left.replace(/%/, '')) + ' * ((' + cw + ' || ' + bcw + ') / 100) + (t = ' + sl + ' ? ' + sl + ' : ' + bsl + ') + "px"';
 							}
@@ -438,8 +438,8 @@
 			return [h, el.width()];
 		},
 		getVal: function (v) {
-			return v == 'auto' ? 0 
-				: v.indexOf('%') > 0 ? v 
+			return v == 'auto' ? 0
+				: v.indexOf('%') > 0 ? v
 					: parseInt(v.replace(/px/, ''));
 		},
 		setContainerDimensions: function (resize) {
@@ -484,7 +484,7 @@
 					s.d.wrap.css({overflow:'auto'});
 				}
 			}
-			
+
 			if (s.o.autoPosition) {
 				s.setPosition();
 			}
@@ -527,8 +527,8 @@
 		},
 		/*
 		 * Open the modal dialog elements
-		 * - Note: If you use the onOpen callback, you must "show" the 
-		 *	        overlay and container elements manually 
+		 * - Note: If you use the onOpen callback, you must "show" the
+		 *	        overlay and container elements manually
 		 *         (the iframe will be handled by SimpleModal)
 		 */
 		open: function () {
@@ -537,7 +537,7 @@
 			s.d.iframe && s.d.iframe.show();
 
 			if ($.isFunction(s.o.onOpen)) {
-				// execute the onOpen callback 
+				// execute the onOpen callback
 				s.o.onOpen.apply(s, [s.d]);
 			}
 			else {
@@ -546,7 +546,7 @@
 				s.d.container.show();
 				s.d.data.show();
 			}
-			
+
 			s.focus();
 
 			// bind default events
@@ -554,7 +554,7 @@
 		},
 		/*
 		 * Close the modal dialog
-		 * - Note: If you use an onClose callback, you must remove the 
+		 * - Note: If you use an onClose callback, you must remove the
 		 *         overlay, container and iframe elements manually
 		 *
 		 * @param {boolean} external Indicates whether the call to this
@@ -588,7 +588,7 @@
 						s.d.data.hide().appendTo(s.d.parentNode);
 					}
 					else {
-						// remove the current and insert the original, 
+						// remove the current and insert the original,
 						// unmodified data back into the DOM
 						s.d.data.hide().remove();
 						s.d.orig.appendTo(s.d.parentNode);

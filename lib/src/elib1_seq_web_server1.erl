@@ -31,7 +31,7 @@
 %%   3) Writes go to the TM and the data is marked as dirty
 %%   4) If the request does not crash (as caught by "catch ,...")
 %%      all dirty data is written back to the real store
- 
+
 %%
 %%                 +-------------+
 %% -- socket 1 --->| http_driver |-----------+
@@ -126,8 +126,8 @@ server(Root, DBPid, Mod) ->
 		    exit(closed);
 		Other ->
 		    PidT ! abort,
-		    Client ! {self(), 
-			      show({internalError,handlerBadPattern,Other})}	    
+		    Client ! {self(),
+			      show({internalError,handlerBadPattern,Other})}
 	    end,
 	    server(Root, DBPid, Mod);
 	Any ->
@@ -157,7 +157,7 @@ transaction_loop(Pid, L) ->
 		    transaction_loop(Pid, L1)
 	    end;
 	{From, {write, Key, Val}} ->
-	    L1 = lists:keystore(Key, 1, L, {Key,dirty,Val}), 
+	    L1 = lists:keystore(Key, 1, L, {Key,dirty,Val}),
 	    From ! {self(), ack},
 	    transaction_loop(Pid, L1);
 	{From, info} ->
@@ -193,12 +193,12 @@ body(X) -> ["<body bgcolor=\"", X, "\">"].
 
 show(X) ->
     {header(text),[body("white"),pre(X)]}.
-	   
+
 pre(X) ->
     ["<pre>",
      quote_lt(lists:flatten(io_lib:format("~p~n",[X]))),
      "</pre>"].
-    
+
 
 quote_lt([$<|T]) -> "&lt;" ++ quote_lt(T);
 quote_lt([H|T])  -> [H|quote_lt(T)];

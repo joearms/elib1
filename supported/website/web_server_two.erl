@@ -6,7 +6,7 @@
 %% callback module for a web server
 -compile(export_all).
 
-start() ->      
+start() ->
     Root = elib1_misc:root_dir(),
     File = Root ++ "/data.dets",
     elib1_seq_web_server1:start(?MODULE,

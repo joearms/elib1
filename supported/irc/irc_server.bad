@@ -19,10 +19,10 @@ server() ->
 
 %% The state of the main server
 %% is defined by a Key-Value store
-%%    Keys     Value 
+%%    Keys     Value
 %%    Pid         => #nick{nick=Nick,data="string"}
 %%    {user,Nick} => #user{pid=Pid, groups= [<<G>>]}
-%%    <<G>>       => #group{mod="string", leader=Pid, pids=[Pid]} 
+%%    <<G>>       => #group{mod="string", leader=Pid, pids=[Pid]}
 
 loop(Listen, D) ->
     receive
@@ -42,7 +42,7 @@ loop(Listen, D) ->
 	    D1 = join_group(Pid, Group, D),
 	    loop(Listen, D1);
     end.
-	
+
 join_group(Pid, G, D) when is_binary(G) ->
     try
 	begin
@@ -66,7 +66,7 @@ join_group(Pid, G, D) when is_binary(G) ->
     catch a ->
 	    b
     end.
-	    
+
 
 set_user_data(Pid, Data, D) ->
     case dict:find(Usr={user,Nick}, D) of
@@ -112,7 +112,7 @@ change_nick(Pid, Fill, D) ->
 		    end,
 		    D1;
 		error ->
-		    %% zomby 
+		    %% zomby
 		    exit(Pid, kill),
 		    D
 	    end
@@ -126,8 +126,8 @@ broadcast_to_groups(Gs, M) ->
 			    end, Pids)
 	    end, Gs).
 
-		    
-		  
+
+
 %% hoorid code ...
 
 %% {Nick, Pid}  %% = Pids
@@ -139,9 +139,9 @@ broadcast_to_groups(G, Pids, Groups, Msg) ->
 message(ToNick, Msg, Pids) ->
     [ {Pid,Msg} || {Nick, Pid} <- Pids, Nick =:= ToNick].
 
-update_nick(OldNick, NewNick, Pids, Groups) -> 
+update_nick(OldNick, NewNick, Pids, Groups) ->
     a.
 
 
-	      
-	 
+
+

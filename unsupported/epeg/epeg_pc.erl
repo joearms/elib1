@@ -5,7 +5,7 @@
 
 %% peg parser combinators
 
--export([alt/1, any/0, bang/1, block/1, cc/1, char/1, 
+-export([alt/1, any/0, bang/1, block/1, cc/1, char/1,
 	 do/2, done/3, lit/1, lit/2, litthenspace/1, litthenspace/2,
 	 plus/1, question/1, star/1, seq/1]).
 
@@ -25,7 +25,7 @@ do(P, Fun)   -> fun(Str) -> match_then_do(P, Fun, Str) end.
 char(Char)   -> fun(Str) -> match_char(Char, Str) end.
 lit(X)       -> fun(Str) -> match_lit(X, Str, X) end.
 lit(X,Y)     -> fun(Str) -> match_lit(X, Str, Y) end.
-    
+
 litthenspace(X)    -> fun(Str) -> match_lit_then_space(X, Str) end.
 litthenspace(X, Y) -> fun(Str) -> match_lit_then_space(X, Y, Str) end.
 plus(X)      -> fun(Str) -> match_plus(X, Str) end.
@@ -67,11 +67,11 @@ match_then_do(Parser, Fun, Str) ->
 
 find_head(Rest, Rest, L)  -> reverse(L);
 find_head([H|T], Rest, L) -> find_head(T, Rest, [H|L]).
-	    
+
 %% seq is actuall mapfold
 
 match_seq([H|T], Str, L) ->
-    {Val, Str1} = H(Str), 
+    {Val, Str1} = H(Str),
     match_seq(T, Str1, [Val|L]);
 match_seq([], Str, L) ->
     {reverse(L), Str}.

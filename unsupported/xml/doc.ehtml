@@ -1,7 +1,7 @@
 <? simple_web_server:header() ?>
 
 <body>
-  <h1>XML validation</h1> 
+  <h1>XML validation</h1>
 
   <p>Not in erlang but useful anyway</p>
 

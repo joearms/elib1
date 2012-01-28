@@ -11,7 +11,7 @@
 
 batch(X) ->
     try
-	begin 
+	begin
 	    [A] = X,
 	    File = atom_to_list(A),
 	    convert(File)
@@ -32,8 +32,8 @@ convert(File) ->
     %% dump("logtmp", Chunks),
     H1 = [ chunk2html(C) || C <- Chunks],
     OutFile = "../doc/" ++ Root ++ ".html",
-    elib1_misc:expand_file_template("me.template", 
-				    [{"content", H1}], 
+    elib1_misc:expand_file_template("me.template",
+				    [{"content", H1}],
 				    OutFile),
     io:format("created ~s~n",[OutFile]).
 
@@ -121,7 +121,7 @@ collect_chunk([], Ln, L) ->
 
 parse_wiki_str(Str) ->
     parse_str0(Str, 0).
-    
+
 parse_str0(Str, Ln) ->
     Pass1 = parse(Str, Ln, []),
     %% dump("t1", Pass1),
@@ -154,7 +154,7 @@ parse_dl(S) ->
     Lines1 = [parse_dl_item(I) || I <- Lines],
     %% io:format("Lines1 =~p~n",[Lines1]),
     {dl, Lines1}.
-    
+
 parse_dl_item(Str) ->
     {Tag, Rest} = extract_tag(Str, []),
     {tag,Tag,paras,parse_paras(split_into_paras(Rest))}.
@@ -173,7 +173,7 @@ split_into_regions(S) ->
 %% split_into_para(Str) -> [Str].
 
 split_into_paras(S) ->
-    L = re:split(S, "[\r]?\n[\s\t]*[\r]?\n",[{return,list},trim]),   
+    L = re:split(S, "[\r]?\n[\s\t]*[\r]?\n",[{return,list},trim]),
     L1 = remove_blank_lines(L),
     [{para,elib1_misc:remove_leading_whitespace(I)} || I <- L1].
 
@@ -213,9 +213,9 @@ parse1(Tag, Str, Stop, Ln, L) ->
 
 collect_thing([H|T] = Str, Stop, Ln, L) ->
     case elib1_misc:is_prefix(Stop, Str) of
-	{yes, Rest} -> 
+	{yes, Rest} ->
 	    {reverse(L), Ln + count_nls(Stop), Rest};
-	no  -> 
+	no  ->
 	    collect_thing(T, Stop, bump(H, Ln), [H|L])
     end;
 collect_thing([], Stop, Ln, _) ->

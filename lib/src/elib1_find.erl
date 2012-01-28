@@ -7,7 +7,7 @@
 %% \title{elib1\_find: Find files}
 %% \author{Joe Armstrong $<$joearms@gmail.com$>$}
 %% \maketitle
-%%  (c) 2008 Joe Armstrong. 
+%%  (c) 2008 Joe Armstrong.
 %%  All rights Reserved.\footnote{\tiny{\licenseMIT}}
 %%
 %% \section{Introduction}
@@ -20,7 +20,7 @@
 	 out_of_date/4]).
 -import(lists, [map/2, reverse/1]).
 -compile(export_all).
- 
+
 -include_lib("kernel/include/file.hrl").
 
 %% Find all files in \verb+DirIn+ with extension \verb+ExtIn+
@@ -45,7 +45,7 @@ out_of_date(DirIn, ExtIn, DirOut, OutAdd) ->
 	     end, L),
     [X || {yes, X} <- L1].
 
-files(Dir, Re, Flag) -> 
+files(Dir, Re, Flag) ->
     %% Re1 = regexp:sh_to_awk(Re),
     Re1 = xmerl_regexp:sh_to_awk(Re),
     reverse(files(Dir, Re1, Flag, fun(File, Acc) ->[File|Acc] end, [])).
@@ -71,7 +71,7 @@ find_files([File|T], Dir, Reg, Recursive, Fun, Acc0) ->
 		_ ->
 		    find_files(T, Dir, Reg, Recursive, Fun, Acc0)
 	    end;
-	directory -> 
+	directory ->
 	    case Recursive of
 		true ->
 		    Acc1 = files(FullName, Reg, Recursive, Fun, Acc0),
@@ -79,7 +79,7 @@ find_files([File|T], Dir, Reg, Recursive, Fun, Acc0) ->
 		false ->
 		    find_files(T, Dir, Reg, Recursive, Fun, Acc0)
 	    end;
-	error -> 
+	error ->
 	    find_files(T, Dir, Reg, Recursive, Fun, Acc0)
     end;
 find_files([], _, _, _, _, A) ->
@@ -128,7 +128,7 @@ fold_files([File|T], Dir, ExcludeDir, Fun, Acc0) ->
 	regular ->
 	    Acc = Fun(FullName, Acc0),
 	    fold_files(T, Dir, ExcludeDir, Fun, Acc);
-	directory -> 
+	directory ->
 	    case ExcludeDir(FullName) of
 		true ->
 		    io:format("excluding:~p~n",[FullName]),
@@ -138,7 +138,7 @@ fold_files([File|T], Dir, ExcludeDir, Fun, Acc0) ->
 							 Fun, Acc0),
 		    fold_files(T, Dir, ExcludeDir, Fun, Acc1)
 	    end;
-	error -> 
+	error ->
 	    io:format("Funny:~p~n",[FullName]),
 	    fold_files(T, Dir, ExcludeDir, Fun, Acc0)
     end;

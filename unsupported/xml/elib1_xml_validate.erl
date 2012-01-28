@@ -7,7 +7,7 @@
 
 test() ->
     validate("../../lib/src/lorem.chap").
-    
+
 validate(File) ->
     case elib1_xml:parse_file(File) of
 	{Tree, []} ->
@@ -25,7 +25,7 @@ validate(File) ->
 	    exit({syntax, L})
     end.
 
-%% this is the checking function which is called for each node in the 
+%% this is the checking function which is called for each node in the
 %% tree - it is called by fold tree
 %% A is an accumulated list of errors
 
@@ -188,7 +188,7 @@ fold_tree({raw,_,_,_}, _, A) ->
     %% this gets checked at the level above
     A.
 
-top({node,N,Ln,_,_}) -> 
+top({node,N,Ln,_,_}) ->
     try list_to_existing_atom(N) of
 	A -> {node, A, Ln}
     catch
@@ -198,7 +198,7 @@ top({node,N,Ln,_,_}) ->
 top({raw,_,true,_})  -> ws;
 top({raw,Ln,false,_}) -> {pcdata, Ln};
 top(X) -> {other1,X}.
-    
+
 
 get_dtd([{doctype,_,Str}|_]) ->
     io:format("Str=~p~n",[Str]),
@@ -220,7 +220,7 @@ get_sys_dtd(File) ->
 %%----------------------------------------------------------------------
 %% check_attributes(Defs, Vals).
 
-check_attributes(Defs, Vals) ->	
+check_attributes(Defs, Vals) ->
     %% Check the required values
     E1 = [check_att(Status, Name,Type,Vals) || {Name, {Type,Status}} <- Defs],
     flatten(E1).
@@ -246,5 +246,5 @@ check_att(Other, Name, Type, Vals) ->
 check_value(cdata, Str) -> [];
 check_value(X,Y) -> [{idontknowhowtocheckthis,X,Y}].
 
-    
-    
+
+

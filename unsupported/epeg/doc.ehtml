@@ -1,7 +1,7 @@
 <? simple_web_server:header() ?>
 
 <body>
-  <h1>Epeg</h1> 
+  <h1>Epeg</h1>
 
   <p>Erlang PEG grammar</p>
   <pre>
@@ -18,7 +18,7 @@ Make targets are:
 
 make    -- compiles epeg.peg using the bootstrap compiler
                  runs test cases
-</pre>     
+</pre>
 
 
 

@@ -38,10 +38,10 @@
 %%
 %%	JSON Obj    = type obj()   = {obj, [{key(), val()}]}
 %%	JSON Array  = type array() = [val()]
-%%	JSON Number = type num()   = int() | float() 
+%%	JSON Number = type num()   = int() | float()
 %%	JSON String = type str()   = bin()
 %%	JSON true false null       = true, false null (atoms)
-%%	With Type val() = obj() | array() | num() | str() | true | false 
+%%	With Type val() = obj() | array() | num() | str() | true | false
 %%                      | null
 %%
 %% and key() being a str(). (Or a binary or atom, during JSON encoding.)
@@ -73,7 +73,7 @@
 %% can use unicode_encode/1 to UTF-encode the results, if that's
 %% appropriate for your application.
 
-%% Modifed: Joe Armstrong 
+%% Modifed: Joe Armstrong
 
 -module(elib1_rfc4627).
 

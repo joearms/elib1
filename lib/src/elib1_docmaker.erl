@@ -6,7 +6,7 @@
 -import(lists, [filter/2,flatten/1, reverse/1, reverse/2]).
 -import(elib1_misc, [string2latex/1]).
 
--export([test/0, batch/1, convert/1, 
+-export([test/0, batch/1, convert/1,
 	 color_erlang_code/1,
 	 str2wikiA/1,
 	 wikiA2html/1, wikiA2latex/1]).
@@ -19,7 +19,7 @@ test() ->
 batch(X) ->
     io:format("Batch:~p~n",[X]),
     try
-	begin 
+	begin
 	    [A] = X,
 	    File = atom_to_list(A),
 	    convert(File)
@@ -34,7 +34,7 @@ convert(File) ->
 	".chap" -> convert(File, chapter);
 	".book" -> convert(File, book)
     end.
-	    
+
 %% START:tag1
 convert(File, Type) ->
     Root = filename:rootname(File),
@@ -98,7 +98,7 @@ parse_dl(S) ->
     Lines1 = [parse_dl_item(I) || I <- Lines],
     %% io:format("Lines1 =~p~n",[Lines1]),
     {dl, Lines1}.
-    
+
 parse_dl_item(Str) ->
     {Tag, Rest} = extract_tag(Str, []),
     {tag,Tag,paras,parse_paras(split_into_paras(Rest))}.
@@ -113,7 +113,7 @@ split_into_regions(S) ->
     L = re:split(S, "[\r]?\n[\s\t]*\\[",[{return,list}]),
     remove_blank_lines(L).
 
- 
+
 %% we only have the following top level tags
 %% <ul> ... </ul> <dl> .. </dl>  <pre>...</pre> <include .... />
 %% NOTE: If you add a new top level tag remember to fix collect_str/3 as
@@ -157,7 +157,7 @@ collect_thing([], Stop, Ln, _) ->
 %% split_into_para(Str) -> [Str].
 
 split_into_paras(S) ->
-    L = re:split(S, "[\r]?\n[\s\t]*[\r]?\n",[{return,list},trim]),   
+    L = re:split(S, "[\r]?\n[\s\t]*[\r]?\n",[{return,list},trim]),
     L1 = remove_blank_lines(L),
     [{para,elib1_misc:remove_leading_whitespace(I)} || I <- L1].
 
@@ -176,12 +176,12 @@ parse_list(S) ->
 parse_paras(L) ->
     [ parse_para(I) || {para,I} <- L].
 
-parse_include(S, _Ln) ->    
+parse_include(S, _Ln) ->
     try
 	begin
 	    {ok, Toks, _} = erl_scan:string(S),
 	    case lists:sort(parse_include1(Toks)) of
-		[{file,File},{tag,Tag}] -> 
+		[{file,File},{tag,Tag}] ->
 		    Str = elib1_misc:get_erl_section(File, Tag),
 		    Type = filename:extension(File),
 		    {include, File, Type, Str};
@@ -342,7 +342,7 @@ quote([])         -> [].
 
 %%----------------------------------------------------------------------
 
-begin_end(Tag, Content) -> 
+begin_end(Tag, Content) ->
     ["\\begin{",Tag,"}\n", Content, "\\end{",Tag,"}\n\n"].
 
 wikiA2latex({wikiA, L})          -> wikiA2latex(L);

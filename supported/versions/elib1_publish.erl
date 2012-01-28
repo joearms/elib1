@@ -53,12 +53,12 @@ rename(Mod) ->
     case lists:keysearch(Mod,1,Data) of
 	{value, Tuple} ->
 	    New = element(4, Tuple),
-	    %% io:format("Rename:~p -> ~w~n",[Mod,New]),	    
+	    %% io:format("Rename:~p -> ~w~n",[Mod,New]),
 	    New;
 	false ->
 	    Mod
     end.
-    
+
 
 publish() ->
     elib1_misc:show_loaded(fun() ->
@@ -75,7 +75,7 @@ publish1() ->
     io:format(S,"map()->~n~p.~n",[Data]),
     file:close(S),
     ok.
-    
+
 validate() ->
     Expected = nmap:map(),
     case check(Expected, []) of
@@ -129,7 +129,7 @@ find_key() ->
 	    {Who, Key};
 	[] ->
 	    exit(eNoKey);
-	O -> 
+	O ->
 	    exit({badKeys,O})
     end.
 

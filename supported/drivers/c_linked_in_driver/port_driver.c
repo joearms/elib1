@@ -49,9 +49,9 @@ ErlDrvEntry example_driver_entry = {
     example_drv_stop,   /* F_PTR stop, called when port is closed */
     example_drv_output, /* F_PTR output, called when erlang has sent
 			   data to the port */
-    NULL,               /* F_PTR ready_input, 
+    NULL,               /* F_PTR ready_input,
                            called when input descriptor ready to read*/
-    NULL,               /* F_PTR ready_output, 
+    NULL,               /* F_PTR ready_output,
                            called when output descriptor ready to write */
     "example_drv",     /* char *driver_name, the argument to open_port */
     NULL,               /* F_PTR finish, called when unloaded */
@@ -64,5 +64,5 @@ DRIVER_INIT(example_drv) /* must match name in driver_entry */
 {
     return &example_driver_entry;
 }
-  
+
 

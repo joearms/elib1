@@ -9,9 +9,9 @@ LOGS := $(wildcard *.log)
 CWD := $(shell pwd)
 
 ../ebin/%.beam: %.erl
-	## erlc +warn_missing_spec -o ../ebin -W $< 
+	## erlc +warn_missing_spec -o ../ebin -W $<
 	##  grep --silent --invert-match "_test"
-	erlc -o ../ebin -W $< 
+	erlc -o ../ebin -W $<
 
 ../ebin/%.beam: ../tmp/%.erl
 	erlc -o ../ebin -W $<
@@ -39,10 +39,10 @@ CWD := $(shell pwd)
 all: yecc beam html #chapHTML
 
 test:
-	dialyzer -Wno_return --src -c "." 
+	dialyzer -Wno_return --src -c "."
 
 utest:  beam
-	erl -noshell -eval "eunit:test(elib1_misc, [verbose])" -s init stop	
+	erl -noshell -eval "eunit:test(elib1_misc, [verbose])" -s init stop
 
 edoc:
 	erl -noshell -eval "edoc:application(lib, \".\", [{dir,\"../doc\"}])" \
@@ -56,7 +56,7 @@ yecc: ${YRL:%.yrl=../tmp/%.erl} ${YRL:%.yrl=../ebin/%.beam}
 
 chapPDF: ${CHAPS:%.chap=../../pdf/%.pdf}
 
-# chapHTML: ${CHAPS:%.chap=../../html/%.html}	
+# chapHTML: ${CHAPS:%.chap=../../html/%.html}
 
 books: ${BOOKS:%.book=../doc/%.html}
 
@@ -64,9 +64,9 @@ logs: ${LOGS:%.log=../doc/%.html}
 
 clean:
 	rm -rf ../ebin/*.beam
-	rm -rf ../doc/*.beam	
-	rm -rf *.aux *.beam 
-	rm -rf *.log *.tmp erl_crash.dump 
+	rm -rf ../doc/*.beam
+	rm -rf *.aux *.beam
+	rm -rf *.log *.tmp erl_crash.dump
 
 veryclean:
 	rm ../bin/* ../doc/* ../tmp/*

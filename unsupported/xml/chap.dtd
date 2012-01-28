@@ -2,7 +2,7 @@
 <!ENTITY  % flow   "img|a|erl|code|p|pre|ol|ul|dl|section">
 
 <!ELEMENT chap (title , (%flow;)* )>
-<!ELEMENT title (#PCDATA)> 
+<!ELEMENT title (#PCDATA)>
 <!ELEMENT section (#PCDATA)>
 <!ELEMENT p  (%inline;)*>
 <!ELEMENT c  (#PCDATA) >

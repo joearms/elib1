@@ -27,7 +27,7 @@ list1(BaseDir, RelDir) ->
 
 mkfull("/", I) -> "/" ++ I;
 mkfull(Dir, I) -> Dir ++ "/" ++ I.
-    
+
 
 format_dir(Dir, I) ->
     Full = mkfull(Dir,  I),
@@ -62,7 +62,7 @@ format_img(BaseDir, Dir, I) ->
     end,
     Thumb = filename:rootname(Full) ++ "_thumb.jpg",
     ["<a href='",Full,"'><img border='0' src='", Thumb, "'></a>"].
-     
+
 
 list_dir(BaseDir, SubDir) ->
     %% lists files in BaseDir ++ SubDir

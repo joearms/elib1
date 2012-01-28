@@ -42,7 +42,7 @@ follow(_Top, _Dir, H) ->
 	"." ++ _ ->
 	    %% io:format("rejecting:~p~n",[join([Top,Dir,H])]),
 	    false;
-	_ -> 
+	_ ->
 	    true
     end.
 
@@ -58,7 +58,7 @@ follow(_Top, _Dir, H) ->
 
 foldl(Top, F, A, Follow) ->
     case file:list_dir(Top) of
-	{ok, Files} -> 
+	{ok, Files} ->
 	    %% io:format("Files=~p~n",[Files]),
 	    fold_files(Files, Top, [], F, A, Follow, []);
 	{error, _}  -> A
@@ -86,7 +86,7 @@ fold_files([H|T], Top, Dir, F, A, Follow, Path) ->
 			false ->
 			    %% io:format("following symlink:~p~n",[FullName]),
 			    A1 = fold_files(T, Top, Dir, F, A, Follow, Path),
-			    Dir1 = filename:join([Dir,H]), 
+			    Dir1 = filename:join([Dir,H]),
 			    fold_files([], Top, Dir1, F, A1, Follow,[Dir1|Path])
 		    end
 	    end;
@@ -95,13 +95,13 @@ fold_files([H|T], Top, Dir, F, A, Follow, Path) ->
 		     true ->
 			 Top1 = filename:join([Top, Dir, H]),
 			 case file:list_dir(Top1) of
-			     {ok, Files} -> 
+			     {ok, Files} ->
 				 %% io:format("Files=~p~n",[Files]),
 				 %% io:format("Dir:~p H=~p join=~p~n",
 				 %% [Dir,H,join1(Dir,H)]),
-				 fold_files(Files, Top, join1(Dir,H), F, 
+				 fold_files(Files, Top, join1(Dir,H), F,
 					    A, Follow, Path);
-			     {error, _}  -> 
+			     {error, _}  ->
 				 A
 			 end;
 		     false ->
@@ -115,7 +115,7 @@ fold_files([H|T], Top, Dir, F, A, Follow, Path) ->
 
 join1([], H) -> H;
 join1(D, H) -> join([D,H]).
-    
+
 
 contains_dotdot(".." ++ _) -> true;
 contains_dotdot([]) -> false;
@@ -137,6 +137,6 @@ file_type(File) ->
 		    error
 	    end
     end.
-    
 
-			    
+
+

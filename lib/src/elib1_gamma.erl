@@ -18,7 +18,7 @@
 %% so 4 = 1 + 3 is coded as unary = 1110
 %% followed by 9-8 =1 as a three bit binary code = 011
 %% finally 1110 001"
-  
+
 
 %% Gamma codes (page 117)
 
@@ -52,7 +52,7 @@ unit_test() ->
     alist_to_gamma([2,4,123,44456]),
     ok.
 
-test1(N, B) ->    
+test1(N, B) ->
     B1 = encode(N),
     case B1 of
 	B ->
@@ -77,8 +77,8 @@ test3(N, A) ->
     test2(A - 10),
     test2(A - 10),
     test3(N+1, 2*A).
-    
-    
+
+
 %%----------------------------------------------------------------------
 %% encode(Int) -> bits()
 
@@ -94,7 +94,7 @@ unary(N) -> B = unary(N-1),<<1:1,B/bits>>.
 
 %% f(X) = floor(log2(X)).
 %%   ie the smallest N for which 2^N > X
-%%   example f(9) 
+%%   example f(9)
 %%      2^3 = 8, 2^4 = 16
 %%      so 2^3.xxx = 9
 %%      so X = 3.xxxx and floor(X) = 3
@@ -103,9 +103,9 @@ unary(N) -> B = unary(N-1),<<1:1,B/bits>>.
 f(X) -> f(X, 1, 0).
 
 f(X, X, N) -> {N,X};
-f(X, Acc, N) -> 
+f(X, Acc, N) ->
     Acc1 = Acc*2,
-    if 
+    if
 	Acc1 > X -> {N, Acc};
 	true     -> f(X, Acc1, N+1)
     end.
@@ -117,10 +117,10 @@ f(X, Acc, N) ->
 %% decode(B:bits()) -> {Int, Length, B1:bits()}
 
 -spec decode(B::bitstring()) ->
-    {Int::integer(), Length::integer(), B1::bitstring()}. 
+    {Int::integer(), Length::integer(), B1::bitstring()}.
 
 %%   Remove a gamma encoded Int from the head of the bitstring B.
-%%   Return the Integer, the number of bits and the remainder of the 
+%%   Return the Integer, the number of bits and the remainder of the
 %%   bitstring.
 
 %% decode(B) works just like decode
@@ -198,7 +198,7 @@ pow(N, 1) -> N;
 pow(N, M) -> N * pow(N, M-1).
 
 %%----------------------------------------------------------------------
-%% Compression and decompression of 
+%% Compression and decompression of
 %%   ascending lists with no duplicates
 %%   These are inverses
 %%   alist_to_gamma(L)   -> Bin
@@ -206,7 +206,7 @@ pow(N, M) -> N * pow(N, M-1).
 
 %% actually this is an opaque type
 -spec alist_to_gamma([integer()]) -> binary().
-    
+
 alist_to_gamma(L) ->
     Bin = term_to_binary(alist_to_gamma1(L)),
     case gamma_to_alist(Bin) of
@@ -214,7 +214,7 @@ alist_to_gamma(L) ->
 	_ -> exit({eAlistToGamma,L})
     end.
 
-alist_to_gamma1([L]) -> 
+alist_to_gamma1([L]) ->
     {one, L};
 alist_to_gamma1([H|T]) ->
     L  = dlist(H, T),
@@ -246,6 +246,6 @@ make_list(_, [])    -> [].
 
 
 
-    
-    
+
+
 

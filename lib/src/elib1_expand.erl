@@ -79,14 +79,14 @@ insert(F) ->
 
 string2html("<" ++ T) -> "&lt;"  ++ string2html(T);
 string2html("&" ++ T) -> "&amp;" ++ string2html(T);
-string2html([H|T])    -> [H|string2html(T)];            
+string2html([H|T])    -> [H|string2html(T)];
 string2html([])       -> [].
 
 %% this adds this module to be the default if no module is supplied
 
 add_default_module({call,Ln,{atom,_,_}=Func, Args}) ->
     {call,Ln,
-     {remote,Ln,{atom,Ln,?MODULE},Func}, 
+     {remote,Ln,{atom,Ln,?MODULE},Func},
      add_default_module(Args)};
 add_default_module(T) when is_tuple(T) ->
     list_to_tuple(add_default_module(tuple_to_list(T)));
@@ -164,7 +164,7 @@ quote_file(File) ->
 	    ""
     end.
 
-expand_lt([$<|T]) -> 
+expand_lt([$<|T]) ->
     "&lt;" ++ expand_lt(T);
 expand_lt([H|T]) ->
     [H|expand_lt(T)];

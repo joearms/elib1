@@ -2,6 +2,6 @@ These programs are *very* fragile -- do not edit
 make a copy of entire directory and edit
 
 NOTES: cpp must be compiled with g++ not gcc
-       ldd -r example_drv.so 
+       ldd -r example_drv.so
 
 Is useful for debugging

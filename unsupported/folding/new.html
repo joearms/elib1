@@ -36,36 +36,36 @@ body { margin-left:10%; background-color: #f0f0f0;}
 
 .level1 { padding-left:10px;
          background-color:#9999ff;
-         border-left: 1px solid black; 
+         border-left: 1px solid black;
 	 border-bottom: 1px solid black; }
 
 .level2 { padding-left:25px;
          background-color:#bbbbff;
-         border-left: 1px solid black; 
+         border-left: 1px solid black;
 	 border-bottom: 1px solid black; }
 
 .level3 { padding-left:40px;
          background-color:#ddddff;
-         border-left: 1px solid black; 
+         border-left: 1px solid black;
 	 border-bottom: 1px solid black; }
 
 .data1{  padding-left: 25px;
          background-color: #ffffff;
-         border-left: 1px solid black; 
+         border-left: 1px solid black;
 	 border-bottom: 1px solid black; }
 
 .data2{  padding-left: 40px;
          background-color: #ffffff;
-         border-left: 1px solid black; 
+         border-left: 1px solid black;
 	 border-bottom: 1px solid black; }
 
 .data3{  padding-left: 55px;
          background-color: #ffffff;
-         border-left: 1px solid black; 
+         border-left: 1px solid black;
 	 border-bottom: 1px solid black; }
 
-.selected { padding-left:40px; 
-         border-left: 1px solid black; 
+.selected { padding-left:40px;
+         border-left: 1px solid black;
 	 border-bottom: 1px solid black;
          background-color: #ffc080 }
 
@@ -94,7 +94,7 @@ var data = [
      content: "To organise your headings you can move them up or down using the **u** and **d** keys.\n\nYou can promote or demote a level by using the left and right arrows.\n\nNote that you can only move a level up within it's own level - to move a header2 up beyond the current block of header 2 elements you have to move it up using the **u** key as far as it will go then use the //left arrow// to promote the level to a header 1 - then you can move it higher",
      level: 1},
     {header:"Wiki text",
-     show: true, open: false, 
+     show: true, open: false,
      content: "The internal form of a fold is //wiki text// - the relationship between the wiki text and the formatted text is --very simple-- easy to understand if you just hit ESC - then you will see the wiki text and the rendered text on the screen at the same time. Try it now.",
      level: 1},
     {header:"Preformatted text",
@@ -117,9 +117,9 @@ var data = [
      show: true, open: false,
      level:1,
      content: "* Remove flickering. I realise that this can be done by simply toggeling the display property of the appropriate elemement between //block// and //none//. This should be fairly easy. I will try this in //structure editor1//"}
-     
+
     ];
-     
+
 var selected = 0;
 var foldingMode = true;
 var mode = "navigate";
@@ -145,7 +145,7 @@ function edit_selected(){
     data[selected].show = true;
     render_rows();
 }
-	
+
 function load() {
     var max, i;
     selected = 0;
@@ -174,7 +174,7 @@ function debug(){
 function render_folds(){
     var level, id, i, max,row,col;
     document.getElementById("mode").innerHTML = mode;
-    id = document.getElementById("maintab"); 
+    id = document.getElementById("maintab");
     id.innerHTML = "";
     max = data.length;
     for(i=0; i< max; i++){
@@ -250,7 +250,7 @@ function move_selection_down(){
     stop = i-1;
     // alert("start = "+start+" stop = "+stop);
     // find out where to put the data
-    // at stop + 1 we should either be at the end of the 
+    // at stop + 1 we should either be at the end of the
     // array OR we have hit a h(nn)
     // alert("i=+"+i);
     if(i==max)return(false);
@@ -283,7 +283,7 @@ function move_block_forward(start, stop, insert){
     selected = p.length + r.length;
     data = p.concat(r,q,s);
 
-    
+
     return (data);
 }
 
@@ -309,15 +309,15 @@ function render_rows() {
 }
 
 function clear_static_display(){
-  id = document.getElementById("statictab"); 
+  id = document.getElementById("statictab");
   id.innerHTML="";
 }
 
 function render_non_folding(){
     var i,id,max;
-    id = document.getElementById("maintab"); 
+    id = document.getElementById("maintab");
     id.innerHTML = "";
-    id = document.getElementById("statictab"); 
+    id = document.getElementById("statictab");
     max = data.length;
     for(i=0; i < max; i++){
 	id.innerHTML += "<h1>" + data[i].header + "</h1>";
@@ -408,7 +408,7 @@ function key_press_fold(key){
 	selected = selection_up();
 	break;
     case 39:
-	// right arrow 
+	// right arrow
 	if(data[selected].level < 3) data[selected].level += 1;
 	break;
      case 85:
@@ -448,10 +448,10 @@ function whichElement(e)
 {
     var targ
     if (!e) var e = window.event
-    if (e.target) 
+    if (e.target)
        targ = e.target
-    else 
-       if (e.srcElement) 
+    else
+       if (e.srcElement)
 	  targ = e.srcElement
     if (targ.nodeType == 3) // defeat Safari bug
 	targ = targ.parentNode

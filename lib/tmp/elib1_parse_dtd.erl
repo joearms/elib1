@@ -20,7 +20,7 @@ fix_mod(Mod, X) -> {Mod, X}.
 unwrap2({_,X,_}) -> X.
 
 unwrap3({_,_,X}) -> X.
-    
+
 
 fix_name({_,_,X}) ->
     list_to_atom(X).
@@ -63,13 +63,13 @@ collect_stuff([{'%',_},{name,Ln,Name},{';',_}|T], Forms, Ents, F) ->
     T1 = expand_entity(Name, Ln, Ents),
     collect_stuff(T1 ++ T, Forms, Ents, F);
 collect_stuff([{'<!', _},{entity,_},{'%',_},{name,_,Name},
-	       {string,_,Str},{'>',_}|Toks], 
+	       {string,_,Str},{'>',_}|Toks],
 	      Forms, Ents, F) ->
     %% io:format("Name=~p Str=~p~n",[Name,Str]),
     Str1 = expand_entities_in_string(Str, Name, 1, Ents),
     collect_stuff(Toks, Forms, [{Name,Str1}|Ents], F);
 collect_stuff([{'<!', _},{entity,_},{'%',_},{name,_,Name},{name,_,_Vis},
-	       {string,_,StdName},{string,_,LocalName},{'>',_}|Toks], 
+	       {string,_,StdName},{string,_,LocalName},{'>',_}|Toks],
 	      Forms, Ents, F) ->
     %% Vis = "PUBLIC" | "PRIVATE"
     %% Defining a parameter entity
@@ -103,7 +103,7 @@ do_parse({form, [{entity,_},{name,_,N},{string,_,S}]}) ->
     {entity, {N,S}};
 do_parse({form, Toks}) ->
     case parse(Toks) of
-	{error,{Line,Mod,Args}} -> 
+	{error,{Line,Mod,Args}} ->
 	    io:format("Parse:~p~n",[Toks]),
 	    Str = lists:flatten(Mod:format_error(Args)),
 	    io:format("Error line:~w ~s~n",[Line, Str]),
@@ -111,7 +111,7 @@ do_parse({form, Toks}) ->
 	{ok, P} ->
 	    P
     end.
-    
+
 expand_entities_in_string(_, Name, 20, _) ->
     exit({tooDeepRecursionInExpandEntity,Name});
 expand_entities_in_string([$%|T], Name, Level, E) ->
@@ -127,7 +127,7 @@ expand_entities_in_string([$%|T], Name, Level, E) ->
 	    [$%|expand_entities_in_string(T, Name, Level, E)]
      end;
 expand_entities_in_string([H|T], Name, Level, E) ->
-    [H|expand_entities_in_string(T, Name, Level, E)]; 
+    [H|expand_entities_in_string(T, Name, Level, E)];
 expand_entities_in_string([], _, _, _) ->
     [].
 
@@ -152,7 +152,7 @@ expand_entity(Name, Ln, Ents) ->
 skip_comment("-->" ++ T, Ln) -> {Ln, T};
 skip_comment([$\n|T], Ln)    -> skip_comment(T, Ln+1);
 skip_comment([_|T], Ln)      -> skip_comment(T, Ln).
-    
+
 tokenize("<!--" ++ T, Ln, L) ->
     {Ln1, T1} = skip_comment(T, Ln),
     tokenize(T1, Ln1, L);
@@ -193,13 +193,13 @@ tokenize([H|T], Ln, L) when H =:= $(; H =:= $);
                             H =:= $=;
 			    H =:= $%; H =:= $;;
 			    H =:= $|; H == $*;
-			    H =:= $/; 
+			    H =:= $/;
                             H =:= $$; H == $[;
                             H == $#;
-			    H =:= $,; H =:= $>; 
+			    H =:= $,; H =:= $>;
                             H =:= $+; H =:= $?; H =:= $] ->
     tokenize(T, Ln, {list_to_atom([H]),Ln}, L);
-tokenize([$\n|T], Ln, L) -> 
+tokenize([$\n|T], Ln, L) ->
     tokenize(T, Ln+1, L);
 tokenize([$"|T], Ln, L) ->
     {Str, Ln1, T1} = collect_string(T, $", Ln, []),
@@ -260,7 +260,7 @@ check_grammar(G) ->
 	[] -> void;
 	_ -> exit({attributeHasNoElement,Missing2})
     end.
-	    
+
 
 atoms_in(H, L) when is_atom(H) ->
     case member(H, L) of
@@ -273,33 +273,33 @@ atoms_in([H|T], L) ->
     atoms_in(H, atoms_in(T, L));
 atoms_in(_, L) ->
     L.
-    
+
 merge_attribues_and_elements(G) ->
     {Elems, Attrs} = lists:partition(fun({{element,_I},_}) -> true;
 					(_) -> false
 				     end, G),
     [{I, {Def, get_attr(I, Attrs)}} || {{element,I},Def} <- Elems].
-					     
+
 get_attr(I, Attrs) ->
     elib1_misc:lookup({attlist,I}, Attrs).
 
 -file("/usr/local/lib/erlang/lib/parsetools-2.0.1/include/yeccpre.hrl", 0).
 %%
 %% %CopyrightBegin%
-%% 
+%%
 %% Copyright Ericsson AB 1996-2009. All Rights Reserved.
-%% 
+%%
 %% The contents of this file are subject to the Erlang Public License,
 %% Version 1.1, (the "License"); you may not use this file except in
 %% compliance with the License. You should have received a copy of the
 %% Erlang Public License along with this software. If not, it can be
 %% retrieved online at http://www.erlang.org/.
-%% 
+%%
 %% Software distributed under the License is distributed on an "AS IS"
 %% basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
 %% the License for the specific language governing rights and limitations
 %% under the License.
-%% 
+%%
 %% %CopyrightEnd%
 %%
 
@@ -340,7 +340,7 @@ return_error(Line, Message) ->
 
 yeccpars0(Tokens, Tzr, State, States, Vstack) ->
     try yeccpars1(Tokens, Tzr, State, States, Vstack)
-    catch 
+    catch
         error: Error ->
             Stacktrace = erlang:get_stacktrace(),
             try yecc_error_type(Error, Stacktrace) of

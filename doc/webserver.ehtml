@@ -10,12 +10,12 @@
   </p>
 
   <h2>Starting the web server</h2>
-  
+
   <pre>    &gt; elib1_webkit:start_web_server(Port, Root)
   </pre>
 
   <h2>Urls and callbacks</h2>
-  
+
   <dl>
     <dt>Path/to/FileName</dt>
     <dd>
@@ -33,7 +33,7 @@
       necessary. It will call <b>foo:bar(...)handle/3</b></p>
     </dd>
   </dl>
-  
+
   <h2>handle/3</h2>
 
   <dl>
@@ -46,7 +46,7 @@
       </ul>
     </dd>
   </dl>
- 
+
 
 
 

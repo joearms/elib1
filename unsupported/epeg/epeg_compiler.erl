@@ -8,7 +8,7 @@
 -import(lists, [map/2, reverse/1]).
 
 %% -import(epeg_pc,
-%% 	[alt/1, any/0, bang/1, block/1, cc/1, char/1, 
+%% 	[alt/1, any/0, bang/1, block/1, cc/1, char/1,
 %% 	 do/2, lit/1, plus/1, question/1, star/1, seq/1]).
 
 -export([compile/2]).
@@ -70,7 +70,7 @@ compile({seq,L}, M, N) ->
 compile({alt,[X]}, M, N) ->
     compile(X, M, N);
 compile({alt,L}, M, N) ->
-    ["epeg_pc:alt([\n",indent(N+4), 
+    ["epeg_pc:alt([\n",indent(N+4),
      interlieve([",\n",indent(N+4)], [compile(I, M, N+4) || I <- L]),"])"];
 compile(C, _, _) ->
     io:format("cannot compile:~p~n",[C]),
@@ -78,7 +78,7 @@ compile(C, _, _) ->
 
 indent(0) -> [];
 indent(N) -> [$\s|indent(N-1)].
-    
+
 
 make_head({seq, L}) ->
     N = length(L),
@@ -91,7 +91,7 @@ make_head(_) ->
 
 mkVars(0) -> [];
 mkVars(N) -> ["V" ++ integer_to_list(N) | mkVars(N-1)].
-    
+
 name([$-|T]) -> "'parse_-" ++ T ++ "'";
 name([$'|T]) -> "'parse_" ++ T;
 name(X) -> "parse_" ++ X.
@@ -99,7 +99,7 @@ name(X) -> "parse_" ++ X.
 name1([$-|T]) -> "'-" ++ T ++ "'";
 name1([$'|T]) -> "'" ++ T;
 name1(X) -> X.
-    
+
 interlieve(_, [H]) -> [H];
 interlieve(_, []) -> [];
 interlieve(X, [H|T]) -> [H,X,interlieve(X, T)].
@@ -122,7 +122,7 @@ comment(F) ->
 comment1([$\n|T]) -> ["\n%% "|comment1(T)];
 comment1([H|T]) ->  [H|comment1(T)];
 comment1([]) -> ["\n\n"].
-    
+
 pp1(I, X) ->
     ["-------------- begin ----------------\n",
      "DEFN ", I, " = ", pp2(X), " ;"].
@@ -140,11 +140,11 @@ body({nt, Mod,X}) -> [Mod,":",X];
 body({litthenspace,X}) -> [$',X,$'];
 body({lit,X}) -> [$",X,$"];
 body({Tag,_} = S) when Tag == seq; Tag == alt; Tag == star;
-		       Tag == question; Tag == plus 
+		       Tag == question; Tag == plus
 		       -> ["(", pp2(S), ")"];
 body({class,C}) -> ["[",pp_class(C),"]"];
 body(any) -> ".";
-body(X) ->    
+body(X) ->
  io_lib:format("Uggh:~p",[X]).
 
 pp_class([{A,B}|T]) -> [A,$-,B|pp_class(T)];
@@ -167,4 +167,4 @@ remove_final_defn([{defn,"final",_}|T]) -> T;
 remove_final_defn([H|T]) -> [H|remove_final_defn(T)];
 remove_final_defn([]) -> [].
 
-    
+
