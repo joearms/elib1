@@ -1,0 +1,22 @@
+= chunks
+
+I am going to give a talk at Spotify and am a bit nervous about how it
+will be received.
+
+The talk is ready so not I have to kill an hour or so.
+
+I'm going to go back to my theme of ''information chunks''. The basic
+fault with all that I have done before is that all the data I generate
+is in text files, which I create with an editor and ''not'' in a
+database.
+
+I'm going to develop the program in order:
+
+First I think I need a pretty web display. I'll mock this up ...
+in new.html
+
+
+
+
+
+

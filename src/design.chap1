@@ -1,0 +1,154 @@
+= Projects
+
+Before you can do ''anything at all'' you need to impose a little order
+on your masterwork. Any project that is destined to be ''the next great hack''
+must have ''some structure.'' The temptation to ''just start hacking'' is
+enormous, but there is really bit of infrastructure that is needed before
+you start hacking. Having said this, I must admit it is difficult
+to follow the rules, you really want to start hacking ''immediately''
+but it's a good ides to have some basic infrastructure in-place before you start.
+The larger the project  becomes, the more important this is.
+
+Here's the order I've decided upon:
+
+<ol>
++ I'll use and must define  a fixed and defined directory structure.
++ I need a documentation tool to produce ~~nice~~ beautiful documentation
++ I need a search tool and meta-data in my code
++ I need Xref - types etc to check my code
+</ol>
+
+Why do I want these things in-place before I start hacking?
+
+<dl> 
+[directory structures] Should I put everything in one directory
+or define a directory structure and force my files into this
+structure?  This is a difficult question. If I had a very small
+project involving only a few files I would obviously stick everything
+into a single directory---anything else would be overkill. For large
+projects this doesn't work, so we need a directory structure. It is
+best to think about and design this directory structure ''before''
+writing the code. 
+
+This is especially important in a multi-person
+project. The folks in the project need to know in which directories
+they should put their code.
+
+[documentation] We need a way to write documentation. ~~Preferably this
+ill result in ''beautiful'' documentation.~~ This ''must'' produce
+''beautiful'' documentation (so that people will want to read it)---the
+documentation should be a "pleasure" to read. The documentation system
+needs to be in-place ''before'' we write the project code, so we need
+pre-phase to set this up (or use an existing documentation system).
+The documentation system should be tied to the code base so that
+relations between the code and the documentation can be automated.
+
+[finding stuff] As projects grow the difficulty in finding stuff
+increases.  When you have ten thousand files you begin to wish that
+every document had been tagged with meta data and index in a search
+engine. Now is too late.  Retrofitting meta data to large projects
+never works (or if it does it requires massive effort). So right from
+the beginning we should be thinking about the meta data we will need in
+our files and how we will store and find this data.
+
+[finding errors at compile time] There are many tools that can help us
+find errors at compile time. Cross reference tools, type inference
+tools, unit test frameworks. These tools are being continually
+improved, but how they are used and how they are customised to just
+''your'' project needs thinking about. It's better to set this stuff
+up ''before'' you get started.  When you are in the ,middle of your
+project you certainly won't have time for this.
+</dl>
+
+== Layout
+
+Let's have some <<code>> here, and ''italics''.
+We can ~~strike~~ some text.
+
+We have the following sub-directories:
+  
+<dl>
+[src] Source code. This is restricted to the following file types:
+  <<.erl>>, <<.chap>> <<.book>>, <<.hrl>>. The content of this file
+  are not actually intended to be read ''directly'', by this we
+  mean we will always read content that is automatically generated
+  from this directory. Files generated in the compilation process, or,
+  for example while generating documentation are not in this
+  directory.  
+
+[ebin] <<.beam>> files. These are put in one directory so that we can
+  point search paths to this directory. We might add additional
+  executables to this directory. At any time the entire contents of
+  this directory can be deleted without problems.
+
+[doc] Generated documentation. This will contain (for example)
+  <<.pdf>> and <<.html>> files. These files should not be hand-edited.
+  The contents of this directory can be deleted.
+
+[save] The contents of this directory must not be deleted. This might
+  for example have a database that records all edits to the system
+  etc.
+
+[tmp] Temporary files. There may be a large number of files here don't
+  worry, the entire contents can safely be deleted.
+
+[bin] Programs, scripts that can be run. These aren't in ebin these
+  are the top-level commands that the user can execute.  
+</dl>
+
+== Programs in bin
+
+<dl> 
+[bin/publish X] Takes a file <<X.lit>> file in the current directory
+  and produces two beautiful files <<X.html>> and <<X.pdf>> in the
+  <<../doc>> directory. Temporary files are put in <<../tmp>>. This
+  command should leave no crud in the current directory. If there are
+  syntax errors then they will be written somewhere.
+</dl>
+
+ 
+== Design
+
+The documentation system uses two commands <<bin/mkchap>> and <<bin/mkbook>>.
+
+<dl>
+[mkchap X.chap] is run in the <<src>> directory. If there are no
+errors in <<X.cap>> then the following files
+are created <<../tmp/X.inc>>, <<../tmp/X.tex>>, <<../doc/X.html>>,
+and <<../doc/X.pdf>>. If anything goes wrong <warn>more here</warn>.
+
+[mkbook X.book] is run in the <<src>> directory. If there are no
+errors in <<X.book>> then the following files
+are created <<../tmp/X.inc>>, <<../tmp/X.tex>>, <<../doc/X.html>>,
+and <<../doc/X.pdf>>. If anything goes wrong <warn>more here</warn>.
+</dl>
+
+The workhorse of the system is <<mkcap>> this converts ''wiki text''
+into PDF and HTML. In writing <<mkchap>> I have adopted a
+''minimalistic approach'', namely:
+
+<ul>
++ Reuse as much code as possible.
++ Write as little as possible
++ Only implement what I need for the documents I have written
++ Make the output look nice
+</ul>
+
+<include file="elib1_docmaker.erl" tag="tag1" />
+
+=== Parse tree of DL
+
+
+<pre>
+[aaa]p1
+[bbb]p1
+p2
+...
+</pre>
+
+is:
+
+<pre>
+{dl, [{tag,"aaa",[{p,p1},{p,P2}]},
+      {tag, "bbb",[{p,p1}]}}
+</pre>

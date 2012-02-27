@@ -1,0 +1,549 @@
+%% Copyright (c) 2006-2009 Joe Armstrong
+%% See MIT-LICENSE for licensing information.
+
+%% elib1_new_webkit  
+%% Time-stamp: <2009-10-15 16:43:36 ejoearm>
+%%---------------------------------------------------------------------------
+%% Copyright (c) 2009 Joe Armstrong <erlang@gmail.com>
+%% Copyright (c) 2009 Whoomph Software AB 
+%%
+%% Permission is hereby granted, free of charge, to any person
+%% obtaining a copy of this software and associated documentation
+%% files (the "Software"), to deal in the Software without
+%% restriction, including without limitation the rights to use, copy,
+%% modify, merge, publish, distribute, sublicense, and/or sell copies
+%% of the Software, and to permit persons to whom the Software is
+%% furnished to do so, subject to the following conditions:
+%%
+%% The above copyright notice and this permission notice shall be
+%% included in all copies or substantial portions of the Software.
+%%
+%% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+%% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+%% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+%% NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+%% BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+%% ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+%% CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+%% SOFTWARE.
+%%---------------------------------------------------------------------------
+
+%% This is an extemely simple, zero configuration webkit.
+%% Using the webkit you can easily make a small HTTP server
+%% running on localhost that is good enough for
+%% backendign simple applications. It is by no means a
+%% full-blown HTTP server, so it is not intended as a replacement
+%% for a "proper" HTTP server, but memely as something that is
+%% usful for interfaceing small scale web applicttions to your
+%% browser.
+%%
+%% The webkit acts as a "middle man" and abstracts out details
+%% of the real HTTP protocol converting it into a form
+%% that is convenient for an Erlang program.
+%% 
+%% that abstract the protocol in different ways
+%% The simplest is
+%%  Messages from driver 
+%%  {Pid, {get, File, Args}}
+%%  {Pid, {post, File, Args, Data}}
+%%  {Pid, close}
+%%  To the client
+%%  {page, FileExtension, DeepList} 
+%%  {error, What}
+%%  close
+
+-module(elib1_new_webkit).
+
+-import(lists, [map/2, reverse/1, reverse/2]).
+
+-compile(export_all).
+
+-export([start/2,
+	 start_batch_mod_server/1,
+	 start_fold_server/3,
+	 start_mod_server/2,
+	 start_static_server/2,
+	 serve_static_file/1,
+	 serve_static_file_report_error/1,
+	 classify/1, 
+	 forever/0,
+	 mod_server/4,
+	 header/1, 
+	 mime/1,
+	 pre/1, 
+	 get_file/1
+	]).
+
+start(Port, Fun) ->
+    {ok, Listen} = gen_tcp:listen(Port, 
+				  [binary,
+				   %% {dontroute, true},
+				   {nodelay,true},
+				   {packet, 0},
+				   {reuseaddr, true}, 
+				   {active, true}]),
+    io:format("listen port:~p~n",[Port]),
+    spawn_link(fun() -> par_connect(Listen, Fun) end).
+
+par_connect(Listen, Fun) ->
+    process_flag(trap_exit, true),
+    {ok, Socket} = gen_tcp:accept(Listen),
+    %% make another one
+    spawn_link(fun() -> par_connect(Listen, Fun) end),
+    %% When we get here we're off
+    process_flag(trap_exit, true),
+    Where = inet:peername(Socket),
+    S = self(),
+    io:format("http driver opened socket:~p~n",[Socket]),
+    Pid = spawn_link(fun() -> Fun(S, Where) end),
+    relay(Socket, Pid, {header, []}).
+
+relay(Socket, Server, State) ->
+    receive
+	{tcp, Socket, Bin} ->
+	    Data = binary_to_list(Bin),
+	    %% io:format("<-- ~s~n", [Data]),
+	    parse_request(State, Socket, Server, Data);
+	{tcp_closed, Socket} ->
+	    io:format("http driver got tcp closed (socket:~p) -" 
+		      " so browser closed connection~n",
+		      [Socket]),
+	    Server ! {self(), closed};
+	{Server, close} ->
+	    io:format("server closed connection~n"),
+	    gen_tcp:close(Socket);
+	{response, Tag, Data} ->
+	    B1  = list_to_binary(Data),
+	    Len = size(B1),
+	    Mime = mime_type(Tag),
+	    Packet = ["HTTP/1.1 200 Ok\r\n", content_type(Mime),
+		      "Content-Length: ", integer_to_list(Len), "\r\n\r\n",
+		      B1],
+	    %% io:format("Packet=~p~n",[B1]),
+	    gen_tcp:send(Socket, Packet),
+	    relay(Socket, Server, State);
+	{response1,Code,Headers,Data} ->
+	    Headers1 = [[Key,":",Val,"\r\n"] || {Key, Val} <- Headers],
+	    Bin = list_to_binary(Data),
+	    CL = ["Content-Length:",i2s(size(Bin)),"\r\n\r\n"],
+	    Packet = ["HTTP/1.1", i2s(Code), " Ok\r\n", Headers1, CL, Bin],
+	    gen_tcp:send(Socket, Packet),
+	    relay(Socket, Server, State);
+	{error, Code} ->
+	    Packet = ["HTTP/1.1 ",i2s(Code),
+		      " Error\r\nContent-Length:0\r\n\r\n"],
+	    %% io:format("Packet=~p~n",[B1]),
+	    gen_tcp:send(Socket, Packet),
+	    relay(Socket, Server, State);
+	{Server, {Headers, Data}} ->
+	    %% io:format("--> ~p ~p~n", [Headers1, B1]),
+    	    gen_tcp:send(Socket, [Headers,Data]),
+	    relay(Socket, Server, State);
+	{'EXIT', Server, Why} ->
+	    io:format("elib1_new_webkit:relay Server exit reason-~p~n",[Why]),
+	    gen_tcp:close(Socket);
+	Other ->
+	    io:format("http_driver unexpected message:~p~n",[Other]),
+	    relay(Socket, Server, State)
+    end.
+
+parse_request({header, Buff}, Socket, Server, Data) ->
+    case scan_header(Data, Buff) of
+	{no, Buff1} ->
+	    %% not enought data to parse the header
+	    relay(Socket, Server, {header, Buff1});
+	{yes, Header, After} ->
+	    %% we've now got enought data to parse the header
+	    got_header(Socket, Server, Header, After)
+    end;
+parse_request({post, Buff, Len, X}, Socket, Server, Data) ->
+    case collect_chunk(Len, Data, Buff) of
+        {yes,PostData,After} ->
+            Args2 = parse_uri_args(PostData),
+	    {Op,Vsn,URI,Args1,Header} = X,
+	    Request = {Op,Vsn,URI,Args1 ++ Args2,Header},
+            Server ! {self(), Request},
+	    parse_request({header,[]}, Socket, Server, After);
+        {no,Buff1,Len1} ->
+            State = {post, Buff1, Len1, X},
+	    relay(Socket, Server, State)
+    end.
+
+got_header(Socket, Server, Header, After) ->
+    %% We've got the header - parse it
+    %% io:format("Header=~p~n",[Header]),
+    case parse_header(Header) of
+	{0, Result} ->
+	    %% Send the parsed request to the server
+	    %% io:format("**finally sending:~p~n",[{self(),Result}]),
+	    Server ! {self(), Result},
+	    %% go get the next request
+	    parse_request({header,[]}, Socket, Server, After);
+	{ContentLen, Result} ->
+	    %% only post commands have extra data
+	    State = {post, [], ContentLen, Result},
+	    parse_request(State, Socket, Server, After)
+    end.
+
+collect_chunk(0, New, Buf)      -> {yes, reverse(Buf), New};
+collect_chunk(N, [H|T], Buff)   -> collect_chunk(N-1, T, [H|Buff]);
+collect_chunk(N, [], Buff)      -> {no, Buff, N}.
+
+%% scan_header is a reentrant scanner that collects data up to
+%% \r\n\r\n
+
+scan_header([$\n|T], [$\r,$\n,$\r|L]) -> {yes, reverse(L), T};
+scan_header([H|T],  L)                -> scan_header(T, [H|L]);
+scan_header([], L)                    -> {no, L}.
+				
+mime_type(gif)  ->  "image/gif";
+mime_type(jpg) -> "image/jpeg";
+mime_type(png) -> "image/png";
+mime_type(css)  -> "text/css";
+mime_type(json)  -> "application/json";
+mime_type(swf)  -> "application/x-shockwave-flash";
+mime_type(html) -> "text/html";
+mime_type(xul) -> "application/vnd.mozilla.xul+xml";
+mime_type(js)   -> "application/x-javascript";
+mime_type(svg)   -> "image/svg+xml";
+mime_type(X) when is_atom(X) -> mime_type(html);
+mime_type(FileName) -> mime_type(classify(FileName)).
+
+mime(Tag) ->
+    content_type(mime_type(Tag)).
+
+classify(FileName) ->
+    case string:to_lower(filename:extension(FileName)) of
+	".gif"  -> gif;
+	".jpg"  -> jpg;
+	".jpeg" -> jpg;
+	".css"  -> css;
+	".js"   -> js;
+	".svg"   -> svg;
+	".xul"  -> xul;
+	".html" -> html;
+	".htm"  -> html;
+	_       -> html
+    end.
+
+header(X) when is_atom(X) -> 
+    ["HTTP/1.0 200 Ok\r\n", powered_by(), content_type(mime_type(X))];
+header({redirect,To}) ->
+    ["HTTP/1.0 302 Come and get it!\r\n",
+     powered_by(), "Location: " ++ To ++ "\r\n"].
+
+powered_by() ->
+    "X-Powered-By: Erlang \r\n".
+
+content_type(X) ->
+    ["Content-Type: ", X, "\r\n"].
+
+%% parse_header(Str) -> {ContentLength, {Verb,Vsn, URI, Args, Headers}\\
+%%   Verb = get | put\\
+%%   ContentLen = the length of any additional data that has to be 
+%%                fetched
+
+parse_header(Str) ->
+    %% {ok, Fields} = regexp:split(Str, "\r\n"),
+    Fields = re:split(Str, "\r\n",[{return,list}]),
+    {Verb, Vsn, Path, Args} = parse_request(hd(Fields)),
+    %% Args = "KeyWord: Str" ..
+    Headers  = map(fun isolate_arg/1, tl(Fields)),
+    Len = content_length(Headers),
+    {Len, {Verb, Vsn, Path, Args, Headers}}.
+
+%% I've lower cased to header keys
+%% so Content-Length is lower cased here
+
+content_length([{"content-length",Str}|_]) -> list_to_integer(Str);
+content_length([_|T]) ->  content_length(T);
+content_length([])    ->  0.
+
+urlencoded2str([$%,Hi,Lo|T]) -> [decode_hex(Hi, Lo)|urlencoded2str(T)];
+urlencoded2str([$+|T])       -> [$ |urlencoded2str(T)];
+urlencoded2str([H|T])        -> [H|urlencoded2str(T)];
+urlencoded2str([])           -> [].
+
+isolate_arg(Str) -> isolate_arg(Str, []).
+
+isolate_arg([$:,$ |T], L) -> {string:to_lower(reverse(L)), T};
+isolate_arg([H|T], L)     -> isolate_arg(T, [H|L]).
+
+%% decode_hex ...
+
+decode_hex(Hex1, Hex2) ->
+    hex2dec(Hex1)*16 + hex2dec(Hex2).
+
+hex2dec(X) when X >=$0, X =<$9 -> X-$0;
+hex2dec($A) -> 10;
+hex2dec($B) -> 11;
+hex2dec($C) -> 12;
+hex2dec($D) -> 13;
+hex2dec($E) -> 14;
+hex2dec($F) -> 15;
+hex2dec($a) -> 10;
+hex2dec($b) -> 11;
+hex2dec($c) -> 12;
+hex2dec($d) -> 13;
+hex2dec($e) -> 14;
+hex2dec($f) -> 15.
+
+%% parse_request(Str) -> {Verb,Vsn,Path,Args}
+%%   parse first line of an HTTP response
+
+parse_request(Str) ->
+    %% {ok, Fields} = regexp:split(Str, " "),
+    Fields = re:split(Str, " ",[{return,list}]),
+    case Fields of
+	["POST", URI, Vsn] ->
+	    {Path, Args} = parse_uri(URI),
+	    {post, parse_vsn(Vsn) , Path, Args};
+	["GET", URI, Vsn] ->
+	    {Path, Args} = parse_uri(URI),
+	    {get, parse_vsn(Vsn), Path, Args};
+	_  ->
+	    exit({badRequest,Str})
+    end.
+
+parse_vsn("HTTP/1.0") -> {1,0};
+parse_vsn(X) -> X.
+
+%% A typical URI looks
+%% like
+%% URI = "/a/b/c?password=aaa&invisible=Ahidden+value"+
+
+parse_uri(URI) ->
+    case string:tokens(URI, "?") of
+	[Root] ->
+	    {Root, []};
+	[Root, Args] ->
+	    {Root, parse_uri_args(Args)}
+    end.
+
+parse_uri_args(Args) ->
+    Args1 = string:tokens(Args, "&;"),
+    map(fun(KeyVal) ->
+	       case string:tokens(KeyVal, "=") of
+		   [Key, Val] ->
+		       {urlencoded2str(Key), urlencoded2str(Val)};
+		   [Key] ->
+		       {urlencoded2str(Key), ""};
+		   _ ->
+		       io:format("Invalid str:~p~n",[KeyVal]),
+		       {"error", "error"}
+	       end
+       end, Args1).
+
+i2s(I) ->
+    integer_to_list(I).
+
+get_file(File) ->
+    case file:read_file("." ++ File) of
+	{ok, Bin} ->
+	    Type = classify(File),
+	    {ok, Type, Bin};
+	Error ->
+	    Error
+    end.
+
+pre(X) ->
+    ["<pre>\n",quote(lists:flatten(io_lib:format("~p",[X]))), "</pre>"].
+
+quote("<" ++ T) -> "&lt;" ++ quote(T);
+quote("&" ++ T) -> "&amp;" ++ quote(T);
+quote([H|T]) -> [H|quote(T)];
+quote([]) -> [].
+    
+forever() ->
+    receive
+	after infinity ->
+		true
+	end.
+
+%% Now for some specialised servers
+%% Fun4(get|put, Uri, Args, State) ->
+%%    {response,Type,Data,State'}
+%%    {resoponseH, Type, Data,State'}
+%%    {erroer,Code,State'}
+
+start_fold_server(Port, Fun4, State) ->
+    %% From should be local host ... but I don't check
+    start(Port, fun(MM, _From) ->  loop4(MM, Fun4, State) end).
+    
+loop4(MM, Fun4, State) ->
+    receive
+	{MM, {Tag, _Vsn, Uri, Args, _Headers}} ->
+	    %% io:format("MM:~p ~p ~p~n",[Tag,Uri,Args]),
+	    case Fun4(Tag, Uri, Args, State) of
+		{response, Type, Data, State1} ->
+		    MM ! {response, Type, Data},
+		    loop4(MM, Fun4, State1);
+		{responseH, Type, Headers, Data, State1} ->
+		    MM ! {response1, Type, Headers, Data},
+		    loop4(MM, Fun4, State1);
+		{error, Code, State1} ->
+		    MM ! {error, Code},
+		    loop4(MM, Fun4, State1);
+		_ ->
+		    io:format("elib1_webkit:Bad Fun=~p ~p~n",[Uri,Args]),
+		    loop4(MM, Fun4, State)
+	    end;
+	Other ->
+	    io:format("Message dropped:~p~n",[Other]),
+	    loop4(MM, Fun4, State)
+    end.
+
+
+
+%%----------------------------------------------------------------------
+%% start_static_server(Port, Fun3)  a static server.
+%% By static is meant a server that is stateless. Each time a request comes
+%% Fun3(Tag, Uri, Args) is evaluated. This must return:
+%% {response, Type, Data} Type = html,js,gif, ...
+%% {error, Code}          Code = 400, ...
+%% {response1, Type, Headers, Data}
+
+
+start_static_server(Port, Fun3) ->
+    %% From should be local host ... but I don't check
+    start(Port, fun(MM, _From) ->  loop2(MM, Fun3) end).
+    
+loop2(MM, Fun) ->
+    receive
+	{MM, {Tag, _Vsn, Uri, Args, _Headers}} ->
+	    %% io:format("MM:~p ~p ~p~n",[Tag,Uri,Args]),
+	    MM ! Fun(Tag, Uri, Args),
+	    loop2(MM, Fun);
+	Other ->
+	    io:format("Message dropped:~p~n",[Other]),
+	    loop2(MM, Fun)
+    end.
+
+
+serve_static_file(File) ->
+    case file:read_file(File) of
+	{ok, Bin}  -> {response, classify(File), [Bin]};
+	{error, _} -> {error, 400}
+    end.
+
+serve_static_file_report_error_as_html(File) ->
+    case file:read_file(File) of
+	{ok, Bin}  -> {response, classify(File), [Bin]};
+	{error, _} -> {response, html,
+		       ["<h2>Missing file</h2>",
+			pre(File)]}
+    end.
+    
+
+serve_static_file_report_error(File) ->
+    case file:read_file(File) of
+	{ok, Bin}  -> {response, classify(File), [Bin]};
+	{error, _} -> io:format("** missing file:~p~n",[File]),
+		      {error, 400}
+    end.
+
+%% start_mod_server(Port, RootDir)
+%%   example:
+%%   start_mod_server(2009, "/home/joe/here/we/are").
+%%   This starts a server on Port
+%%   With root directory RoorDir
+%%   GET requests to files are assumed to be relative to RootDir
+%%   If the path is the form /mod/Mod/Func?Args
+%%   Then Mod:Func(Args) will be called
+%%   Mod must be located in RootDir and will be recompiled if necessary
+
+start_batch_mod_server([P,D]) ->
+    Port = list_to_integer(atom_to_list(P)),
+    Dir = atom_to_list(D),
+    start_mod_server(Port, Dir),
+    forever().
+
+start_mod_server(Port, RootDir) ->
+    start_static_server(Port, fun(Tag, Uri, Args) ->
+				      mod_server(Tag, Uri, Args, 
+						 filename:split(RootDir))
+			      end).
+
+mod_server(Tag, Uri, Args, Root) ->
+    io:format("Starting server Tag=~p Uri=~p Args=~p Root=~p~n",
+	      [Tag, Uri, Args, Root]),
+    %% io:format("elib1_new_webkit mod_server URI=~p~n",[Uri]),
+    Parts = filename:split(Uri),
+    %% io:format("elib1_new_webkit parts=~p~n",[Parts]),
+    case Parts of
+	["/","mod"] ->
+	    %% io:format("elib1_webkit: exec_mod Args=~p Rooot=~p~n",
+	    %%   [Args,Root]),
+	    exec_mod(Args,Root);
+	["/"|F] ->
+	    %% io:format("elib1_webkit mod_server F=~p~n",[F]),
+	    Full = filename:join(Root ++ F),
+	    io:format("Serve file:~p~n",[Full]),
+	    serve_static_file_report_error_as_html(Full);
+	_Other ->
+	    {response, html, [pre({mod_server,Parts,Tag,Uri,Args,Root})]}
+    end.
+
+%% Rules:
+
+exec_mod([{"mod", Str1},{"func", Str2}|Args], Root) ->
+    Mod  = list_to_atom(Str1),
+    Func = list_to_atom(Str2),
+    Dir  = filename:join(Root),
+    case (catch Mod:Func(Args, Dir)) of
+	{'EXIT', Why} ->
+	    {response, html, 
+	     pre({evalError,Mod,Func,Args,Dir,Why})};
+	Other ->
+	    Other
+    end.
+
+error(X) ->    
+    {response, html, [pre({error, X})]}.
+
+%% ensure that
+%%   ensure_loaded("/home/joe/foo/bar")
+%%   1) check /home/joe/foo/bar.erl  exists
+%%   2) check is /home/joe/foo/bar.beam exists and is up-to-date
+%%   3) if not uptodate recompiles and loads
+%%   4) once loaded
+%% ensure_loaded(PathToMod) -> {ok, Mod} | {error, Why}
+
+ensure_loaded(PathToMod) ->
+    Erl = PathToMod ++ ".erl",
+    Beam = PathToMod ++ ".beam",
+    Mod = list_to_atom(filename:basename(Erl)),
+    case filelib:is_file(Erl) of
+	true ->
+	    case elib1_misc:out_of_date(Erl, Beam) of
+		true ->
+		    recompile_src_and_load(PathToMod);
+		false ->
+		    %% Src and beam are OK -- but what happns if the
+		    %% code is already loaded in some different place
+		    case code:is_loaded(Mod) of
+			{file, Beam} ->
+			    {ok, Mod};
+			_ ->
+			    recompile_src_and_load(PathToMod)
+		    end
+	    end;
+	false ->
+	    {error, {ebadMod,Mod}}
+    end.
+
+recompile_src_and_load(PathToMod) ->
+    io:format("** recompiling:~p.erl~n",[pathToMod]),
+    OutDir = filename:dirname(PathToMod),
+    case compile:file(PathToMod ++ ".erl", 
+		      [report,{outdir,OutDir}]) of
+	{ok, Mod} ->
+	    code:purge(Mod),
+	    C = code:load_abs(PathToMod),
+	    io:format("load_abs=~p ~p~n",[PathToMod,C]),
+	    io:format("code:is_loaded=~p~n",[code:is_loaded(Mod)]),
+	    {ok, Mod};
+	Error ->
+	    {error, Error}
+    end.
+
