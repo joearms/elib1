@@ -1,0 +1,55 @@
+<? M=simple_web_server, M:header() ?>
+
+<body>
+  <h1>Website</h1> 
+
+  <p>This website is built using an extremely simple
+  web server and mark-up language.</p>
+
+  <p>The server is <i>stateless</i> and merely returns the requested file.
+  If the filename extension is <b>.ehtml</b> then the file is expanded.</p>
+
+  <h2>.ehtml files</h2>
+
+  <p>Files with the extension <b>.ehtml</b> can contain embedded Erlang code.
+  such code is contained in <b>&lt;? ... ?></b> brackets.</p>
+  
+  <p>Expansion module <a href="/lib/html/elib1_expand.html">elib1_expand</a>
+  expands the expressions within the brackets and replaces the
+  entire bracked expression by the value of the last expression in the 
+  brackets, which must be a string. So for example, the code seqeunce:</p>
+
+  <pre>
+    &lt;? Who = "Joe", "Hello" ?>
+    my name is &lt? Who ?>
+  </pre>
+
+  <p>Evaluates to:</p>
+  
+  <p>
+    <? Who = "Joe", "Hello" ?>
+    my name is <? Who ?>
+  </p>
+
+  <p>The first line in a <b>.ehtml</b> file is usually:</p>
+
+  <pre>
+    &lt;? M=simple_web_server, M:header() ?>
+  </pre>
+
+  <h2>Code inclusion</h2>
+
+  <? Dir = elib1_misc:root_dir() ++ "/supported/website/", "" ?>
+
+  <pre>
+    <? insert(Dir ++ "simple_web_server.erl", "start") ?>
+  </pre>
+
+  <p>Then start clicking on <a href="html/elib1_tagger.html">elib1_tagger</a>
+  or <a href="html/elib1_misc.html">elib1_misc</a></p>
+
+  <h2>Bugs</h2>
+  <p>Seems like there is a bug in syntax tools ... or mayby not ...</p>
+
+ </body>
+

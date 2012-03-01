@@ -1,0 +1,933 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Module elib1_misc</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module elib1_misc</h1>
+<ul class="index"><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>
+
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#added_files-2">added_files/2</a></td><td>
+  Added files makes a listing of all the files in Dir
+  then it calls Fun(), finally in lists all the files
+  in Dir again.</td></tr>
+<tr><td valign="top"><a href="#as_bits-1">as_bits/1</a></td><td>convert a bitstring to a list of zeros and ones.</td></tr>
+<tr><td valign="top"><a href="#bin2hex-1">bin2hex/1</a></td><td>Convert a binary to list of hex characters.</td></tr>
+<tr><td valign="top"><a href="#byte_to_hex_string-1">byte_to_hex_string/1</a></td><td>return the hex representation of a byte.</td></tr>
+<tr><td valign="top"><a href="#check_io_list-1">check_io_list/1</a></td><td>Test if an I/O list really is an IO list.</td></tr>
+<tr><td valign="top"><a href="#collect_atom-1">collect_atom/1</a></td><td>Extract an atom from the start of a string.</td></tr>
+<tr><td valign="top"><a href="#collect_int-1">collect_int/1</a></td><td>extract a base ten integer from the start of a string.</td></tr>
+<tr><td valign="top"><a href="#collect_string-1">collect_string/1</a></td><td>collect_string(S) -&gt; {S1, S2} such that
+  S = S1 ++ S2.</td></tr>
+<tr><td valign="top"><a href="#collect_word-1">collect_word/1</a></td><td>Extracts the next word from the start of a string.</td></tr>
+<tr><td valign="top"><a href="#complete-2">complete/2</a></td><td>complete(A, L) Compute possible completions of a
+  string.</td></tr>
+<tr><td valign="top"><a href="#dos2unix-1">dos2unix/1</a></td><td>replace \r\n with \n.</td></tr>
+<tr><td valign="top"><a href="#downcase_char-1">downcase_char/1</a></td><td>Convert uppercase character to lowercase.</td></tr>
+<tr><td valign="top"><a href="#dump-2">dump/2</a></td><td>
+  Dumps a term into a file.</td></tr>
+<tr><td valign="top"><a href="#duplicates-1">duplicates/1</a></td><td>Return a list of all duplicated items in A.</td></tr>
+<tr><td valign="top"><a href="#ensure_started-2">ensure_started/2</a></td><td>
+  Ensure_started modified from
+  % File: eunit_server.erl
+  % By Richard Carlsson &lt;richardc@it.uu.se&gt;
+  Checks if there is a registered process called Name
+  If not spawns Fun() in a new process and registers it as Name.</td></tr>
+<tr><td valign="top"><a href="#eval_file-1">eval_file/1</a></td><td>Evaluate a series of expressions contained in a file.</td></tr>
+<tr><td valign="top"><a href="#eval_string-1">eval_string/1</a></td><td>Evaluate code in a string.</td></tr>
+<tr><td valign="top"><a href="#every-3">every/3</a></td><td>Links to Pid then every Time Fun is
+  evaluated.</td></tr>
+<tr><td valign="top"><a href="#expand_file_template-3">expand_file_template/3</a></td><td>Expand a template file, with property list to produce a file.</td></tr>
+<tr><td valign="top"><a href="#expand_tabs-1">expand_tabs/1</a></td><td>Expand tabs, the tab stop is assumed to be fixed 8 column tabs.</td></tr>
+<tr><td valign="top"><a href="#expand_template-2">expand_template/2</a></td><td>Expand a template and a property list.</td></tr>
+<tr><td valign="top"><a href="#extract_attribute-2">extract_attribute/2</a></td><td>Extract an attribute from beam code.</td></tr>
+<tr><td valign="top"><a href="#extract_prefix-2">extract_prefix/2</a></td><td>if A is a prefix of B return {yes, C} where A ++ C = B
+  otherwise no.</td></tr>
+<tr><td valign="top"><a href="#fetch-2">fetch/2</a></td><td>fetch(Key, PropertyList) -&gt; Val or raises an errors.</td></tr>
+<tr><td valign="top"><a href="#file2lines-1">file2lines/1</a></td><td>Read file into line buffer
+  "\n" at the end of each linhe is retained.</td></tr>
+<tr><td valign="top"><a href="#file2md5-1">file2md5/1</a></td><td>compute the MD5 checksum of a file.</td></tr>
+<tr><td valign="top"><a href="#file2numberedlines-1">file2numberedlines/1</a></td><td>Read file into numbered line buffer.</td></tr>
+<tr><td valign="top"><a href="#file2paras-1">file2paras/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#file2stream-1">file2stream/1</a></td><td>
+  file2stream(File) -&gt; Stream raises exit(eNoStream).</td></tr>
+<tr><td valign="top"><a href="#file2string-1">file2string/1</a></td><td>Read a file into a string.</td></tr>
+<tr><td valign="top"><a href="#file2template-1">file2template/1</a></td><td>
+  Parse a file containing a template.</td></tr>
+<tr><td valign="top"><a href="#file2term-1">file2term/1</a></td><td>Reads a file into a binary and
+  does <b>binary_to_term</b> on the
+  result.</td></tr>
+<tr><td valign="top"><a href="#file_size_and_type-1">file_size_and_type/1</a></td><td>return the file type and length in bytes.</td></tr>
+<tr><td valign="top"><a href="#find_src-1">find_src/1</a></td><td>
+  Given a module name find_src(Mod) attempts to find the source
+  code for the module.</td></tr>
+<tr><td valign="top"><a href="#first-1">first/1</a></td><td>The analog of last(L).</td></tr>
+<tr><td valign="top"><a href="#flatten_io_list-1">flatten_io_list/1</a></td><td>flattens an I/O list.</td></tr>
+<tr><td valign="top"><a href="#flush_buffer-0">flush_buffer/0</a></td><td>Clear all message out of the process mailbox.</td></tr>
+<tr><td valign="top"><a href="#for-3">for/3</a></td><td>for(Min, Max, F) -&gt; [F(Min), F(Min+1), ...</td></tr>
+<tr><td valign="top"><a href="#force-1">force/1</a></td><td>Force evauation of a fun.</td></tr>
+<tr><td valign="top"><a href="#foreach_chunk_in_file-3">foreach_chunk_in_file/3</a></td><td>
+  Open File and reads into binary chunks Len bytes at a
+  time for each chunk compute F(Bin) and return the list
+  [F(Bin)].</td></tr>
+<tr><td valign="top"><a href="#foreach_word_in_file-2">foreach_word_in_file/2</a></td><td>Apply F(Word) to each Word contained in a given file.</td></tr>
+<tr><td valign="top"><a href="#foreach_word_in_string-2">foreach_word_in_string/2</a></td><td>Apply F(Word) to each Word contained in a string.</td></tr>
+<tr><td valign="top"><a href="#forever-0">forever/0</a></td><td>Suspend for a very long time.</td></tr>
+<tr><td valign="top"><a href="#get_erl_section-2">get_erl_section/2</a></td><td>
+  Extract a tagged region of a file.</td></tr>
+<tr><td valign="top"><a href="#get_line-1">get_line/1</a></td><td>get next line
+  get_line(Str) -&gt; {Line, Str'}.</td></tr>
+<tr><td valign="top"><a href="#get_line-2">get_line/2</a></td><td>Get line and add to reversed line.</td></tr>
+<tr><td valign="top"><a href="#have_common_prefix-1">have_common_prefix/1</a></td><td>Find the common prefix in a list of strings.</td></tr>
+<tr><td valign="top"><a href="#hex2bin-1">hex2bin/1</a></td><td>Convert a hex string to a binary.</td></tr>
+<tr><td valign="top"><a href="#hex2list-1">hex2list/1</a></td><td>Convert a hex string to a list of bytes.</td></tr>
+<tr><td valign="top"><a href="#hex_nibble2int-1">hex_nibble2int/1</a></td><td>Convert a hex nibble chanrcater to an integer.</td></tr>
+<tr><td valign="top"><a href="#id-1">id/1</a></td><td>Identity function.</td></tr>
+<tr><td valign="top"><a href="#include_dir-0">include_dir/0</a></td><td>Return the name of the include directory.</td></tr>
+<tr><td valign="top"><a href="#include_file-1">include_file/1</a></td><td>Find the fully qualified name of a file in the include directory.</td></tr>
+<tr><td valign="top"><a href="#interlieve-2">interlieve/2</a></td><td>Interlieve a symbol Sep between elements in a list.</td></tr>
+<tr><td valign="top"><a href="#is_alphanum-1">is_alphanum/1</a></td><td>test if a character is aphanumeric.</td></tr>
+<tr><td valign="top"><a href="#is_blank_line-1">is_blank_line/1</a></td><td>check if a line is all blank.</td></tr>
+<tr><td valign="top"><a href="#is_prefix-2">is_prefix/2</a></td><td>true if A is a prefix of B otherwise false.</td></tr>
+<tr><td valign="top"><a href="#is_response_correct-3">is_response_correct/3</a></td><td>used in an MD5 callenge response test.</td></tr>
+<tr><td valign="top"><a href="#keep_alive-2">keep_alive/2</a></td><td>Keep a registerd process alive, restarting if necessary.</td></tr>
+<tr><td valign="top"><a href="#lines2para-1">lines2para/1</a></td><td>Add \n between lines with \n's.</td></tr>
+<tr><td valign="top"><a href="#list2frequency_distribution-1">list2frequency_distribution/1</a></td><td>Make a frequency distribution of a numbner of items in a list.</td></tr>
+<tr><td valign="top"><a href="#longest_common_prefix-1">longest_common_prefix/1</a></td><td>Given a list of strings return the longest prefix which is
+  common to all lists.</td></tr>
+<tr><td valign="top"><a href="#lookup-2">lookup/2</a></td><td>Fast property list lookup.</td></tr>
+<tr><td valign="top"><a href="#lorem-1">lorem/1</a></td><td>extract N lines of Lorum ipsum.</td></tr>
+<tr><td valign="top"><a href="#ls-1">ls/1</a></td><td>List the files in a directory.</td></tr>
+<tr><td valign="top"><a href="#make_challenge-0">make_challenge/0</a></td><td>Make a random string to be used as a challenge in
+  challenge response authentication.</td></tr>
+<tr><td valign="top"><a href="#make_response-2">make_response/2</a></td><td>Makwe the response for a challenge response authentication
+  algorithm.</td></tr>
+<tr><td valign="top"><a href="#make_test_strings-1">make_test_strings/1</a></td><td>make_test_strings(Str).</td></tr>
+<tr><td valign="top"><a href="#merge_kv-1">merge_kv/1</a></td><td>
+  Take a property list [{Key,Val}] where Key can occur
+     More than once and make it into a list {Key, [Val]} where
+     each Key occurs only once.</td></tr>
+<tr><td valign="top"><a href="#mini_shell-0">mini_shell/0</a></td><td>Emulate the shell.</td></tr>
+<tr><td valign="top"><a href="#ndots-1">ndots/1</a></td><td>Count the number of dots in a string.</td></tr>
+<tr><td valign="top"><a href="#nibble_to_hex_char-1">nibble_to_hex_char/1</a></td><td>Convert an integer in 0..15 to a hex character.</td></tr>
+<tr><td valign="top"><a href="#odd-1">odd/1</a></td><td>odd(X) is true if X is odd.</td></tr>
+<tr><td valign="top"><a href="#on_exit-2">on_exit/2</a></td><td>on_exit(Pid, Fun) links to Pid.</td></tr>
+<tr><td valign="top"><a href="#out_of_date-2">out_of_date/2</a></td><td>true if last_modification_time(Dest) &gt; last_modification_time(Src)
+  otherwise false.</td></tr>
+<tr><td valign="top"><a href="#outfile-2">outfile/2</a></td><td>Change the extension of FileName to Ext.</td></tr>
+<tr><td valign="top"><a href="#padd-2">padd/2</a></td><td>
+  add X to L if it is not a member of the list
+  padd is short for "possible add".</td></tr>
+<tr><td valign="top"><a href="#perms-1">perms/1</a></td><td>Return all permutations of a string.</td></tr>
+<tr><td valign="top"><a href="#pmap-2">pmap/2</a></td><td>
+  Parallel version of map.</td></tr>
+<tr><td valign="top"><a href="#pmap1-2">pmap1/2</a></td><td>
+  Parallel map that is not order preserving.</td></tr>
+<tr><td valign="top"><a href="#priority_receive-0">priority_receive/0</a></td><td>
+  priority receive.</td></tr>
+<tr><td valign="top"><a href="#random_seed-0">random_seed/0</a></td><td>Seed the random number generator.</td></tr>
+<tr><td valign="top"><a href="#random_string-1">random_string/1</a></td><td>
+  Return a random string with N characters.</td></tr>
+<tr><td valign="top"><a href="#read_at_most_n_lines-2">read_at_most_n_lines/2</a></td><td>Read the first N lines of a file.</td></tr>
+<tr><td valign="top"><a href="#remove_duplicates-1">remove_duplicates/1</a></td><td>Remove duplicate entries from a list.</td></tr>
+<tr><td valign="top"><a href="#remove_leading_and_trailing_whitespace-1">remove_leading_and_trailing_whitespace/1</a></td><td>remove leading and trailing white space from a string.</td></tr>
+<tr><td valign="top"><a href="#remove_leading_whitespace-1">remove_leading_whitespace/1</a></td><td>remove leading white space from a string.</td></tr>
+<tr><td valign="top"><a href="#remove_prefix-2">remove_prefix/2</a></td><td>remove_prefix(X, Y) -&gt; Z finds Z such that X ++ Z = Y
+  Note: this is only called when it is known that
+  X is a prefix of Y.</td></tr>
+<tr><td valign="top"><a href="#remove_trailing_whitespace-1">remove_trailing_whitespace/1</a></td><td>remove trailing white space from a string.</td></tr>
+<tr><td valign="top"><a href="#replace-3">replace/3</a></td><td>
+  Replace and Key with Key,Val in the property list
+  Old.</td></tr>
+<tr><td valign="top"><a href="#root_dir-0">root_dir/0</a></td><td>the root dir of the library.</td></tr>
+<tr><td valign="top"><a href="#rpc-2">rpc/2</a></td><td>Standard RPC.</td></tr>
+<tr><td valign="top"><a href="#safe-1">safe/1</a></td><td>Evauate a function within a catch to make it safe.</td></tr>
+<tr><td valign="top"><a href="#show_loaded-1">show_loaded/1</a></td><td>
+  show_loaded(Fun0) -&gt; Mods
+    show which functions get loaded
+    when you evaluate Fun0().</td></tr>
+<tr><td valign="top"><a href="#skip_blanks-1">skip_blanks/1</a></td><td>Remove any spaces at the beginning of a string.</td></tr>
+<tr><td valign="top"><a href="#skip_to_nl-1">skip_to_nl/1</a></td><td>skip all characters up to and including new line.</td></tr>
+<tr><td valign="top"><a href="#sleep-1">sleep/1</a></td><td>sleep(N) sleeps for N milliseconds.</td></tr>
+<tr><td valign="top"><a href="#spawn_monitor-3">spawn_monitor/3</a></td><td>spawn_monitor behaves just like spawn but
+  prints a message when the function terminates.</td></tr>
+<tr><td valign="top"><a href="#split_at_char-2">split_at_char/2</a></td><td>Split a string at the first occurance of a given character.</td></tr>
+<tr><td valign="top"><a href="#split_list-2">split_list/2</a></td><td>
+  split(Fun, [X]) -&gt; [{Header,[X]}]
+  Splits a lists
+  Fun(X) -&gt; {yes, Header} | no
+  the list L is partitioned into segments
+  for which Fun(X) -&gt; {yes,Header}
+  The header '$none' is used for leading
+  elements in the list.</td></tr>
+<tr><td valign="top"><a href="#string2exprs-1">string2exprs/1</a></td><td>Convert a string contianign a number of expressions to
+  the abstract form of the expressions.</td></tr>
+<tr><td valign="top"><a href="#string2html-1">string2html/1</a></td><td>Quote &lt; and &amp; so they can be included in HTML.</td></tr>
+<tr><td valign="top"><a href="#string2latex-1">string2latex/1</a></td><td>Turn a Erlang string into a LateX string quiting where necessary.</td></tr>
+<tr><td valign="top"><a href="#string2lines-1">string2lines/1</a></td><td>
+  Split a string into lines.</td></tr>
+<tr><td valign="top"><a href="#string2stream-1">string2stream/1</a></td><td>Convert a string to a stream.</td></tr>
+<tr><td valign="top"><a href="#string2template-1">string2template/1</a></td><td>
+  Parse a string containing a template.</td></tr>
+<tr><td valign="top"><a href="#string2term-1">string2term/1</a></td><td>Convert a string to a term.</td></tr>
+<tr><td valign="top"><a href="#string2toks-1">string2toks/1</a></td><td>simple tokeniser.</td></tr>
+<tr><td valign="top"><a href="#sub_binary-3">sub_binary/3</a></td><td>return the binary between Start and Stop in Bin.</td></tr>
+<tr><td valign="top"><a href="#template2file-3">template2file/3</a></td><td>
+  fill in the template and write to file.</td></tr>
+<tr><td valign="top"><a href="#term2file-2">term2file/2</a></td><td>Write term_to_binary(Term) to a file.</td></tr>
+<tr><td valign="top"><a href="#term2string-1">term2string/1</a></td><td>Convert a term to a printable string.</td></tr>
+<tr><td valign="top"><a href="#test_function_over_substrings-2">test_function_over_substrings/2</a></td><td>Tests a function by calling it with different substrings of
+  a given string.</td></tr>
+<tr><td valign="top"><a href="#tex2pdf-1">tex2pdf/1</a></td><td>
+  TeX to PDF
+  Run pdflatex on the created /verb+.tex+ file.</td></tr>
+<tr><td valign="top"><a href="#time_fun-2">time_fun/2</a></td><td>time_fun(Str, Fun)
+     times Fun().</td></tr>
+<tr><td valign="top"><a href="#time_stamp-0">time_stamp/0</a></td><td>return a string contining the current data and time.</td></tr>
+<tr><td valign="top"><a href="#to_lower-1">to_lower/1</a></td><td>Lowercase a string.</td></tr>
+<tr><td valign="top"><a href="#trim-1">trim/1</a></td><td>remove leading and trailing white space from a string.</td></tr>
+<tr><td valign="top"><a href="#unconsult-2">unconsult/2</a></td><td>Write a file (inverse of consult).</td></tr>
+<tr><td valign="top"><a href="#which-1">which/1</a></td><td>Find the directory name where a module was loaded from.</td></tr>
+<tr><td valign="top"><a href="#which_added-1">which_added/1</a></td><td>
+  spawn a fun and find out which additional modules get loaded.</td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="added_files-2">added_files/2</a></h3>
+<div class="spec">
+<p><tt>added_files(Dir, Fun) -&gt; any()</tt></p>
+</div><p>
+  Added files makes a listing of all the files in Dir
+  then it calls Fun(), finally in lists all the files
+  in Dir again. It returns a list of the files
+  which have been added to the directory.</p>
+
+<h3 class="function"><a name="as_bits-1">as_bits/1</a></h3>
+<div class="spec">
+<p><tt>as_bits(B) -&gt; any()</tt></p>
+</div><p>convert a bitstring to a list of zeros and ones.
+  so &lt;&lt;2#11011:5&gt;&gt; is converted to [1,1,0,1,1]</p>
+
+<h3 class="function"><a name="bin2hex-1">bin2hex/1</a></h3>
+<div class="spec">
+<p><tt>bin2hex(B) -&gt; any()</tt></p>
+</div><p>Convert a binary to list of hex characters.</p>
+
+<h3 class="function"><a name="byte_to_hex_string-1">byte_to_hex_string/1</a></h3>
+<div class="spec">
+<p><tt>byte_to_hex_string(X) -&gt; any()</tt></p>
+</div><p>return the hex representation of a byte</p>
+
+<h3 class="function"><a name="check_io_list-1">check_io_list/1</a></h3>
+<div class="spec">
+<p><tt>check_io_list(T) -&gt; any()</tt></p>
+</div><p>Test if an I/O list really is an IO list.</p>
+
+<h3 class="function"><a name="collect_atom-1">collect_atom/1</a></h3>
+<div class="spec">
+<p><tt>collect_atom(L) -&gt; any()</tt></p>
+</div><p>Extract an atom from the start of a string.</p>
+
+<h3 class="function"><a name="collect_int-1">collect_int/1</a></h3>
+<div class="spec">
+<p><tt>collect_int(L) -&gt; any()</tt></p>
+</div><p>extract a base ten integer from the start of a string</p>
+
+<h3 class="function"><a name="collect_string-1">collect_string/1</a></h3>
+<div class="spec">
+<p><tt>collect_string(T) -&gt; any()</tt></p>
+</div><p>collect_string(S) -&gt; {S1, S2} such that
+  S = S1 ++ S2. Here s1 must begin with a single or double quote.</p>
+
+<h3 class="function"><a name="collect_word-1">collect_word/1</a></h3>
+<div class="spec">
+<p><tt>collect_word(T) -&gt; any()</tt></p>
+</div><p>Extracts the next word from the start of a string.</p>
+
+<h3 class="function"><a name="complete-2">complete/2</a></h3>
+<div class="spec">
+<p><tt>complete(Str, L) -&gt; any()</tt></p>
+</div><p>complete(A, L) Compute possible completions of a
+  string. A is a string, L is a list of possible strings
+  that A might be the prefix of.
+  <pre>
+  Return values:
+  error  - means no string will ever match
+  {more,L}  - means there are completions
+              but we need more characters. L = [Str] = a list of
+              possible strings that might match
+  {yes, S}  - means there is a unique completion,
+              S  is the largest string
+              such that A ++ S is a prefix of all the elements of L
+  </pre></p>
+
+<h3 class="function"><a name="dos2unix-1">dos2unix/1</a></h3>
+<div class="spec">
+<p><tt>dos2unix(T) -&gt; any()</tt></p>
+</div><p>replace \r\n with \n.</p>
+
+<h3 class="function"><a name="downcase_char-1">downcase_char/1</a></h3>
+<div class="spec">
+<p><tt>downcase_char(X) -&gt; any()</tt></p>
+</div><p>Convert uppercase character to lowercase.</p>
+
+<h3 class="function"><a name="dump-2">dump/2</a></h3>
+<div class="spec">
+<p><tt>dump(File, Term) -&gt; any()</tt></p>
+</div><p>
+  Dumps a term into a file. The extension .tmp
+  is added to the filename (so it is easy to delete all files
+  with the extension .tmp. This is very usuful for debugging
+  program which produce very large data structures</p>
+
+<h3 class="function"><a name="duplicates-1">duplicates/1</a></h3>
+<div class="spec">
+<p><tt>duplicates(X) -&gt; any()</tt></p>
+</div><p>Return a list of all duplicated items in A</p>
+
+<h3 class="function"><a name="ensure_started-2">ensure_started/2</a></h3>
+<div class="spec">
+<p><tt>ensure_started(Name, Fun) -&gt; any()</tt></p>
+</div><p>
+  Ensure_started modified from
+  % File: eunit_server.erl
+  % By Richard Carlsson &lt;richardc@it.uu.se&gt;
+  Checks if there is a registered process called Name
+  If not spawns Fun() in a new process and registers it as Name</p>
+
+<h3 class="function"><a name="eval_file-1">eval_file/1</a></h3>
+<div class="spec">
+<p><tt>eval_file(File) -&gt; any()</tt></p>
+</div><p>Evaluate a series of expressions contained in a file.</p>
+
+<h3 class="function"><a name="eval_string-1">eval_string/1</a></h3>
+<div class="spec">
+<p><tt>eval_string(Str) -&gt; any()</tt></p>
+</div><p>Evaluate code in a string</p>
+
+<h3 class="function"><a name="every-3">every/3</a></h3>
+<div class="spec">
+<p><tt>every(Pid, Time, Fun) -&gt; any()</tt></p>
+</div><p>Links to Pid then every Time Fun is
+  evaluated. If Pid exits, this process stops.</p>
+
+<h3 class="function"><a name="expand_file_template-3">expand_file_template/3</a></h3>
+<div class="spec">
+<p><tt>expand_file_template(FileIn, Assoc, FileOut) -&gt; any()</tt></p>
+</div><p>Expand a template file, with property list to produce a file.</p>
+
+<h3 class="function"><a name="expand_tabs-1">expand_tabs/1</a></h3>
+<div class="spec">
+<p><tt>expand_tabs(Xs) -&gt; any()</tt></p>
+</div><p>Expand tabs, the tab stop is assumed to be fixed 8 column tabs.</p>
+
+<h3 class="function"><a name="expand_template-2">expand_template/2</a></h3>
+<div class="spec">
+<p><tt>expand_template(Template, Assoc) -&gt; any()</tt></p>
+</div><p>Expand a template and a property list.</p>
+
+<h3 class="function"><a name="extract_attribute-2">extract_attribute/2</a></h3>
+<div class="spec">
+<p><tt>extract_attribute(Mod, Key) -&gt; any()</tt></p>
+</div><p>Extract an attribute from beam code.</p>
+
+<h3 class="function"><a name="extract_prefix-2">extract_prefix/2</a></h3>
+<div class="spec">
+<p><tt>extract_prefix(T, B) -&gt; any()</tt></p>
+</div><p>if A is a prefix of B return {yes, C} where A ++ C = B
+  otherwise no</p>
+
+<h3 class="function"><a name="fetch-2">fetch/2</a></h3>
+<div class="spec">
+<p><tt>fetch(Key, L) -&gt; any()</tt></p>
+</div><p>fetch(Key, PropertyList) -&gt; Val or raises an errors.
+  provides a wrapper around lists:keyfind</p>
+
+<h3 class="function"><a name="file2lines-1">file2lines/1</a></h3>
+<div class="spec">
+<p><tt>file2lines(File) -&gt; any()</tt></p>
+</div><p>Read file into line buffer
+  "\n" at the end of each linhe is retained</p>
+
+<h3 class="function"><a name="file2md5-1">file2md5/1</a></h3>
+<div class="spec">
+<p><tt>file2md5(File) -&gt; any()</tt></p>
+</div><p>compute the MD5 checksum of a file</p>
+
+<h3 class="function"><a name="file2numberedlines-1">file2numberedlines/1</a></h3>
+<div class="spec">
+<p><tt>file2numberedlines(File) -&gt; any()</tt></p>
+</div><p>Read file into numbered line buffer. The \n is retained at the end of
+  each line.</p>
+
+<h3 class="function"><a name="file2paras-1">file2paras/1</a></h3>
+<div class="spec">
+<p><tt>file2paras(File) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="file2stream-1">file2stream/1</a></h3>
+<div class="spec">
+<p><tt>file2stream(File) -&gt; any()</tt></p>
+</div><p>
+  file2stream(File) -&gt; Stream raises exit(eNoStream).
+  things to streams
+    Stream() -&gt; {Str, Stream'} | eos</p>
+
+<h3 class="function"><a name="file2string-1">file2string/1</a></h3>
+<div class="spec">
+<p><tt>file2string(File) -&gt; any()</tt></p>
+</div><p>Read a file into a string.</p>
+
+<h3 class="function"><a name="file2template-1">file2template/1</a></h3>
+<div class="spec">
+<p><tt>file2template(File) -&gt; any()</tt></p>
+</div><p>
+  Parse a file containing a template.</p>
+
+<h3 class="function"><a name="file2term-1">file2term/1</a></h3>
+<div class="spec">
+<p><tt>file2term(File) -&gt; any()</tt></p>
+</div><p>Reads a file into a binary and
+  does <b>binary_to_term</b> on the
+  result.</p>
+
+<h3 class="function"><a name="file_size_and_type-1">file_size_and_type/1</a></h3>
+<div class="spec">
+<p><tt>file_size_and_type(File) -&gt; any()</tt></p>
+</div><p>return the file type and length in bytes</p>
+
+<h3 class="function"><a name="find_src-1">find_src/1</a></h3>
+<div class="spec">
+<p><tt>find_src(Mod) -&gt; any()</tt></p>
+</div><p>
+  Given a module name find_src(Mod) attempts to find the source
+  code for the module. We look first in the current directory, thereafter
+  in ..\ebin. If all else fails try to load the module
+  and look in Mod:module_info(compile).</p>
+
+<h3 class="function"><a name="first-1">first/1</a></h3>
+<div class="spec">
+<p><tt>first(T) -&gt; any()</tt></p>
+</div><p>The analog of last(L). last(L) is the last element in the
+  list. first(L) is all the elements except the last.
+  Obeys the identity: first(X) ++ last(X) == X for noempty
+  lists X.</p>
+
+<h3 class="function"><a name="flatten_io_list-1">flatten_io_list/1</a></h3>
+<div class="spec">
+<p><tt>flatten_io_list(L) -&gt; any()</tt></p>
+</div><p>flattens an I/O list.</p>
+
+<h3 class="function"><a name="flush_buffer-0">flush_buffer/0</a></h3>
+<div class="spec">
+<p><tt>flush_buffer() -&gt; any()</tt></p>
+</div><p>Clear all message out of the process mailbox.</p>
+
+<h3 class="function"><a name="for-3">for/3</a></h3>
+<div class="spec">
+<p><tt>for(Max, X2, F) -&gt; any()</tt></p>
+</div><p>for(Min, Max, F) -&gt; [F(Min), F(Min+1), ... F(Max)].</p>
+
+<h3 class="function"><a name="force-1">force/1</a></h3>
+<div class="spec">
+<p><tt>force(Fun) -&gt; any()</tt></p>
+</div><p>Force evauation of a fun</p>
+
+<h3 class="function"><a name="foreach_chunk_in_file-3">foreach_chunk_in_file/3</a></h3>
+<div class="spec">
+<p><tt>foreach_chunk_in_file(File, BlockSize, Fun) -&gt; any()</tt></p>
+</div><p>
+  Open File and reads into binary chunks Len bytes at a
+  time for each chunk compute F(Bin) and return the list
+  [F(Bin)].</p>
+
+<h3 class="function"><a name="foreach_word_in_file-2">foreach_word_in_file/2</a></h3>
+<div class="spec">
+<p><tt>foreach_word_in_file(File, F) -&gt; any()</tt></p>
+</div><p>Apply F(Word) to each Word contained in a given file.
+  We extract "words" from a file and call F(Word) for each word.
+  this is done for its side effect. There is no return value.</p>
+
+<h3 class="function"><a name="foreach_word_in_string-2">foreach_word_in_string/2</a></h3>
+<div class="spec">
+<p><tt>foreach_word_in_string(Str, F) -&gt; any()</tt></p>
+</div><p>Apply F(Word) to each Word contained in a string.</p>
+
+<h3 class="function"><a name="forever-0">forever/0</a></h3>
+<div class="spec">
+<p><tt>forever() -&gt; any()</tt></p>
+</div><p>Suspend for a very long time.</p>
+
+<h3 class="function"><a name="get_erl_section-2">get_erl_section/2</a></h3>
+<div class="spec">
+<p><tt>get_erl_section(File, Tag) -&gt; any()</tt></p>
+</div><p>
+  Extract a tagged region of a file.
+  <pre>
+  get_erl_section(File, Tag) -&gt; Data | exit + warning message
+  </pre>
+     Looks in File for a section marked
+     Data is quoted for html
+  <pre>
+    %% START:Tag
+     ....
+    %% END:Tag
+  </pre>
+  very strict Tag must come immediately after :</p>
+
+<h3 class="function"><a name="get_line-1">get_line/1</a></h3>
+<div class="spec">
+<p><tt>get_line(Str) -&gt; any()</tt></p>
+</div><p>get next line
+  get_line(Str) -&gt; {Line, Str'}</p>
+
+<h3 class="function"><a name="get_line-2">get_line/2</a></h3>
+<div class="spec">
+<p><tt>get_line(T, L) -&gt; any()</tt></p>
+</div><p>Get line and add to reversed line.</p>
+
+<h3 class="function"><a name="have_common_prefix-1">have_common_prefix/1</a></h3>
+<div class="spec">
+<p><tt>have_common_prefix(L) -&gt; any()</tt></p>
+</div><p>Find the common prefix in a list of strings.</p>
+
+<h3 class="function"><a name="hex2bin-1">hex2bin/1</a></h3>
+<div class="spec">
+<p><tt>hex2bin(Str) -&gt; any()</tt></p>
+</div><p>Convert a hex string to a binary.</p>
+
+<h3 class="function"><a name="hex2list-1">hex2list/1</a></h3>
+<div class="spec">
+<p><tt>hex2list(T) -&gt; any()</tt></p>
+</div><p>Convert a hex string to a list of bytes.</p>
+
+<h3 class="function"><a name="hex_nibble2int-1">hex_nibble2int/1</a></h3>
+<div class="spec">
+<p><tt>hex_nibble2int(X) -&gt; any()</tt></p>
+</div><p>Convert a hex nibble chanrcater to an integer.</p>
+
+<h3 class="function"><a name="id-1">id/1</a></h3>
+<div class="spec">
+<p><tt>id(I) -&gt; any()</tt></p>
+</div><p>Identity function.</p>
+
+<h3 class="function"><a name="include_dir-0">include_dir/0</a></h3>
+<div class="spec">
+<p><tt>include_dir() -&gt; any()</tt></p>
+</div><p>Return the name of the include directory.</p>
+
+<h3 class="function"><a name="include_file-1">include_file/1</a></h3>
+<div class="spec">
+<p><tt>include_file(X) -&gt; any()</tt></p>
+</div><p>Find the fully qualified name of a file in the include directory.</p>
+
+<h3 class="function"><a name="interlieve-2">interlieve/2</a></h3>
+<div class="spec">
+<p><tt>interlieve(Sep, T) -&gt; any()</tt></p>
+</div><p>Interlieve a symbol Sep between elements in a list.
+  Given a list [X1,X2,...,Xn] makes the list.
+  [X1,Sep,X2,Sep,...,Sep,Xn].</p>
+
+<h3 class="function"><a name="is_alphanum-1">is_alphanum/1</a></h3>
+<div class="spec">
+<p><tt>is_alphanum(X) -&gt; any()</tt></p>
+</div><p>test if a character is aphanumeric.</p>
+
+<h3 class="function"><a name="is_blank_line-1">is_blank_line/1</a></h3>
+<div class="spec">
+<p><tt>is_blank_line(T) -&gt; any()</tt></p>
+</div><p>check if a line is all blank</p>
+
+<h3 class="function"><a name="is_prefix-2">is_prefix/2</a></h3>
+<div class="spec">
+<p><tt>is_prefix(T, T1) -&gt; any()</tt></p>
+</div><p>true if A is a prefix of B otherwise false.</p>
+
+<h3 class="function"><a name="is_response_correct-3">is_response_correct/3</a></h3>
+<div class="spec">
+<p><tt>is_response_correct(Challenge, Response, Secret) -&gt; any()</tt></p>
+</div><p>used in an MD5 callenge response test</p>
+
+<h3 class="function"><a name="keep_alive-2">keep_alive/2</a></h3>
+<div class="spec">
+<p><tt>keep_alive(Name, Fun) -&gt; any()</tt></p>
+</div><p>Keep a registerd process alive, restarting if necessary.</p>
+
+<h3 class="function"><a name="lines2para-1">lines2para/1</a></h3>
+<div class="spec">
+<p><tt>lines2para(Lines) -&gt; any()</tt></p>
+</div><p>Add \n between lines with \n's.</p>
+
+<h3 class="function"><a name="list2frequency_distribution-1">list2frequency_distribution/1</a></h3>
+<div class="spec">
+<p><tt>list2frequency_distribution(L) -&gt; any()</tt></p>
+</div><p>Make a frequency distribution of a numbner of items in a list.</p>
+
+<h3 class="function"><a name="longest_common_prefix-1">longest_common_prefix/1</a></h3>
+<div class="spec">
+<p><tt>longest_common_prefix(L) -&gt; any()</tt></p>
+</div><p>Given a list of strings return the longest prefix which is
+  common to all lists.</p>
+
+<h3 class="function"><a name="lookup-2">lookup/2</a></h3>
+<div class="spec">
+<p><tt>lookup(Key, L) -&gt; any()</tt></p>
+</div><p>Fast property list lookup.
+  Fast because it uses the internal lists:keysearch which is a BIF</p>
+
+<h3 class="function"><a name="lorem-1">lorem/1</a></h3>
+<div class="spec">
+<p><tt>lorem(N) -&gt; any()</tt></p>
+</div><p>extract N lines of Lorum ipsum</p>
+
+<h3 class="function"><a name="ls-1">ls/1</a></h3>
+<div class="spec">
+<p><tt>ls(Dir) -&gt; any()</tt></p>
+</div><p>List the files in a directory.
+  Returns a directory listing <b>relative to Dir</b> -- the filenames are sorted.
+  classified as files or directories and the sizes are given.</p>
+
+<h3 class="function"><a name="make_challenge-0">make_challenge/0</a></h3>
+<div class="spec">
+<p><tt>make_challenge() -&gt; any()</tt></p>
+</div><p>Make a random string to be used as a challenge in
+  challenge response authentication.</p>
+
+<h3 class="function"><a name="make_response-2">make_response/2</a></h3>
+<div class="spec">
+<p><tt>make_response(Challenge, Secret) -&gt; any()</tt></p>
+</div><p>Makwe the response for a challenge response authentication
+  algorithm.</p>
+
+<h3 class="function"><a name="make_test_strings-1">make_test_strings/1</a></h3>
+<div class="spec">
+<p><tt>make_test_strings(Str) -&gt; any()</tt></p>
+</div><p>make_test_strings(Str)</p>
+
+<h3 class="function"><a name="merge_kv-1">merge_kv/1</a></h3>
+<div class="spec">
+<p><tt>merge_kv(KV) -&gt; any()</tt></p>
+</div><p>
+  Take a property list [{Key,Val}] where Key can occur
+     More than once and make it into a list {Key, [Val]} where
+     each Key occurs only once.</p>
+
+<h3 class="function"><a name="mini_shell-0">mini_shell/0</a></h3>
+<div class="spec">
+<p><tt>mini_shell() -&gt; any()</tt></p>
+</div><p>Emulate the shell.</p>
+
+<h3 class="function"><a name="ndots-1">ndots/1</a></h3>
+<div class="spec">
+<p><tt>ndots(T) -&gt; any()</tt></p>
+</div><p>Count the number of dots in a string</p>
+
+<h3 class="function"><a name="nibble_to_hex_char-1">nibble_to_hex_char/1</a></h3>
+<div class="spec">
+<p><tt>nibble_to_hex_char(X) -&gt; any()</tt></p>
+</div><p>Convert an integer in 0..15 to a hex character</p>
+
+<h3 class="function"><a name="odd-1">odd/1</a></h3>
+<div class="spec">
+<p><tt>odd(X) -&gt; any()</tt></p>
+</div><p>odd(X) is true if X is odd</p>
+
+<h3 class="function"><a name="on_exit-2">on_exit/2</a></h3>
+<div class="spec">
+<p><tt>on_exit(Pid, Fun) -&gt; any()</tt></p>
+</div><p>on_exit(Pid, Fun) links to Pid. If Pid dies
+  with reason Why then Fun(Why) is evaluated.</p>
+
+<h3 class="function"><a name="out_of_date-2">out_of_date/2</a></h3>
+<div class="spec">
+<p><tt>out_of_date(In, Out) -&gt; any()</tt></p>
+</div><p>true if last_modification_time(Dest) &gt; last_modification_time(Src)
+  otherwise false.</p>
+
+<h3 class="function"><a name="outfile-2">outfile/2</a></h3>
+<div class="spec">
+<p><tt>outfile(File, Ext) -&gt; any()</tt></p>
+</div><p>Change the extension of FileName to Ext.</p>
+
+<h3 class="function"><a name="padd-2">padd/2</a></h3>
+<div class="spec">
+<p><tt>padd(X, L) -&gt; any()</tt></p>
+</div><p>
+  add X to L if it is not a member of the list
+  padd is short for "possible add"</p>
+
+<h3 class="function"><a name="perms-1">perms/1</a></h3>
+<div class="spec">
+<p><tt>perms(L) -&gt; any()</tt></p>
+</div><p>Return all permutations of a string.</p>
+
+<h3 class="function"><a name="pmap-2">pmap/2</a></h3>
+<div class="spec">
+<p><tt>pmap(F, L) -&gt; any()</tt></p>
+</div><p>
+  Parallel version of map</p>
+
+<h3 class="function"><a name="pmap1-2">pmap1/2</a></h3>
+<div class="spec">
+<p><tt>pmap1(F, L) -&gt; any()</tt></p>
+</div><p>
+  Parallel map that is not order preserving.
+  pmap1([X,Y,Z]) return any permutation of  [F(X), F(Y), F(Z)].</p>
+
+<h3 class="function"><a name="priority_receive-0">priority_receive/0</a></h3>
+<div class="spec">
+<p><tt>priority_receive() -&gt; any()</tt></p>
+</div><p>
+  priority receive</p>
+
+<h3 class="function"><a name="random_seed-0">random_seed/0</a></h3>
+<div class="spec">
+<p><tt>random_seed() -&gt; any()</tt></p>
+</div><p>Seed the random number generator.
+  This is evaluated for its side effect. Now well tested at all.</p>
+
+<h3 class="function"><a name="random_string-1">random_string/1</a></h3>
+<div class="spec">
+<p><tt>random_string(N) -&gt; any()</tt></p>
+</div><p>
+  Return a random string with N characters.</p>
+
+<h3 class="function"><a name="read_at_most_n_lines-2">read_at_most_n_lines/2</a></h3>
+<div class="spec">
+<p><tt>read_at_most_n_lines(File, N) -&gt; any()</tt></p>
+</div><p>Read the first N lines of a file.</p>
+
+<h3 class="function"><a name="remove_duplicates-1">remove_duplicates/1</a></h3>
+<div class="spec">
+<p><tt>remove_duplicates(L) -&gt; any()</tt></p>
+</div><p>Remove duplicate entries from a list. The resulting list
+  is sorted.</p>
+
+<h3 class="function"><a name="remove_leading_and_trailing_whitespace-1">remove_leading_and_trailing_whitespace/1</a></h3>
+<div class="spec">
+<p><tt>remove_leading_and_trailing_whitespace(X) -&gt; any()</tt></p>
+</div><p>remove leading and trailing white space from a string.</p>
+
+<h3 class="function"><a name="remove_leading_whitespace-1">remove_leading_whitespace/1</a></h3>
+<div class="spec">
+<p><tt>remove_leading_whitespace(T) -&gt; any()</tt></p>
+</div><p>remove leading white space from a string.</p>
+
+<h3 class="function"><a name="remove_prefix-2">remove_prefix/2</a></h3>
+<div class="spec">
+<p><tt>remove_prefix(T, T1) -&gt; any()</tt></p>
+</div><p>remove_prefix(X, Y) -&gt; Z finds Z such that X ++ Z = Y
+  Note: this is only called when it is known that
+  X is a prefix of Y</p>
+
+<h3 class="function"><a name="remove_trailing_whitespace-1">remove_trailing_whitespace/1</a></h3>
+<div class="spec">
+<p><tt>remove_trailing_whitespace(X) -&gt; any()</tt></p>
+</div><p>remove trailing white space from a string.</p>
+
+<h3 class="function"><a name="replace-3">replace/3</a></h3>
+<div class="spec">
+<p><tt>replace(Key, Val, Old) -&gt; any()</tt></p>
+</div><p>
+  Replace and Key with Key,Val in the property list
+  Old.</p>
+
+<h3 class="function"><a name="root_dir-0">root_dir/0</a></h3>
+<div class="spec">
+<p><tt>root_dir() -&gt; any()</tt></p>
+</div><p>the root dir of the library</p>
+
+<h3 class="function"><a name="rpc-2">rpc/2</a></h3>
+<div class="spec">
+<p><tt>rpc(Pid, Q) -&gt; any()</tt></p>
+</div><p>Standard RPC.</p>
+
+<h3 class="function"><a name="safe-1">safe/1</a></h3>
+<div class="spec">
+<p><tt>safe(Fun) -&gt; any()</tt></p>
+</div><p>Evauate a function within a catch to make it safe.</p>
+
+<h3 class="function"><a name="show_loaded-1">show_loaded/1</a></h3>
+<div class="spec">
+<p><tt>show_loaded(Fun0) -&gt; any()</tt></p>
+</div><p>
+  show_loaded(Fun0) -&gt; Mods
+    show which functions get loaded
+    when you evaluate Fun0().</p>
+
+<h3 class="function"><a name="skip_blanks-1">skip_blanks/1</a></h3>
+<div class="spec">
+<p><tt>skip_blanks(T) -&gt; any()</tt></p>
+</div><p>Remove any spaces at the beginning of a string.</p>
+
+<h3 class="function"><a name="skip_to_nl-1">skip_to_nl/1</a></h3>
+<div class="spec">
+<p><tt>skip_to_nl(T) -&gt; any()</tt></p>
+</div><p>skip all characters up to and including new line</p>
+
+<h3 class="function"><a name="sleep-1">sleep/1</a></h3>
+<div class="spec">
+<p><tt>sleep(T) -&gt; any()</tt></p>
+</div><p>sleep(N) sleeps for N milliseconds.</p>
+
+<h3 class="function"><a name="spawn_monitor-3">spawn_monitor/3</a></h3>
+<div class="spec">
+<p><tt>spawn_monitor(Term, X2, Fun) -&gt; any()</tt></p>
+</div><p>spawn_monitor behaves just like spawn but
+  prints a message when the function terminates.
+  spawn_monitor(Term, Flag, Fun0) spawns Fun0 and prints Term
+  when the function terminates if Flag =0 true.</p>
+
+<h3 class="function"><a name="split_at_char-2">split_at_char/2</a></h3>
+<div class="spec">
+<p><tt>split_at_char(Str, C) -&gt; any()</tt></p>
+</div><p>Split a string at the first occurance of a given character.</p>
+
+<h3 class="function"><a name="split_list-2">split_list/2</a></h3>
+<div class="spec">
+<p><tt>split_list(Fun1, L) -&gt; any()</tt></p>
+</div><p>
+  split(Fun, [X]) -&gt; [{Header,[X]}]
+  Splits a lists
+  Fun(X) -&gt; {yes, Header} | no
+  the list L is partitioned into segments
+  for which Fun(X) -&gt; {yes,Header}
+  The header '$none' is used for leading
+  elements in the list</p>
+
+<h3 class="function"><a name="string2exprs-1">string2exprs/1</a></h3>
+<div class="spec">
+<p><tt>string2exprs(Str) -&gt; any()</tt></p>
+</div><p>Convert a string contianign a number of expressions to
+  the abstract form of the expressions.</p>
+
+<h3 class="function"><a name="string2html-1">string2html/1</a></h3>
+<div class="spec">
+<p><tt>string2html(T) -&gt; any()</tt></p>
+</div><p>Quote &lt; and &amp; so they can be included in HTML.</p>
+
+<h3 class="function"><a name="string2latex-1">string2latex/1</a></h3>
+<div class="spec">
+<p><tt>string2latex(T) -&gt; any()</tt></p>
+</div><p>Turn a Erlang string into a LateX string quiting where necessary.</p>
+
+<h3 class="function"><a name="string2lines-1">string2lines/1</a></h3>
+<div class="spec">
+<p><tt>string2lines(Str) -&gt; any()</tt></p>
+</div><p>
+  Split a string into lines. Each line is terminated by
+  \n of eof. \n at end of each line is retained</p>
+
+<h3 class="function"><a name="string2stream-1">string2stream/1</a></h3>
+<div class="spec">
+<p><tt>string2stream(Str) -&gt; any()</tt></p>
+</div><p>Convert a string to a stream.</p>
+
+<h3 class="function"><a name="string2template-1">string2template/1</a></h3>
+<div class="spec">
+<p><tt>string2template(Str) -&gt; any()</tt></p>
+</div><p>
+  Parse a string containing a template.</p>
+
+<h3 class="function"><a name="string2term-1">string2term/1</a></h3>
+<div class="spec">
+<p><tt>string2term(Str) -&gt; any()</tt></p>
+</div><p>Convert a string to a term.</p>
+
+<h3 class="function"><a name="string2toks-1">string2toks/1</a></h3>
+<div class="spec">
+<p><tt>string2toks(T) -&gt; any()</tt></p>
+</div><p>simple tokeniser. Turns a string into a list of tokens</p>
+
+<h3 class="function"><a name="sub_binary-3">sub_binary/3</a></h3>
+<div class="spec">
+<p><tt>sub_binary(Bin, Start, Stop) -&gt; any()</tt></p>
+</div><p>return the binary between Start and Stop in Bin</p>
+
+<h3 class="function"><a name="template2file-3">template2file/3</a></h3>
+<div class="spec">
+<p><tt>template2file(Template, Assoc, FileOut) -&gt; any()</tt></p>
+</div><p>
+  fill in the template and write to file</p>
+
+<h3 class="function"><a name="term2file-2">term2file/2</a></h3>
+<div class="spec">
+<p><tt>term2file(File, Term) -&gt; any()</tt></p>
+</div><p>Write term_to_binary(Term) to a file.</p>
+
+<h3 class="function"><a name="term2string-1">term2string/1</a></h3>
+<div class="spec">
+<p><tt>term2string(Term) -&gt; any()</tt></p>
+</div><p>Convert a term to a printable string.</p>
+
+<h3 class="function"><a name="test_function_over_substrings-2">test_function_over_substrings/2</a></h3>
+<div class="spec">
+<p><tt>test_function_over_substrings(F, Str) -&gt; any()</tt></p>
+</div><p>Tests a function by calling it with different substrings of
+  a given string.</p>
+
+<h3 class="function"><a name="tex2pdf-1">tex2pdf/1</a></h3>
+<div class="spec">
+<p><tt>tex2pdf(File) -&gt; any()</tt></p>
+</div><p>
+  TeX to PDF
+  Run pdflatex on the created /verb+.tex+ file.
+  In the rare event that you get a syntax error in your generated
+  .tex file then the best thig to do is manually run pdflatex
+  to determine the fault.
+  Runs with output in the directory where File is</p>
+
+<h3 class="function"><a name="time_fun-2">time_fun/2</a></h3>
+<div class="spec">
+<p><tt>time_fun(Str, Fun) -&gt; any()</tt></p>
+</div><p>time_fun(Str, Fun)
+     times Fun().
+     Prints Str and time if evaluation of Fun succeeds
+     otherwise prints error</p>
+
+<h3 class="function"><a name="time_stamp-0">time_stamp/0</a></h3>
+<div class="spec">
+<p><tt>time_stamp() -&gt; any()</tt></p>
+</div><p>return a string contining the current data and time</p>
+
+<h3 class="function"><a name="to_lower-1">to_lower/1</a></h3>
+<div class="spec">
+<p><tt>to_lower(Str) -&gt; any()</tt></p>
+</div><p>Lowercase a string.</p>
+
+<h3 class="function"><a name="trim-1">trim/1</a></h3>
+<div class="spec">
+<p><tt>trim(S) -&gt; any()</tt></p>
+</div><p>remove leading and trailing white space from a string.</p>
+
+<h3 class="function"><a name="unconsult-2">unconsult/2</a></h3>
+<div class="spec">
+<p><tt>unconsult(File, L) -&gt; any()</tt></p>
+</div><p>Write a file (inverse of consult).
+  A joke.</p>
+
+<h3 class="function"><a name="which-1">which/1</a></h3>
+<div class="spec">
+<p><tt>which(Mod) -&gt; any()</tt></p>
+</div><p>Find the directory name where a module was loaded from.</p>
+
+<h3 class="function"><a name="which_added-1">which_added/1</a></h3>
+<div class="spec">
+<p><tt>which_added(Fun) -&gt; any()</tt></p>
+</div><p>
+  spawn a fun and find out which additional modules get loaded.
+  Returns the names of the new modules which have been loaded and
+  where they were loaded from.</p>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc, Dec 9 2009, 19:02:45.</i></p>
+</body>
+</html>

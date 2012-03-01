@@ -1,0 +1,34 @@
+<!ENTITY  % inline "#PCDATA|e|emph|ic|latex|iq">
+<!ENTITY  % flow   "e|code|p|pre|ol|ul|dl|code">
+
+<!ELEMENT log (entry)* >
+<!ELEMENT entry (date, (%flow; | sect1)* )>
+<!ELEMENT title (#PCDATA)>
+<!ELEMENT sect1 (title, (%flow; | sect2)* )>
+<!ELEMENT sect2 (title, (%flow;)* )>
+<!ELEMENT p (%inline;)*>
+<!ELEMENT date (#PCDATA)>
+<!ELEMENT ic (#PCDATA) >
+<!ELEMENT ul (li)*>
+<!ELEMENT pre (#PCDATA)>
+<!ELEMENT dt (%inline;)* >
+<!ELEMENT dd (%flow;)* >
+<!ELEMENT dl (dt,dd)* >
+<!ELEMENT ol (li)* >
+<!ELEMENT li (%flow;)* >
+<!ELEMENT code (#PCDATA) >
+<!ELEMENT latex (#PCDATA) >
+<!ELEMENT iq (#PCDATA) >
+<!ELEMENT emph (#PCDATA) >
+<!ELEMENT e (#PCDATA)>
+<!ATTLIST sys1
+          auto.mod CDATA #FIXED "foo"
+          auto.func CDATA #FIXED "bar"
+          auto.args NMTOKENS #FIXED "a b 123 foo bar"
+          types CDATA #FIXED "sys1.types">
+
+<!ATTLIST sys1
+          auto.mod CDATA #FIXED "foo"
+          auto.func CDATA #FIXED "bar"
+          auto.args NMTOKENS #FIXED "a b 123 foo bar"
+          types CDATA #FIXED "sys1.types">

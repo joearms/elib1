@@ -1,0 +1,35 @@
+h1 {  text-align: center; font-size:1.5em }
+
+.slide { 
+  padding: 0.5em 2em 0em 2em; 
+  display: block;
+  border: 1px solid black;
+  background: #ffddee;
+  width: 90%;
+  height: 90%;
+  font-size: x-large;
+  }
+
+p {text-align:justify}
+
+ul { margin-left:1em}
+
+pre {
+  margin: 1em;
+  font-weight: bold;
+  background-color: #FED;
+  border-style: solid;
+  border-width: 1px;
+  -webkit-border-radius: .5em;
+  -moz-border-radius: .5em;
+  border-color: #48C;
+  padding: 0.5em;
+  font-size: 100%;
+}
+
+.right  {position: absolute; left:50%; top:100px;}
+.middle {position: absolute; left:33%; top:100px;}
+.farright  {position: absolute; left:70%; top:100px;}
+
+td { border: 2px solid black; padding:5px; } 
+table {border-collapse:collapse}

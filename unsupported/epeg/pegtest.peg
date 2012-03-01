@@ -1,0 +1,31 @@
+# test a few peg expressions
+
+s = " "* ;  # spaces
+
+line = s (token s)*;
+
+token = peglib:float | peglib:int | atom;
+
+atom = [a-z]+;
+
+%{
+
+test() ->
+    {Toks, []} = ?MODULE:parse_line("    1234 abc 12.23 34"),
+    [{token,1234},
+     {token,{atom,"abc"}},
+     {token,{float,_}},
+     {token,34}] = Toks,
+    io:format("test:test worked~n"),
+    init:stop().
+
+final(line, [_,L]) -> 
+    [I || [I,_] <- L];
+final(Tag, Val) -> 
+    {Tag, Val}.
+
+
+%}
+
+
+

@@ -1,0 +1,34 @@
+<? simple_web_server:header() ?>
+
+<body>
+  <h1>IRC</h1> 
+
+  <p>This is an IRC client and server.</p>
+  
+  <p><a href="/cgi/start_irc">Show me</a></p>
+
+  <p>The intention is to control all Erlang components with
+  IRC</p>
+
+  <p>Erlang components (web-servers, indexing engines, databases etc.)
+  should appear to be "chat-rooms" in an IRC interface. To interact
+  with <i>mnesia</i> for example, one might say:</p>
+
+  <pre>
+    /join #mnesia
+  </pre>
+
+  <p>This would enter the chat room mnesia, then you could chat with
+  the #mnesia bot:</p>
+
+  <pre>
+    joe: show tables
+    #mnesia: one two three
+    joe: describe one
+    #mnesia: {name:string(), ag::integer()}
+    ...
+  </pre>
+  
+  
+ </body>
+

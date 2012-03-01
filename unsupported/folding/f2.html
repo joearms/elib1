@@ -1,0 +1,329 @@
+
+<style>
+/* some styles */
+
+body { margin-left:10%; background-color: #f0f0f0;}
+
+.content {
+  padding: 1em;
+}
+
+.bar {
+  background-color: #008080;
+  color: #ffffff;
+  font-weight: bold;
+  padding: 2px 1em 2px 1em;
+}
+
+.box {
+  background-color: #ffff00;
+  border: 1px solid #000000;
+  color: #000000;
+  padding: 0px;
+  position: absolute;
+}
+
+.zebra1 { padding-left:7px;
+         background-color:red;
+         border-left: 1px solid black; 
+	 border-bottom: 1px solid black; }
+
+.zebra2 { padding-left:7px;
+    background-color:green;
+         border-left: 1px solid black; 
+	 border-bottom: 1px solid black; }
+
+.selected { padding-left:40px; 
+         border-left: 1px solid black; 
+	 border-bottom: 1px solid black;
+         background-color: orange }
+
+
+.table1 {border-top: solid 1px #000000;
+          border-right: solid 1px #000000;}
+
+p	 {color:black}
+p i	 {color: black}
+p tt	 {font-weight: bold}
+h1       {color:  #394d7f;}
+h2	 {color:   #394d7f;}
+pre	 {color: green; font-weight:bold}
+ul	 {margin-left: 120px}
+
+div#mynote {
+display: none;
+position: fixed; 
+padding:10px;
+top:100; 
+left:100; 
+width:600;
+height:400;
+background-color:white;
+border: 2px solid black;
+}
+
+a.but {text-decoration:none;
+   font-size:0.8em;
+   font-family:sans}
+
+a.but:hover {background-color:yellow;
+         border: solid thin #666666; }
+
+
+.title {color:blue; padding-left:5px;
+        border:1px solid black; background-color:#ddffff}
+
+</style>
+<script language="JavaScript" 
+        SRC="../../include/jquery-1.3.2.min.js"></script>
+<script>
+$(document).ready(function(){
+    var data = [
+        {header:"To do",
+	show:true,
+	data:"Make the organiser mode work while in the HTML display. This is pretty easy and would be quite impressive.<p>Change the color of the selected text.</p>"},
+	{header:"Commands",
+	show:true,
+	 data:"<p>u d - move selection up or down (org mode)<p>esc change mode<p>up,down arrow move selection (org mode)<p>h help<p>e edit (org mode)"},
+	{header:"Header2",
+	 show: true,
+	 data:"<p>Content 2 Hello joe. <font color='red'>How are you</font>"},
+	{header: "Header 3",
+	 show: false,
+	 data:"<p>Content 3"},
+	{header:"Header 4",
+	 show:false,
+	 data:"<p>Content 4</p>"},
+	{header:"Header 5",
+	 show:false,
+	 data:"<p>Content 5</p>"}
+    ];
+
+    // global varibles
+    var selected;    // which row is selected
+    var display;  // true = display the text
+    // false organise
+    var editing; // true means we are editing 
+    var html; // id of the html region
+    var org; // id of the org region
+    var orgtab; // id of the organiser table
+
+    function init_html(){
+	// render all folds
+	var i,max,id;
+	max = data.length;
+	html.html("");
+	for(i=0; i<max; i++){
+	    html.append("<h2>"+data[i].header+"</h2>").
+		append(data[i].data);
+	}
+    };
+
+    function init_org(){
+	orgtab.html("");
+	var k;
+	var j = 2;
+	for(i=0;i<data.length;i++){
+	    k = $("<tr><td>"+data[i].header+"</td></tr>");
+	    orgtab.append(k);
+	    k.addClass("zebra" + j);
+	    j = 3 - j;
+	    k = $("<tr><td>"+data[i].data+"</td></tr>");
+	    orgtab.append(k);
+	    if (!data[i].show)k.hide(); 
+	};
+	$("#orgtab tr").eq(2*selected).addClass("selected");
+    };
+   
+    function move_row_up(){
+	// swap selected with selected + 1 in the data array
+	if(selected > 0){
+	    var tmp = data[selected];
+	    data[selected] = data[selected-1];
+	    data[selected-1] = tmp;
+	    selected -= 1;
+	    init_org();
+	    init_html();
+	};
+    };
+    
+    function move_row_down(){
+	// swap selected with selected + 1 in the data array
+	if(selected < data.length - 1){
+	    var tmp = data[selected];
+	    data[selected] = data[selected+1];
+	    data[selected+1] = tmp;
+	    selected += 1;
+	    init_org();
+	    init_html();
+	};
+    };
+
+    function debug(x){
+	$("#debug").append("<br>"+x);
+    };
+    
+    function move_selection_down(){
+	if(selected < data.length - 1){
+	    selected += 1;
+	    $("#orgtab tr").eq(2*selected).addClass("selected");
+	    $("#orgtab tr").eq(2*(selected-1)).removeClass("selected");
+	};
+    };
+    
+    function move_selection_up(){
+	if(selected > 0){ 
+	    selected -= 1;
+	    $("#orgtab tr").eq(2*selected).addClass("selected");
+	    $("#orgtab tr").eq(2*(selected+1)).removeClass("selected");
+	};
+    };
+    
+    function toggle_fold(){
+	// debug("toggle "+selected);
+	data[selected].show = !data[selected].show;
+	if(data[selected].show){
+	    $("#orgtab tr").eq(2*selected+1).show();
+	} else {
+	    $("#orgtab tr").eq(2*selected+1).hide();
+	};
+    };
+
+
+    // off we go
+    // start by rendering the text and the organiser boxes
+    // then display the HTMNL box
+
+    $(document).keypress(function(e){
+	if(editing){
+	    return true;
+	} else {
+	    if (e.keyCode == 27) {
+		if (display){
+		    html.hide();
+		    org.show();
+		} else {
+		    org.hide();
+		    html.show();
+		};
+		display = !display;
+	    } else {
+		if (!display){
+		    do_org_cmd(e);
+		}
+	    }}});
+    
+    function do_org_cmd(e){
+	// do a command in organise mode
+	switch(e.keyCode) {
+	case 13:
+	    // hit enter
+	    toggle_fold();
+	    break;
+	case 38:
+	    // arrow up
+	    move_selection_up();
+	    break;
+	case 40:
+	    // arrow down
+	    move_selection_down();
+	    break;
+	default:
+	    var k = e.which;
+	    $("#debug").append("<br>e="+k+" "+e.keyCode);
+	    switch(k) {
+	    case 117:
+		// key 'u' move title up
+		move_row_up();
+		break;
+	    case 100:
+		// key 'd' move title down
+		move_row_down();
+		break;
+	    case 101:
+		// 'e'
+		edit_selected();
+		break;
+	    default:
+		// alert("non"+key);
+		break;
+	    };
+	};
+    };
+
+    function edit_selected(){
+	debug("edit");
+	editing = true;
+	$("body").css("background", "#cccccc");
+	$("#title").html(data[selected].header);
+	$("#content").html(data[selected].data);
+	$("#mynote").show();
+    };
+    
+    $("#save_edit").click(function(){
+	data[selected].header = $("#title").html();
+	data[selected].data = $("#content").html();
+	init_org();
+	init_html();
+	$("body").css("background", "white");
+	editing = false;
+	$("#mynote").hide();
+    });
+    
+    selected = 0;
+    display = true;
+    editing = false;
+    html = $("#html");
+    org = $("#org");
+    orgtab = $("#orgtab");
+    org.hide();
+    html.html("<h1>ready ...</h1>");
+    init_html();
+    init_org();
+});
+
+</script>
+
+<body>
+  <!-- this div is a hidden editor div -->
+  <div id="mynote">
+    <center>
+      <table width="100%">
+	<tr>
+	  <td align="left">
+	    <a class="but" href="#" onclick="add_button()">button</a>
+	    <a class="but" href="#" onclick="add_pre()">pre</a>
+	    <a class="but" href="#" onclick="add_link()">link</a>
+	    <a class="but" href="#" onclick="add_link1()">new link</a>
+	  </td>
+	  <td align="right">
+            <button id="save_edit">save</button>
+            <a class="but" href="#" onclick="save_edit()">quit</a>
+	  </td>
+	</tr>
+	<tr>
+	  <td colspan="2">
+	    <span contenteditable="true" class="title" id="title">Title</span>
+	    <div contenteditable="true" id="content">
+		<p>I am a hidden window</p>
+	      </div>
+	    </div>
+	  </td>
+	</tr>
+      </table>
+    </center>
+  </div>
+  
+  <!-- define two top regions. Only one is visable -->
+  <div id="org">
+    <table class="table1" border=1 id="orgtab" width="800px" cellspacing=0>
+    </table>
+  </div>
+  <!-- html stuff -->
+  <div id="html">
+  </div>
+  <!-- debug is always on -->
+  <h2>debug</h2>
+  <div id="debug">
+  </div>
+</body>

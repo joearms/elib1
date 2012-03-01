@@ -1,0 +1,10 @@
+.comment {color:green}
+.keyword {font-weight:bold}
+.string {color: grey}
+.var {color:orange}
+.bif {color:red; font-weight:bold}
+.int {color:#cceeaa}
+.atom { }
+a:link {text-decoration:none; color:blue}
+a:visited {text-decoration:none; color:blue}
+

@@ -1,0 +1,354 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso8859-1">
+<script language="JavaScript" SRC="render.js"></script>
+<style>
+
+body { margin-left:10%; background-color: #f0f0f0;}
+
+.table1 {border-top: solid 1px #000000;
+          border-right: solid 1px #000000;}
+
+.zebra1 { padding-left:7px;
+         background-color:#ffeeaa;
+         border-left: 1px solid #808080; 
+	 border-bottom: 1px solid #808080; }
+
+.zebra2 { padding-left:7px;
+         background-color:#aaeeff;
+         border-left: 1px solid #808080; 
+	 border-bottom: 1px solid #808080; }
+
+.data {  padding-left: 7px;
+         background-color: #ffffff;
+         border-left: 1px solid #808080; 
+	 border-bottom: 1px solid #808080; }
+
+.selected { padding-left:7px; 
+         border-left: 1px solid #808080; 
+	 border-bottom: 1px solid #808080;
+         background-color: #ffaabb }
+
+    p {color:blue}
+    p i {color: red}
+    p tt {font-weight: bold}
+    h1 {color: red}
+    h2 {color: orange}
+    pre {color: green; font-weight:bold}
+    ul { margin-left: 120px}
+
+
+</style>
+
+<script type="text/javascript">
+
+/* each row has a single column in it
+   the following attributes are set
+   "type" = "header"   (it's a header)
+          | "data"     (it's data)
+   "class" = "zebra1" | "zebra2" | "selected"  (classes for type header)
+           | "data" (class for type data)
+   "idx" = an index in the the header and content arrays
+
+   index points to the currently selected header
+   and never data
+
+   Initally the data should look like this:
+   <type=header idx=1 class=zebra1>header[1]
+   <type=header idx=2 class=zebra2>header[2]
+   
+*/
+
+var selected = 0;
+
+var myClass = new Array();
+myClass[1] = "zebra1";
+myClass[2] = "zebra2";
+
+var expanded = new Array();
+var edit     = new Array();
+var header   = new Array();
+var content  = new Array();
+var order    = new Array();
+
+header[0]  = "Getting started (0)";
+content[0] = "Getting started (0) is //easy//";
+
+header[1]  = "Inlines (1)";
+content[1] = "Are (1) are //all the inlines//\nYou can have **bold** //emphasis// <<code>> or --struck though text--.\n\nYou --can strike **bolded** text---";
+
+header[2]  = "More on Inlines (2)";
+content[2] = "Are (2) are //all the inlines//\nYou can have **bold** //emphasis// <<code>> or --struck thoough text--/n/n. You --can strike **bolded** text---";
+
+header[3]  = "Some headers (3)";
+content[3] ="!Header1\n!!header2 (3)\n!! another header 2\nAnd a para";
+
+header[4]  = "preformatted text (4)";
+content[4] = "To make (4) preformatted text\n> just preceed every\n> line with a >";
+
+function load() {
+    var max, i;
+    max = header.length;
+    for(i=0; i<max; i++){
+	order[i] = i;
+	expanded[i] = false;
+	edit[i] = false;
+    };
+    selected = 0;
+    render_rows();
+}
+
+function render_rows(){
+    var node, node1, k,max,i,j,x,id,pos,node,oldmaxrows,color;
+    max = order.length;
+    debug();
+    pos = 0;
+    // alert("max="+max);
+    id = document.getElementById("maintab"); 
+    id.innerHTML = "";
+    pos = 0;
+    k = 1;
+    for(i=0; i < max; i++){
+	color = myClass[k];
+	if(i == selected) color="selected";
+	add_a_row(id, pos++, "header", header[order[i]], i, color);
+	if(expanded[i]){
+	    add_a_row(id, pos++, "data", "uum", i, "data");
+	    node=id.rows[pos-1].cells[0];
+	    node.innerHTML = content[order[i]];
+	    render_wiki_str_in_node(node, content[order[i]]);
+	};
+	if(edit[i]){
+	    add_a_row(id, pos++, "data", "uum", i, "data");
+	    node=id.rows[pos-1].cells[0];
+	    // disable the window click event
+	    document.body.setAttribute("onkeyup", "");
+	    node1 = id.rows[pos-2].cells[0];
+	    node.innerHTML = "<textarea onkeyup='mynewclicker(event)' cols=40 rows=15>" + content[order[i]] + "</textarea>";
+	    // set the focus in the editor
+	    node.childNodes[0].focus();
+	}    
+	k = 3 - k;
+    };
+}
+
+function mynewclicker(event){
+    var text = whichElement(event);
+    var key = event.keyCode;
+    var str = text.value;
+    var row = text.parentNode.parentNode.rowIndex;
+    var table = document.getElementById("maintab");
+    var id = table.rows[row-1].cells[0];
+    render_wiki_str_in_node(id, str);
+    if ( key == 27) {
+	// done editing
+	// store the string back in the array
+	content[order[row-2]] = str;
+	// delete the current row
+	edit[row-2] = false;
+	// restore the origonal key handler for the body
+	render_rows();
+	document.body.setAttribute("onkeyup", "keypressed(event)");
+    };
+}
+
+// add a row type is normal or expanded
+
+function add_a_row(id, n, type, text, idx, class) {
+    var row = id.insertRow(n);
+    var y=row.insertCell(0);
+    y.innerHTML = text;
+    y.setAttribute("type", type);
+    // y.setAttribute("onclick", "whichRow(event)");
+    y.setAttribute("idx", idx);
+    y.setAttribute("class", class);
+    // color_rows(id);
+}
+
+
+function debug(){
+    var out, i, max, x;
+    out = document.getElementById("debug");
+    out.innerHTML = "";
+    out.innerHTML += "Debug";
+    id = document.getElementById("maintab"); 
+    max = order.length;
+    out.innerHTML += "<br>max="+max;
+    out.innerHTML += "<br>selected="+selected;
+    for(i=0; i < max; i++){
+	out.innerHTML += "<br>i="+i;
+	out.innerHTML += " expanded = "  + expanded[i];
+	out.innerHTML += " order = " + order[i];
+	out.innerHTML += " edit = " + edit[i];
+    };
+}
+
+function keypressed(event){
+    var x, x1, x2, max, idx;
+    var key = event.keyCode;
+    id = document.getElementById("maintab");
+    switch(key) {
+    case 40:
+	// down
+	max = order.length;
+	if (selected < max - 1)selected++;
+	break;
+    case 38:
+	// move selection up
+	selected--;
+	break;
+     case 85:
+	 // key 'u' move title up
+	 if(selected > 0) {
+	     x = order[selected];
+	     order[selected] = order[selected-1];
+	     order[selected-1] = x;
+	     selected--;
+	 };
+	 break;
+    case 68:
+	// key 'd' move title down
+	max = order.length;
+	if(selected < max-1) {
+	    x = order[selected];
+	    order[selected] = order[selected+1];
+	    order[selected+1] = x;
+	    selected++;
+	};
+	break;
+    case 69:
+	// 'e'
+	edit[selected] = ! edit[selected];
+	if(edit[selected]) expanded[selected]= true;
+	break;
+    case 13:
+	expanded[selected] = ! expanded[selected];
+	break;
+    default:
+	// alert("non"+key);
+	break;
+    };
+    render_rows();
+}
+
+function is_expanded(id, index) {
+    return expanded[id.rows[index].cells[0].getAttribute("idx")];
+}
+
+function delete_a_row(id, n) {
+    var x=document.getElementById(id).deleteRow(n);
+    color_rows(id);
+}
+
+function text_a_row(id, n, c) {
+    var x=document.getElementById(id).rows[n].cells
+    x[0].innerHTML = c;
+}
+
+function style_a_row(id, n, c) {
+    var x=document.getElementById(id).rows[n].cells
+    x[0].setAttribute("class",c);
+}
+
+function set_an_attribute(id, n, attr, val) {
+    var x = document.getElementById(id).rows[n].cells;
+    x[0].setAttribute(attr, val);
+}
+
+function whichElement(e)
+{
+    var targ
+    if (!e) var e = window.event
+    if (e.target) 
+       targ = e.target
+    else 
+       if (e.srcElement) 
+	  targ = e.srcElement
+    if (targ.nodeType == 3) // defeat Safari bug
+	targ = targ.parentNode
+    return(targ);
+}
+
+function whichRow(e) {
+    var td = whichElement(e);
+    var tr = td.parentNode;
+    index = + tr.rowIndex;
+    var table = tr.parentNode.parentNode;
+    var id = table.getAttribute("id");
+    // alert("Click tab id=" + id + " index = " + index);
+    
+}
+
+</script>
+</head>
+
+<body onload="load()" onkeyup="keypressed(event)" width="80%">
+
+<h2>The main table</h2>
+
+
+<p>The follow keys are "live";
+<ul>
+<li> <b>u</b> Move selected element up
+<li> <b>d</b> Move selected element down
+<li> <b>up arrow</b> Move the selection up
+<li> <b>down arrow</b> Move the selection down
+<li> <b>enter</b> Toggle the fold on the selection
+</ul>
+
+<table>
+<tr><td>
+<table class="table1" id="maintab" width="400px" cellspacing=0>
+</table>
+</td>
+</tr>
+</table>
+
+<p>
+<div id="debug">
+</div>
+
+<h2>To do</h2>
+<p>bug when u and d typed when opened
+
+<h2>Dynamic table manipulation and styling</h2>
+
+<p>This page tests the techniques used for dynamic manipultaion of tables.
+
+<p></p>
+ 
+<table class="table1" id="t123" width="400px" cellspacing=0>
+<tr><td class="zebra1" type="header" onclick="whichRow(event)">One</td></tr>
+<tr><td class="zebra2" type="header" onclick="whichRow(event)">Two</td></tr>
+<tr><td class="zebra1" type="header" onclick="whichRow(event)">Three</td></tr>
+<tr><td class="zebra2" type="header" onclick="whichRow(event)">Four</td></tr>
+</table>
+
+<p><a href="#" onclick='javascript:add_a_row("t123", 2, "header","test");'>add normal row</a>
+<p><a href="#" onclick='javascript:add_a_row("t123", 3, "expanded","stuff");'>add expanded</a>
+<p><a href="#" onclick='javascript:delete_a_row("t123", 2);'>delete a  row</a>
+<p><a href="#" onclick='javascript:text_a_row("t123", 2, "Have a nice one");'>set text in a row</a>
+<p><a href="#" onclick='javascript:style_a_row("t123", 2, "zebra2");'>style a row</a>
+<p><a href="#" onclick='javascript:set_an_attribute("t123", 0, "bgColor","red");'>set a color</a>
+
+ <h2>An empty table</h2>
+
+<table class="table1" id="t124" width="400px" cellspacing=0>
+</table>
+
+
+<p>Is here
+
+<p><a href="#" onclick='javascript:add_a_row("t124", 0, "header","click");'>add normal row</a>
+
+
+<h2>References</h2>
+<p>Most of the code is modified from the examples at
+<a href="http://www.w3schools.com/js/js_examples_3.asp">W3schools - dom manipulation</a>
+
+<p>The trick I used to get nice border stylings I found at
+<a href="http://www.jessett.com/web_sites/css/borders.shtml">CSS border styling</a>
+
+</body>
+</html>

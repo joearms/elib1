@@ -1,0 +1,33 @@
+<script src='/include/jquery-1.3.2.min.js'></script>
+<script src='/include/jquery-slides.js'></script>
+<link rel='stylesheet' href='/include/slides.css'>
+<body>
+
+  <div class='slide'>
+    <h1>Highlights of the library</h1>
+    <ol>
+      <li>Streams</li>
+      <li>Fast IO</li>
+      <li>Gamma encoding</li>
+      <li>XML parser</li>
+    </ol>
+  </div>
+
+  <div class='slide'>
+
+    <h1>Streams</h1>
+    
+    <p>Stream parsing is very powerful technique.</p>
+
+    <p>If <b>F</b> is a stream then:
+    <ol>
+      <li>{string(), F1} | eos = F()</li>
+    </ol>
+    
+    <p>Where F1 is a new stream</p>
+    <p>Used in <a href="/supported/tagger/html/elib1_xml.html">elib1_xml.erl</a></p>
+    
+  </div>
+</body>
+
+

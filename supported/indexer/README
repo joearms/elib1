@@ -1,0 +1,59 @@
+The Index consists of 4 programs
+
+     egather <Name>
+        <Name>.in -> <Name>.flist <Name>.trawl
+     eindex <Name>
+        <Name>.trawl -> <Name>.idx
+     esearch <Name> "Query" 
+        <Name>.idx "Query" -> Output
+     efsim <Name>
+        <Name>.trawl -> <Name>.fsim
+
+<Name>.in
+   {"Dir", "*.erl", Bool}.
+   ...
+
+Talk:
+
+	elib2 - an Erlang library
+	Joe Armstrong
+
+Elib2 is an Erlang library and a number of complete programs that 
+make use of the library.
+
+The talk discusses:
+
+   - the philosophy behind the library
+   - what's in the library 
+   - my plans for the library
+   
+I'll also show some of the programs that I have built using the
+library, with special attention to the following programs:
+
+   - elib2_gather
+     A program to scavenge your hard disk and find all Erlang
+     programs on your disk and pack them in a single
+     compressed file (called a trawl).
+
+   - elib2_make_index
+     A program that creates a full text index from a trawl.
+     This implements some of the algorithms in "managing gigabytes."
+     In particular I'll show how gamma compression is implemented
+     using the bit syntax. 
+
+   - elib2_query
+     A program that queries the full text index.
+
+   - elib2_find_similar_files
+     A program that computes a "similarity index" between pairs
+     of Erlang modules. Using this we can find "the most similar"
+     module to a given module in linear time.  I compute the similarity
+     digraph of all Erlang module programs on my disk.
+
+     Programs which are very similar are candidates for refactoring into
+     a library part and a specific part. 
+
+I'll also discuss my plans for releasing the library.
+
+
+	 

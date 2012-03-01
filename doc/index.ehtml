@@ -1,0 +1,36 @@
+<html>
+  <script>
+function link(file,text)
+{
+     document.write("<li><a href='/mod?mod=elib1_content_edit&func=show_ehtml&file=/home/ejoearm/code/elib2-1/doc/" + file + ".html'>" + text + "</a></li>");
+}
+</script>
+
+  <h1>Index</h1>
+
+  <a href="/mod?mod=elib1_content_edit&amp;func=list_dir">auto generate
+  the index</a>
+
+  <ul>
+    <script>
+      link("about","About This Library");
+      link("glossary", "Glossary");
+      link("trawl", "Trawl files");
+      link("bin", "runnable programs");
+      link("full_text_index","A full text indexing engine");
+      link("web_query","A query interface to the indexing engine");
+      link("webserver", "A Web Server");
+      link("validate", "Notes on my XML validation chain");
+      link("content_editable", "Content editable a custom editor for this library");
+      link("erl_browser", "A browser for Erlang code");
+      link("squasher", "squash many files into  one");
+      link("similar", "Find similar files in a trawl");
+      link("doc", "How this library is documented.");
+      link("xml.html", "XML parsing and manipulation");
+      link("fast_io","Fast I/O");
+      link("parsing", "Parser combinators");
+      link("lib_misc", "Lib misc");
+    </script>
+  </ul>
+
+</html>

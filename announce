@@ -1,0 +1,67 @@
+Announcing elib1
+
+Elib1 was released today.
+
+Elib1 is a library of Erlang modules and set of applications which use the modules.
+
+The Elib1 project now moves into phase 2
+
+The phases of the project are:
+
+    Phase 1: Define and implement a basic structure 
+             and a small number of applications
+    Phase 2: Make project open source
+    Phase 3: Write books
+
+Each phase will take about 2-3 years.
+
+The first attempt at a library contains modules for the following:
+
+    xml parsing
+    fast tuple I/O (to disk)
+    full-text indexing
+    http parsing
+    telnet server
+    json parsing
+    porter stemming
+    mysql native interface
+    sha1
+    similar file locator
+    screen manipulation
+    miscellaneous missing functions (which should be in the standard libraries)
+    accurate tagging of Erlang so it can be turned into browsable HTML
+    (and more ...)
+
+The applications are divided it two areas. Supported and unsupported
+
+In supported:
+
+    indexer      - a full text indexing engine (this is the of near production quality)
+    irc          - and irc kit (includes a TCL wish interface) (somewhat incomplete)
+    tagger       - an application to turn erlang into browsable HTML
+    drivers      - example linked in and port drivers (currently broken)
+    midi_drivers - mac os X only
+    website      - a webserver (used internally)
+    versions     - a way of munging module names to make them secure
+
+In unsupported:
+
+   epeg     - a peg grammar and parser combinators
+   folding  - Javascript folding editor/organiser (needs some work, not erlang :-)
+   jpeg     - image transformation in Erlang
+   xml      - some xml stuff
+
+I have attempted to use "best practise" in making the library. Using
+the dialyzer, eunit and edoc.
+
+This code is far from perfect or polished - but the basic way things fit together
+is defined.
+
+Rather than have 500 small libraries each with a few users and a few routines I'd
+like to see one library with a much large number of tightly integrated routines.
+
+The code is available at:
+
+http://github.com/joearms/elib1
+
+

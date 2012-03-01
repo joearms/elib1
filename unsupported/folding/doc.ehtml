@@ -1,0 +1,30 @@
+<? simple_web_server:header() ?>
+
+<body>
+  <h1>A folding editor</h1> 
+
+  <p>Nothing to do with Erlang.</p>
+
+  <p>
+    This is some JavaScript that I tried to make a folding editor
+    with.
+  </p>
+
+  <p>If anybody who is skilled in the art can fix the problems below then
+  I will be able to integrate this with an Erlang content management system</p>
+
+  <ul>
+    <li>Run the latest version <a href="f3.html">f3</a></li>
+  </ul>
+  
+  <p>Problems with this:</p>
+  <ul>
+    <li>Focus - when I hit down arrow a few times the focus moves off screen
+    I need to scroll the display to keep the focus on screen</li>
+    <li>Keyboard mappings. This works fine on firefox/ubuntu, but not on my
+    mac (I think). Need a portable way of doing this that works on all
+    browsers.</li>
+  </ul>
+
+ </body>
+

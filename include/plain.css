@@ -1,0 +1,75 @@
+
+h1, h2, h3, p, td {
+font-family: serif;
+}
+
+
+h1{ font-size:1.2em }
+
+h3{ font-size:0.75em; color:#777; margin-bottom:0;}
+
+h3 + p{ margin-top:0;}
+
+h2{ font-size:1em; display:block; clear:both; }
+
+td + td + td,
+th + th + th{ text-align:left; }
+
+tt { font-weight:bold }
+
+
+td { border: 1px solid black } 
+table {border-collapse:collapse}
+
+
+*.myhover
+{  	text-shadow: #ccc 2px 2px 5px;
+	color:#E20074;
+}   
+
+p {  text-align:justify }
+/* structured text styles */
+
+body {margin-left:2in; width:60%}
+
+h1{ font-size:1.2em }
+
+h3{ font-size:0.75em; color:#777; margin-bottom:0;}
+
+h3 + p{ margin-top:0;}
+
+h2{ font-size:1em; display:block; clear:both; }
+
+td + td + td,
+th + th + th{ text-align:left; }
+
+tt { font-weight:bold }
+
+
+td { border: 1px solid black } 
+table {border-collapse:collapse}
+
+pre {
+  margin: 1em;
+  font-weight: bold;
+  background-color: #FED;
+  border-style: solid;
+  border-width: 1px;
+  -webkit-border-radius: .5em;
+  -moz-border-radius: .5em;
+  border-color: #48C;
+  padding: 0.5em;
+  font-size: 120%;
+  overflow: auto;
+}
+
+
+body { font-size:1.2em; }
+
+p {  text-align:justify }
+
+
+*.hover
+{  	text-shadow: #ccc 2px 2px 5px;
+	color:#E20074;
+}   

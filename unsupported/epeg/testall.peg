@@ -1,0 +1,576 @@
+%{
+-import(lists, [flatten/1]).
+%}
+
+# testall.peg
+# This file contains a numeber of differnt grammars
+# and test cases
+# 
+# This file contains a sequence of 
+#    - comments
+#    - Erlang code
+#    - peg productions
+#
+# Comments
+# ========
+#    Comments begin with # and terminate with end of line
+#
+# Erlang code
+# ===========
+#    is put in brackets, like this:
+#
+#    %{
+#       erlang code
+#       .. 
+#    %}
+#
+# Peg Productions
+# ===============
+#
+# Are written
+#  
+# Id = Expr ;
+#
+# For each rule a number of functions are generated
+# I'll give a simple example:
+#
+# The rule
+
+    erlint = [0-9]+ -;
+ 
+   abc = erlint;
+
+%{
+abc(X) -> abc.
+%}
+
+# defines an erlang integer (-) means "skip spaces"
+#
+# the compiler will turn this into the function
+#  parse_erlint(Str) which returns {Val, Str'}
+# to produce Val the user *must* supply a funtion called
+#  
+# defined as follows:
+
+%{
+
+erlint([A,_]) -> {int, list_to_integer(A)}.
+
+%}
+
+# Note that erlint has a list of two arguments as
+# it's argumemt. The first is the parse of [0-9]+ the
+# second the parse of "-" (which just consumes spaces)
+
+# A more complex example is:
+
+erlfloat = [0-9]+ "." [0-9]+ ("e" ("+"|"-")? [0-9]+)? -;   
+
+# semantic function (which deals with the parse tree) is:
+
+%{
+
+erlfloat([A,_,C,D,_]=S) ->
+    D1 = toexp(D),
+    Str = flatten([A,".",C,D1]),
+    {float, list_to_float(Str)}.
+
+toexp([]) -> [];
+toexp([[e,['-'],S]]) -> ["e-",S];
+toexp([[e,['+'],S]]) -> ["e+",S];
+toexp([[e,[],   S]]) -> ["e",S].
+
+%}
+
+# Peg Expressions are really easy.
+
+# The base cases of PE's are
+#  "xxx"        matches a literal string
+#  'XXX'        matches a lityeral string follows by spaces
+#  .            matches any character
+#  [X-Yx-YZZZZ] matches ranges of characters or individual characters
+
+# If P is a  PE's then so are
+#    P* P+ P? and (P)
+# If P1 and P2 are PEs then so are
+#    P1 | P2  (commited choise - if P1 is accepted the the system will
+#              never backtrack into P2)
+#    P1 P2    (sequence)
+# !P succeeds if P fails
+
+%{
+
+%}
+
+
+# A leg grammar for newp
+
+# Note the difference between 'X' and "X"
+# both are literals. The diffence is that
+# 'XX' consumes any additional space *after* the
+# literal whereas "XX" does not.
+# 'XX' is compiled to lit_then_space("XX") 
+# "XX" is compiled to lit("XX")
+
+grammar = - ( decln | def | unexpected)+ endOfFile ;
+
+unexpected = . ;
+
+lines = spaces line (';' line)* endOfFile;
+
+endOfFile = !. ;	  
+
+line = (!';' .)*;
+ 
+decln = '%{' ( !'%}' . )* '%}' -;
+
+def = ident '=' expr ';' - ;
+
+expr = seq ('|' seq)* -; 
+
+seq = prefix (prefix)*;
+
+prefix = ( '&' action )
+|	 ('&' suffix )
+|	 ('!' suffix )
+|        suffix;
+
+suffix  = primary ('?' | '*' | '+' )?;
+
+primary = ident ! '='
+ |	'(' expr ')' 
+ |	literal        
+ |	class
+ |	'.' ;
+
+# Lexical syntax
+
+int = [0-9]+;
+
+ident =  "-" - | [a-z][a-zA-Z_]* -; 
+
+literal = lit -;
+
+# literals '...'  or "..."
+# the ... are char's
+
+lit  =  ["] (!["] char )*  ["] 
+     |  ['] (!['] char )*  [']; 
+
+# chars are what we find inside strings
+# we use the Erlang quoting convention here
+# \n \t \f \v \r are special
+# \\ is backslash
+# \C is C
+# \OOO is octal
+# \^ C is control 
+
+## this is horrible
+
+char = 
+     "\\" [0-3][0-7][0-7]
+     | "\\" [0-7][0-7]     
+     | "\\" [0-7]
+     | "\\" [bdefnrstv\'"]
+     | "\\^" [a-zA-Z]
+     | "\\\\"            
+     | !"\\" . 
+     | "\\" .
+     | . ;
+
+class = '['  ( !']' range )* ']' -;
+
+range = char "-" char | char;
+
+action = '{' braces* '}' - ;
+
+braces = '{' (!'}' .)* '}' | !'}' .;
+
+spaces =  (space | comment)* ;
+
+- =	(space | comment)* ;
+
+space = " " | "\t" | endofline;
+
+comment = '#' (!endofline .)* endofline;
+
+endofline = "\r\n" | "\n" | "\r";
+
+# note the leading space
+
+# Now erlang tokens
+
+erltokens = - erltoken* endOfFile;
+
+#note float *must* come before int
+
+erltoken = erlcomment | erldollarint 
+         |  erlfloat | erlatom | erlvar | erlanonvar | erlint  
+         | erlstring | erlquotedatom |
+           erlpunct | erlerror;
+
+erlerror = .; 
+
+erlatom = [a-z] [A-Za-z0-9_]* -;
+
+erlvar = [A-Z][A-Za-z0-9_]* -;
+
+erlanonvar = "_" [A-Z] [A-Za-z0-9]* -
+           | "_" -;
+
+erldollarint = "$\\" eat_escape  -
+             | "$" . -;
+
+# character after $
+eat_escape = [0-3][0-7][0-7] 
+           | [0-7][0-7]
+           | [0-7]
+           | [nsrtfv]
+           | "\\"
+           | "^" [a-ZA-Z];
+
+erlstring = ["] strquotechars* ["] - ;
+
+strquotechars = "\\\""
+           | "\\" .
+           | !"\"" .;
+
+erlquotedatom = ['] atomquotechars* ['] -;
+
+
+atomquotechars = "\\'"
+           | !"'" .;
+
+## note "." not '.' ws
+
+## to do later - efficient compilation of "all quoted" things
+
+erlpunct =
+   '(' | ')' |',' | ';' | '=' | ':' | '->' | '[' | ']' | '||' | '|' |
+   '{' | '}' | 'case' | 'end' | 'receive' | 'if' | 'try' | 'catch' |
+   '?' | '<' | '>' | '+' | '-' | '/' | '*' | 'after' | '-' | dws;
+
+# this fails for .EndOfFile
+
+dws = "." ws -;
+
+
+erlcomment = "%" (! "\n" .)* - ;
+
+# note to self I have a bug - I can't say "\s" ...
+
+ws = "\r\n" | " " | "\t" | "\n" | endOfFile;
+
+%{
+
+%% semantics
+
+grammar([_,G,_]) ->
+    {gram,G}.
+
+ws(_) -> ws.
+
+erltokens([_,S,_]) -> {toks, S}.
+
+erltoken(X) -> X.
+
+unexpected(X) ->
+    io:format("Unexpected symbol:~p",[[X]]),
+    {error, [X]}.
+
+erldollarint(X) -> {dollarInt, X}.
+
+eat_escape(X) -> {escape, X}.
+
+erlatom([A,B,_]) ->  {atom, [A|B]}.
+
+erlvar([A,B,_]) ->  {var, [A|B]}.
+
+erlanonvar([_,_,B,_]) -> {anonvar, B};
+erlanonvar([_,_])     -> anonvar.
+
+erlstring([_,S,_,_]) -> {estr, flatten(S)}.
+
+strquotechars([bang, X]) -> X;
+strquotechars(X)         -> X.
+
+atomquotechars([bang,X]) -> X;
+atomquotechars(X)        -> X.
+    
+erlquotedatom([_,S,_,_]) -> {qatom, S}.
+    
+erlpunct(X) -> {punct, X}.
+
+erlcomment([_, S,_]) -> {comment, reduce(S)}.
+
+action([_,B,_,_]) -> {action, B}.
+
+braces(X) -> {braces, X}.
+
+class([_,X,_,_]) -> {class, reduce(X)}.
+
+-define(IN(X,Low,Hi),Low =< X, X =< Hi).
+
+%% char sucks -- fortunately we only have to define it once
+
+char(X) ->
+    char1(X).
+
+char1([bang,X]) ->
+    X;
+char1(['\\', X]) when ?IN(X, $0, $7) ->
+    X - $0;
+char1(['\\', X, Y]) when ?IN(X, $0, $7), ?IN(Y, $0, $7) ->
+    (X-$0) * 8 + (Y - $0);
+char1(['\\', X, Y, Z]) when ?IN(X, $0, $3), ?IN(Y, $0, $7), ?IN(Z, $0, $7) ->
+    (X-$0) * 64 + (Y-$0) * 8 + (Z - $0);
+char1(['\\^', X]) when ?IN(X, $a, $z) ->
+    X - $a + 1;
+char1(['\\^', X]) when ?IN(X, $A, $Z) ->
+    X - $A + 1;
+char1('\\\\') ->
+    $\\;
+char1('\\') ->
+    $\\;
+char1(['\\', C]) ->
+    case C of
+	$b -> $\b;
+	$d -> $\d;
+	$e -> $\e;
+	$f -> $\f;
+	$n -> $\n;
+	$r -> $\r;
+	$s -> $\s;
+	$t -> $\t;
+	$v -> $\v;
+	$' -> $';
+	$" -> $";
+	C -> C
+    end;
+char1(X) ->
+    io:format("ooo char=~p~n",[X]),
+    {char, X}.
+	    
+spaces(X) ->
+    {spaces, flatten(X)}.
+    %% {spaces, X}.
+
+'-'(X) ->
+    spaces.
+
+range([A,_,B]) -> {A,B};
+range(X)       -> X.
+
+endofline(_) -> eol.
+
+space(X) -> X.
+
+comment(X) -> {comment, X}.
+
+decln([_,L,_,_]) ->
+    R = reduce(L),
+    io:format("code (~w bytes) ...~n",[length(R)]),
+    {decln, R}.
+
+lines([_,L,L2,_]) -> {lines, [L|reduce(L2)]}.
+
+endOfFile(_) -> endofFile.
+
+ident(['-',spaces]) -> "-";
+ident([A,B,spaces]) -> [A|B].
+
+line(L) -> reduce(L).
+
+def([Id,'=',Expr,';',_]) ->
+    io:format("DEF:~p ~n",[Id]),
+    {defn, Id, Expr}.
+
+expr([Seq, More, _]) ->
+   L = [X || [_,X] <- More],
+   case [Seq|L] of
+     [Z] -> Z;
+     Many -> {alt, Many} 
+   end.
+
+seq([A,B]) ->
+    case [A|B] of
+       [Z] -> Z;
+       L -> {seq, L}
+    end.
+
+prefix(['&', A]) -> {land, A};
+prefix(['!', A]) -> {bang, A};
+prefix(X) -> X.
+
+suffix([X, []]) -> X;
+suffix([X, ['?']]) -> {question, X};
+suffix([X, ['+']]) -> {plus, X};
+suffix([X, ['*']]) -> {star, X}.
+
+primary([Id, bang]) -> Id;    
+primary(['(',E,')']) -> E;
+primary(['.']) -> any;
+primary(X) -> X.
+
+literal([X,_]) ->
+    X.
+
+lit([$',L,$']) -> 
+    {lit1, reduce(L)};
+lit([$",L,$"]) -> {lit2, reduce(L)}.
+
+
+reduce(L) -> [X || [_,X] <- L].
+
+int(X) ->
+    list_to_integer(X).
+
+erlerror(S) ->
+    {badToken, [S]}.
+
+dws(S) ->
+    dot.
+
+%}
+
+
+%{
+
+%% Now the main program and text cases
+
+-define(QUOTE, 92).
+
+test() ->
+    put(errors, 0),
+    put(ntests, 0),
+    io:format("testing parser~n"),
+    run(parse_int, "123abc", 123, "abc"),
+    run(parse_char, "123", $1, "23"),
+    %% this is wrong --> run(parse_char, "\1a", 1, "a"),
+    %% because Erlang will already have expanded the string
+    %% peforming the conversion 92 is quote
+    run(parse_char, [?QUOTE,$1,$1,$a], 9, "a"),
+    run(parse_char, [?QUOTE,$1,$1,$1,$a], 73, "a"),
+    run(parse_char, [?QUOTE,$3,$7,$7,$a], 255, "a"),
+    run(parse_char, [?QUOTE,$^,$a,$F], 1, "F"),
+    run(parse_char, [?QUOTE,$^,$z,$F], 26, "F"),
+    run(parse_char, [?QUOTE,$^,$Z,$F], 26, "F"),
+    run(parse_char, [?QUOTE,$^,$A,$F], 1, "F"),
+    run(parse_char, [?QUOTE, $A, $B], $A, "B"),
+    run(parse_char, [?QUOTE,?QUOTE,$b,$c], ?QUOTE, "bc"),
+    run(parse_literal, "'\bc' 123", {lit1, "\bc"}, "123"),
+    run(parse_literal, "'\dc' 123", {lit1, "\dc"}, "123"),
+    run(parse_literal, "'\ec' 123", {lit1, "\ec"}, "123"),
+    run(parse_literal, "'\fc' 123", {lit1, "\fc"}, "123"),
+    run(parse_literal, "'\nc' 123", {lit1, "\nc"}, "123"),
+    run(parse_literal, "'\rc' 123", {lit1, "\rc"}, "123"),
+    run(parse_literal, "'\sc' 123", {lit1, "\sc"}, "123"),
+    run(parse_literal, "'\tc' 123", {lit1, "\tc"}, "123"),
+    run(parse_literal, "'\vc' 123", {lit1, "\vc"}, "123"),
+    run(parse_literal, "'\1b'  abc", {lit1, [1,$b]}, "abc"),
+    run(parse_literal, "'\11b'  abc", {lit1, [9,$b]}, "abc"),
+    run(parse_literal, "'\377b' abc", {lit1, [255,$b]}, "abc"),
+    run(parse_literal, "\"\377b\" abc", {lit2, [255,$b]}, "abc"),
+    run(parse_literal, "'\^aa' abc", {lit1, [1,$a]}, "abc"),
+    run(parse_literal, "'\^Aa' abc", {lit1, [1,$a]}, "abc"),
+    run(parse_literal, "'\^za' abc", {lit1, [26,$a]}, "abc"),
+    run(parse_literal, "'\^ZZ' abc", {lit1, [26,$Z]}, "abc"),
+    run(parse_char, [?QUOTE,?QUOTE,$z], ?QUOTE,"z"),
+    run(parse_lit, 
+	[$',?QUOTE,?QUOTE,$z,$',$a], 
+	{lit1, [?QUOTE,$z]}, "a"),
+    %% run(parse_literal, "'\\z' abc", {lit1, "\\z"}, "abc"),
+    run(parse_literal, [$',?QUOTE,?QUOTE,$z,$',32,32,$a],
+	{lit1, [?QUOTE,$z]}, "a"),
+    run(parse_lit,  [$',?QUOTE,?QUOTE,$z,$'], {lit1, [?QUOTE,$z]}, ""),
+    run(parse_literal, "'abc' 123", {lit1,"abc"}, "123"),
+    run(parse_ident, "-A", "-", "A"),
+    run(parse_ident, "abcABC+", "abcABC", "+"),
+    run(parse_range, "a-zB", {$a,$z}, "B"),
+    run(parse_class, 
+	"[a-zA-Z12]     abc", 
+	{class, [{$a,$z},{$A,$Z},$1,$2]}, 
+	"abc"),
+    run(parse_erltokens, "1.23 abc. "),
+    run(parse_erltokens, "foo(X) ->
+                            case (catch bar(X)) of
+                              {'EXIT', Why} ->
+                                [{bal,12.23e-23,
+	                         }|a];
+                              {X, Y} ->
+                                [X || X <- Y]
+                             end. "),
+
+    io:format("~n# errors = ~p~n~n", [get(errors)]),
+    %% parse_file("small.erl"),
+    parse_file("epeg.erl"),
+    %% parse ourself
+    io:format("parsing ourself~n"),
+    %% parse_leg("small.leg"),
+    parse_leg("epeg.peg"),
+    init:stop().
+
+parse_leg(F) ->
+    io:format("parse leg:~p~n",[F]),
+    {ok, B} = file:read_file(F),
+    L = binary_to_list(B),
+    {Time, Val} = timer:tc(?MODULE, parse_grammar, [L]),
+    Rate = Time/length(L),
+    io:format("file:~p time:~p (ms)"
+	      " #chars = ~w rate=~p~n", [F, Time/1000, length(L), Rate]),
+    io:format("Val=~p~n",[Val]).
+
+
+parse_file(F) ->
+    {ok, B} = file:read_file(F),
+    L = binary_to_list(B),
+    {Time, Val} = timer:tc(?MODULE, parse_erltokens, [L]),
+    Rate = Time/length(L),
+    io:format("file:~p time:~p (ms)"
+	      " #chars = ~w rate=~p~n", [F, Time/1000, length(L), Rate]),
+    {T1, _} = timer:tc(erl_scan, string, [L]),
+    io:format("** erlscan string time:~p (ms) rate=~p~n",
+	      [T1/1000, T1/length(L)]),
+    lib_misc:dump(F ++ "_toks", Val).
+
+run(Parse, Str, Val, Str1) ->
+    N = get(ntests),
+    io:format("~p ",[N]),
+    put(ntests, N+1),
+    case (catch jpeg_leg:Parse(Str)) of
+	{Val, Str1} ->
+	    ok;
+	Other ->
+	    io:format("*** error ***~n"),
+	    io:format("~w ~p (~w) ~p ~p~n", [Parse, Str, Str, Val, Str1]),
+	    io:format("Parse returns ~p~n",[Other]),
+	    put(errors, get(errors) + 1)
+    end.
+
+run(Parse, Str) ->
+    N = get(ntests),
+    io:format("~p ",[N]),
+    put(ntests, N+1),
+    case (catch jpeg_leg:Parse(Str)) of
+	{Val, Str1} ->
+	    %% io:format("Val = ~p [unmatched=~p]~n", [Val, Str1]),
+	    Val;
+	Other ->
+	    io:format("*** error ***~n"),
+	    io:format("~p ~p~n", [Parse, Str]),
+	    io:format("Parse returns ~p~n",[Other]),
+	    put(errors, get(errors) + 1)
+    end.
+
+%%  \b \d \e \f \n\r \s \t \v
+%%     \O \OO \OOO
+%%     \^a..zA..Z 12..26
+%%     \' 
+%%     \"
+%%     \\
+%%     \C
+%}
+
+
+    
+

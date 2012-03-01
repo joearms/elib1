@@ -1,0 +1,338 @@
+<style>
+/* some styles */
+
+body { margin-left:10%; background-color: #f0f0f0;}
+
+.content {
+  padding: 1em;
+}
+
+.bar {
+  background-color: #008080;
+  color: #ffffff;
+  font-weight: bold;
+  padding: 2px 1em 2px 1em;
+}
+
+.box {
+  background-color: #ffff00;
+  border: 1px solid #000000;
+  color: #000000;
+  padding: 0px;
+  position: absolute;
+}
+
+.zebra1 { padding-left:7px;
+         background-color:red;
+         border-left: 1px solid black; 
+	 border-bottom: 1px solid black; }
+
+.zebra2 { padding-left:7px;
+    background-color:green;
+         border-left: 1px solid black; 
+	 border-bottom: 1px solid black; }
+
+.selected {
+         border-left: 1px solid black; 
+	 border-bottom: 1px solid black;
+         background-color: orange }
+
+
+.table1 {border-top: solid 1px #000000;
+          border-right: solid 1px #000000;}
+
+p	 {color:black}
+p i	 {color: black}
+p tt	 {font-weight: bold}
+h1       {color:  #394d7f;}
+h2	 {color:   #394d7f;}
+pre	 {color: green; font-weight:bold}
+ul	 {margin-left: 120px}
+
+div#popup_editor {
+display: none;
+position: fixed; 
+padding:10px;
+top:100; 
+left:100; 
+width:600;
+height:400;
+background-color:white;
+border: 2px solid black;
+}
+
+a.but {text-decoration:none;
+   font-size:0.8em;
+   font-family:sans}
+
+a.but:hover {background-color:yellow;
+         border: solid thin #666666; }
+
+
+.title {color:blue; padding-left:5px;
+        border:1px solid black; background-color:#ddffff}
+
+</style>
+<script language="JavaScript" 
+        SRC="/include/jquery-1.3.2.min.js"></script>
+
+<script src="./jquery.localscroll-1.2.7-min.js"></script>
+
+<script>
+$(document).ready(function(){
+    var deleted_data= [];
+    var data = [
+    {header:"To do",
+     level:1,
+     research:"none",
+     data:"You are now in the folding editor/organiser. <ul><li>Type ESC to change modes (for organising, normal viewing)<li>'e' to edit a region.<li>arrows to move the focus. <li>'u' or 'd' to move the entry</ul>.</p>"},
+    {header:"Commands",
+     level:1,
+     show:true,
+     data:"<p>u d - move selection up or down (org mode)<p>esc change mode<p>up,down arrow move selection (org mode)<p>h help<p>e edit (org mode)"},
+    {header:"Header2",
+     level:2,
+     show: true,
+     data:"<p>Content 2 Hello joe. <font color='red'>How are you</font>"},
+    {header: "Header 3",
+     show: false,
+     level: 3,
+     data:"<p>Content 3"},
+    {header:"Header 4",
+     show:false,
+     level: 1,
+     data:"<p>Content 4</p>"},
+    {header:"Header 5",
+     show:false,
+     level: 2,
+     data:"<p>Content 5</p>"}
+		];
+
+    // global varibles
+    var selected;    // which row is selected
+    var display;     // true = display the content
+
+    var editing; // true means we are editing 
+    var html; // id of the html region
+    var org; // id of the org region
+    var orgtab; // id of the organiser table
+
+    function render_html(){
+	// render all folds
+	var level,i,max,id;
+	max = data.length;
+	debug("max="+max);
+	html.html("");
+	for(i=0; i<max; i++){
+	    // render the header
+	    level = data[i].level;
+	    html.append("<h" + level + " class='header'>"+
+			data[i].header+"</h" + level + ">").
+		append("<div class='data'>" + data[i].data + "</div>");
+	};
+	$(".header").eq(selected).addClass("selected");
+	if(display)
+	    $(".data").show();
+	    else $(".data").hide();
+    };
+
+    function debug(x){
+	$("#debug").append("<br>"+x);
+    };
+    
+    function swap(i, j){
+	var tmp = data[i];
+	data[i] = data[j];
+	data[j] = tmp;
+    };
+
+
+    // off we go
+    // start by rendering the text and the organiser boxes
+    // then display the HTMNL box
+
+    $(document).keypress(function(e){
+	    if(!editing)do_cmd(e);
+	    // return false;
+	});
+
+    function do_cmd(e){
+	var i;
+	// debug("keycode="+e.keyCode);
+	switch(e.keyCode){
+	case 27:
+	    // escape -- toggle the data display
+	    display = !display;
+	    $(".data").toggle();
+	    break;
+	case 37:
+	    // left arrow demote element
+	    if(data[selected].level > 1)data[selected].level -= 1;
+	    render_html();
+	    break;
+	case 33:
+	case 38:
+	    // arrow up or page up
+	    if(selected > 0) {
+		selected -= 1;
+		$(".header").eq(selected+1).removeClass("selected");
+		$(".header").eq(selected).addClass("selected").localScroll();
+		
+	    };
+	    break;
+	case 39:
+	    // right arrow
+	    data[selected].level += 1;
+	    render_html();
+	    break;
+	case 34:
+	case 40:
+	    // arrow down or page down
+	    if(selected < data.length - 1) {
+		selected += 1;
+		$(".header").eq(selected-1).removeClass("selected");
+		$(".header").eq(selected).addClass("selected").localScroll();
+	    };
+	    break;
+	default:
+	    switch(e.which){
+	    case 68:
+		// 'D' delete fold
+		// deleted folds are put on a stack so we can undelete them
+		// with U
+		var max = deleted_data.length;
+		deleted_data[max] = data[selected];
+		data.splice(selected, 1);
+		render_html();
+		break;
+	    case 85:
+		// 'U' undelete 
+		var max = deleted_data.length;
+		if(max > 0) {
+		    var max1 = data.length;
+		    data.splice(selected, 0, deleted_data[max-1]);
+		    deleted_data.splice(max-1, 1);
+		    render_html();
+		};
+		break;
+	    case 100:
+		// 'd' down
+		if(selected < data.length - 1) {
+		    swap(selected, selected+1);	
+		    selected+=1;
+		    render_html();
+		};
+		break;
+	    case 101:
+		// 'e' = edit
+		edit_selected();
+		break;
+	    case 110:
+		// 'n' new section
+		// add the new selectioon at the end
+		var max = data.length;
+		data[max] = {header:"New header",
+			     level: 1,
+			     data:"<p>Some content</p>"};
+		swap(selected, max);
+		render_html();
+		break;
+	    case 117:
+		// 'u' up
+		if(selected > 0) {
+		    swap(selected, selected-1);
+		    selected -= 1;
+		    render_html();
+		};
+		break;
+	    default:
+		debug("keyCode = " + e.keyCode);
+		debug("keyW = " + e.which);
+		break;
+	    }
+	}};
+    
+    function edit_selected(){
+	editing = true;
+	$("body").css("background", "#cccccc");
+	$("#title").html(data[selected].header);
+	$("#content").html(data[selected].data);
+	$("#popup_editor").show();
+    };
+    
+    $("#save_edit").click(function(){
+	data[selected].header = $("#title").html();
+	data[selected].data = $("#content").html();
+	$("#popup_editor").hide();	
+	render_html();
+	$("body").css("background", "#f0f0f0");
+	editing = false;
+    });
+
+    $("#quit_edit").click(function(){
+	    $("#popup_editor").hide();	
+	    render_html();
+	    $("body").css("background", "#f0f0f0");
+	    editing = false;
+	});
+
+    selected = 0;
+    display = true;
+    editing = false;
+    html = $("#html");
+    render_html();
+
+    // org = $("#org");
+    orgtab = $("#orgtab");
+    // org.hide();
+    // html.html("<h1>ready ...</h1>");
+
+    // init_org();
+});
+
+</script>
+
+<body>
+    <button id="save_all">save all</button>  
+  <!-- this div is a hidden editor div -->
+  <div id="popup_editor">
+    <center>
+      <table width="100%">
+	<tr>
+	  <td align="left">
+	    <a class="but" href="#" onclick="add_button()">button</a>
+	    <a class="but" href="#" onclick="add_pre()">pre</a>
+	    <a class="but" href="#" onclick="add_link()">link</a>
+	    <a class="but" href="#" onclick="add_link1()">new link</a>
+	  </td>
+	  <td align="right">
+            <button id="save_edit">save</button>
+            <a class="but" href="#" id="quit_edit">quit</a>
+	  </td>
+	</tr>
+	<tr>
+	  <td colspan="2">
+	    <span contenteditable="true" class="title" id="title">Title</span>
+	    <div contenteditable="true" id="content">
+		<p>I am a hidden window</p>
+	      </div>
+	    </div>
+	  </td>
+	</tr>
+      </table>
+    </center>
+  </div>
+  
+  <!-- define two top regions. Only one is visable -->
+  <div id="org">
+    <table class="table1" border=1 id="orgtab" width="800px" cellspacing=0>
+    </table>
+  </div>
+  <!-- html stuff -->
+  <div id="html">
+  </div>
+  <!-- debug is always on -->
+  <h2>debug</h2>
+  <div id="debug">
+  </div>
+</body>
