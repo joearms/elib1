@@ -1,0 +1,460 @@
+=An XML toolkit and Lightweight documentation system
+
+==Introduction
+
+XML is ubiquitous. Parsing XML is important in many different
+projects.  Unfortunately the expression "parsing XML" can mean many
+different things, in many different contexts. Usually life is
+complicated by the fact that we don't really know that is meant by the
+term "XML" nor do we know where and how the XML document that is to be
+parsed is to be obtained.
+
+  In the past ten years I have had to write a number of more-or-less
+ad hock applications that processes, what might loosely by called "XML
+data structures". For a lot of applications anything that has nested
+matching angle brackets, ''is'' XML
+
+So <<\<anything\>>>like this<<\</anything\>>> ''is'' XML. What about
+character encodings, parameter entities, schemas, CDATA and PI
+sections, you ask? You may well ask, but for simple applications all
+we want is the parse tree for a well-formed XML expression, using
+whatever character set the data happened to be in, with some sensible
+decisions as to whether or not to retain white space between tags.
+
+
+  For the uninitiated, the eye sees what it wants to see. The XML
+  data structures
+  
+<pre>
+     <container>
+      <a>AAA</a>
+      <b>BBB</b>
+      <c><CCC></c>>
+     </container>
+</pre>
+
+and
+
+  <<\<container><a>AAA<a><b>BBB</b><c>CCC</c></container\>>>
+
+  are different. In the first case there is a carriage return and
+  some white space between the <<\<container\>>> and <<\<a\>>>
+  tag. In the second case there is no white space.
+
+  Often we want to just ignore all white space that is in the
+  "wrong place" ie between two start tags, or between an end tag and
+  and the next start tag.
+
+  Apart from simply parsing the XML itself we also have a problem
+  with knowing where the XML came from. Did the XML come from a file,
+  was there a single XML document in the file, or multiple
+  documents.
+
+  Is the XML delivered over a socket, if so is there there some
+  kind of protocol so that we know when the XML document is
+  complete. When we parse XML data from a socket we often have the
+  added complication that the data will often be fragmented, so we
+  have to keep on parsing until we have received a complete XML form,
+  for this we need everything to be re-entrant.
+
+  How is the XML data encoded, common encoding are US-ASCII and
+  UTF-8 in the case where we have multi byte encodings (for example,
+  UTF-8) delivered over a socket not only can the XML data structures
+  be fragmented, but the individual UTF-8 characters can be
+  fragmented. Half the character in a multi-byte encoding might arrive
+  in one packet, with the other half ion the next packet.
+
+  What do we want to do with the XML data? do we want an entire
+  parse tree, or do we just want to extract some subset of the
+  information in the XML data and not be bothered with the entire
+  parse tree.
+
+  Is the input data structure very large, or even infinite? - well
+  of course it can't be infinite but it might be represented by a
+  never endings stream of XML forms over a socket that is never
+  supposed to terminate.
+
+  In the case where the input data is derived from a file, is the
+  file very large? An example of a very large file is the pages dump
+  of the wikipedia - even the compressed data is very large (400MB) I
+  don't know how large the uncompressed file is, but it is certainly
+  several GBytes of data, which for our purposes we can consider to be
+  "infinite".
+
+  <note>
+    Check that the type of raw is correct ...
+  </note>
+	
+  <note>
+    <<ezxml>><footnote>(the <<z>> is pronounced "zee", so
+    this is pronounced <i>easy xml</i>)</footnote> is a library
+    containing modules for scanning, tokenization, parsing and
+    validating XML forms.  There is also included a simple application.
+    <<ezdoc>> which transforms XML to PDF.  <<ezdoc>> <<ezdoc>>
+    is deliberately written in a manner similar to an XSLT
+    transformation, so anybody who understands XSLT will be able to see
+    how this works.
+  </note>
+
+
+    I'm going to make a number of simplifying assumptions. To start
+    with I'll assume that the XML document you want to parse is
+    reasonably small. "reasonably small" means the entire parsed
+    document will easily fit into memory. How much memory? This is
+    difficult to say. Modern machines have Mega-bytes of memory so XML
+    files which are few thousand lines of text should easily fit into
+    Mega-bytes of memory. I'm deliberately excluding "infinite" XML
+    streams of data -- we will be able to do a few simple operations
+    on very large XML documents, but some of the algorithms in
+    <<ezxml>> won't work on infinite streams.
+  
+    Many operations on XML documents can be performed on "incorrect"
+    XML - by that I mean that we can often extract and processes
+    useful information from XML data which is badly-formed and which
+    is cannot be validated. <<ezxml>> has routines for token-level
+    manipulation, and for building parse trees from token lists, and
+    for XML validation.
+  
+
+  
+    Sometimes, complete parsing and validation is overkill. We can,
+    for example transform this XML document into <<TeX>> and hence into
+    PDF without ever parsing the content. This can be done at a pure
+    token level, this is very efficient.  The downside is that if the
+    document is incorrect, then we won't be able to automatically
+    detect errors and thus the transformation to <<TeX>> might fail in
+    mysterious ways. By ''validating'' the XML document we can
+    ensure that it will be correctly transformed.
+  
+  <<ezxml-2.0>> is an XML toolkit and a simple document preparation 
+  system. The XML toolkit contains routines for tokenization, parsing and
+  validation of XML data structures.
+
+  The XML toolkit is designed for fast in-memory parsing and
+  manipulation of XML documents. We do not consider methods for parsing
+  and manipulating very large XML documents that do not fit into memory.
+
+  The modules in this application  are as follows:
+
+<dl>
+  [ezxml_doc]
+  module for transforming XML to <<LaTeX>>. Note that this
+  only transforms text that conforms with the <<doc.dtd>> DTD.
+  
+    [ezxml]
+    Interface to all otehr routines.
+      
+    [ezxml_ezdoc] Documentaion program.
+  </dl>
+
+  We'll start by looking at the routinmes for converting text
+  into tokens.
+
+<dl>
+    [scan_tok(Str, Line)] tries to extract a single token
+    from <<Str>>.
+
+[token2iol(Token)] turns a token back into
+    something that can be printed.
+</dl>
+
+
+  Before we can do anything with XML we mus break the input into a
+  sequence of ''tokens''. These are:
+
+<dl>
+[{sTag,Line,Str,Attrs}] a start tag.  This is used
+    for start tags. <<Attrs>> is a sorted list of key, value
+    attributes associated with the tag.
+
+[{eTag,Line,Str}] an end tag
+
+[{empty,Line,Str, Attrs}] an empty tag
+
+[{raw,Line,Bool,Bin}] raw data
+
+[{comment,Line,Str}] comments
+
+[{pi,Line,Str}] processing instruction
+
+[{doctype,Line,Str}] doctype
+
+  </dl>
+
+  ==Extracting tokens
+
+  <<ezxmlscan_tok(Str, Line)>> is used to extract the next token from
+    <<Str>>.
+
+<ul>
++ <<{ok, Token, Str', Line'}>> is returned if it can extract
+    a token.  <<Token>> is the next token (which is one of the token
+    types given above.  <<Str'>> is the text ''after'' the token, and
+    <<Line'>> is the lone number to be used in the ''next'' call to
+    the scanner.
+
++ <<more>> is returned if the token is incomplete and we need
+    more data.
+
++ throws an error <<{error, {Line,What}}>> if <<Str>>
+    does not start with a valid token.
+</ul>
+
+
+  We can experiment with the scanner in the shell:
+
+ <pre>
+    > ezxml:scan_token("<abc>123", 1).
+    {ok,{sTag,1,"abc",[]},"123",1}
+    > (catch ezxml:scan_next_tok("<abc~def>123", 1))
+    {error, {1,"Bad character (expecting start of name):~"}}
+    > ezxml_scanner:scan_next_token("<abc", 1).        
+    more
+    > ezxml_scanner:scan_next_token("123<abc", 1).
+    {ok,{raw,1,false,<<"123">>},"<abc",1}
+    > ezxml_scanner:scan_next_token(
+        "<name last='armstrong' first='joe'>123", 1). 
+    {ok,{sTag,1,"name",
+         [{"first","joe"},{"last","armstrong"}]},
+        "123",1}
+  </pre>
+
+  The inverse operation <<ezxml:token2iol(Token)>> turns
+    a token back into an I/O list which can be printed.
+    
+
+  <pre>
+    > ezxml:tok2iol({sTag,12,"abc",[{"a","b"}]}).
+    ["<","abc",[32,"a",61,34,"b",34],">"]
+  </pre>
+  
+  <note> 
+   Note that the round trip <<scan_tok>> followed by
+  <<tok2iol>> will not get you back to where you started. The order
+  of attributes in a start tag may change and any blanks or line feeds
+  separating attributes in a tag will be replaced by a single
+  blank. However, if you tokenize an XML file, use <<tok2iol>> to
+  create a new file and tokenize the result you will get a logically
+  equivalent sequence of XML tokens, where only the line numbers may
+  have changed.
+  
+
+  Note 1: it was not a design goal to ''exactly''
+  parse and reconstruct XML forms, only to produce logically
+  equivalent forms. This is why this library is for ''easy''
+  processing. Exact reconstruction of XML forms is rarely necessary
+  and would introduce unnecessary complexity to a simple library.
+  
+  Note 2: Inside raw data, we expand two types of character
+  entity. <<&amp;>> is replaced by 38 (the character code for
+  &amp;) and <<&lt;>> is replaced by 60 (the character code for
+  <). All other chararacter entities are not expanded.
+</note>
+
+
+== ezxml_lib
+
+  Once we have a sequence of XML tokens the next thing we might want to do
+  is parse them. Parsing involves two steps:
+
+  <ul>
++ Recognising and parsing well-formed XML expressions.
+    
++ validating well-formed XML expressions.
+  </ul>
+
+  The first step is a check for "well-formed ness". Well-formed
+  means that the XML token sequence is properly "tag balanced." This
+  means that for every start tag there is a matching end tag, and that
+  for every end-tag the currently open start tag matches the end
+  tag.
+
+  
+    Checking for well-formed ness does not need an XML grammar, any
+    XML document can be checked to see if it is well formed, all we
+    have to do is match start and end tags.
+  
+  
+  
+    If and only if the XML form is well-formed do we bother to
+    validate the individual components of the form and check that they
+    correspond to some grammar.<footnote>Note there are many different
+    ways of specifying the grammar of an XML form. We will only
+    consider grammars defined with a DTD and not XML schema's, nor RNC
+    grammars.</footnote>
+  
+
+== Well formed XML
+
+  To test if a fragment of XML is well-formed we need to consider
+  one other factor. ''Does the fragment represent a single XML form,
+  could IT represent more than one form, or is it incomplete?''
+  
+  We can imagine several different scenarios:
+
+<ol>
++ Our XML input data comes from a file. the file is known ''a prioiri'' 
+
++ Our XML input data comes from a file. the file is known ''a prioiri''
+to contain several XML forms
+
++ Our XML input data comes from a socket. The socket delivers data in
+  fragments, it is not knows in advance if the stream of data received
+  from the socket contains one or more XML forms.
+      
+</ol>
+
+  The library functions to parse lists of XML tokens must be
+  written in such a way that all the above above situations can be
+  accomodated.
+  
+  At a low level we will define a re-entrant parser, that can be used to
+  build parsers that can parse sequences of tokens originating in files or 
+  sockets.
+
+  <<parse_toks([Toks])>> is a re-entrant parser that parses a list
+  of tokens <<[Toks]>> it returns:
+
+   <dl>
+ 
+[{ok, Parse, Toks'}] if <<[Toks]>> starts with a
+    well-formed XML form.  <<Parse>> is a parse tree of the form
+    (see later) and <<Toks'>> is a list of tokens that is "left
+    over" at the end of the parse.
+
+ [{error, What}] if <<[Toks]>> is not well-formed.
+    What is something that can be printed with <<io:format("...~p
+    ...", [What])>>.
+    
+[{more, Fun}] means the parsing is incomplete and
+    requires more tokens. This might be the situation encountered when
+    re-entrantly parsing data from a socket. When more tokens have
+    arrived you must call <<ezxml:more(Fun, [Toks])>>. The return
+    value of <<more/2>> is the same as that of <<parse_toks/1>>
+    it just "re-enters" then code (we'll talk more about this
+    later.
+</dl>
+
+  To test <<parse_toks>> we need some tokens to parse.  To make
+  some tiokens we need a function which calls <<scan_next_token>>
+  in a loop until the entire string has been consumed. This is easy,
+  and is performed by the function <<ezxml:str2toks>>. This is
+  defined as follows:
+
+  We can run this with some test data:
+
+  <pre>
+     > Toks = ezxml:str2toks("<abc>123</abc>456").
+       [{sTag,1,"abc",[]},
+        {raw,1,false,<<"123">>},
+        {eTag,1,"abc"},
+        {raw,1,false,<<"456">>}]
+  </pre>
+     
+  Now we can call <<ezxml:toks2xml/1>> as follows:
+
+  <pre>
+    > ezxml:toks2xml(Toks). 
+    [{node,"abc",1,[],[{raw,1,false,<<"123">>}]},
+     {space,1,false,<<"456">>}]
+  </pre>
+    
+   <<toks2xml([Toks])>> tries to parse the list <<[Toks]>> as a
+   sequence of XML forms. The result is a list of parse trees
+   representing these forms. To delve deeper into this we must take a
+   look at the parse tree of well-formed XML.
+
+   == The XML parse tree
+
+   The XML parse tree is made from two types of nodes:
+
+ <dl>
+     
+[{node, Tagname, Line, Args, [Child\]}] this is a node in the XML
+  tree. <<[Child]>> is a list of child nodes.
+
+[{raw,Ln,Bool,Bin}] is a leaf node. <<Bool>> is <<true>> if the
+  data in the leaf is whitespace, otherwise <<false>>.
+
+</dl>
+
+== Parsing files
+
+   Parsing files containg XML is easy. We make the following
+   assumption:
+
+   <note>XML files contain one or more complete XML forms.</note>
+
+   The function <<ezxml:file2xml(File) -> [Forms]>> assumes
+   that <<File>> contains one or more well-formed XML documents.
+   
+   == Summary of routines
+
+<dl> 
+[scan_tok(Str)] extracts an <<indivdual token>> from a string it
+returns the token and the remainder of the string. The error case is
+unrecoverable. The string cannot possibly contain a token we don't kn
+ow what to do so we raise an exception.
+   
+[str_to_toks(Str, Ln)] assumes that <<Str>> contains more than
+   one token. We don't know if the last token is complete or not. It
+   returns <<{Toks, Str', Ln'}>> where <<Str'>> is a possibly
+   incomplete token at the end of the string. <<Str'>> is empty if the
+   entire string was consumed. An invalid toklen raises an error.
+   
+[toks2xml(Toks) -> {ok, Form, Toks'} raises Error]
+   Extract the first XML form from a list of tokens.
+   <<Toks'>> is the renmained of the list with the fuirst form removed.
+</dl>
+
+==The problem of parsing lists of tokens
+
+   When we parse a list of tokens there is a subtle problem, we
+   don't know where the list of tokens is copmplete, or if we'll get
+   more tokens later.
+
+   Consider the following input:
+
+   <<<a><b><c>>>
+   
+   If this represents a complete XML form then parsing this input
+   should result in a bundle of error messages, something like
+   ''expecting </c>, expecting </b>'' and so on.
+
+   Alternativly if the parser was re-entrant it shoul have to return
+   some kind of contionuation <<{more, Fun}>> allowing the user to
+   call <<Fun(Toks')>> when more tokens were available.
+
+   This makes the API to the parsing more complex than
+   we might imagine. Thus we define two different fucntions
+   for handling tokens derived from a stream, and for those
+   derived from a finite source (for example a file).
+
+   <<stream2xml(Toks) -> {ok, Form, Rest} | {error, Why}>>
+   extracts the next form from a list of tokens. <<Rest = done |
+   {more, F}>> If <<Rest = done>> there the toekn stream was
+   complete.  If <<Rest = <<{more, Tok}>> then the token stream is
+   incolmpletr and when more tokesn (<<NewToks>>) are available the
+   user shopuld call <<F(newToks)>> to reenter the parser.
+   
+   
+   == Rentrant parsing of XML
+
+   To re-entrantly parse XMl we ...
+
+   == The Document production cycle
+
+  <ol>
+    + Edit document. I use the emacs with the <<nxml>> mode. This
+    does a nice job of indenting xml and easy to use.
+
+    + Convert the document to <<LaTeX>> with the command:<<ezdoc File>> this
+    parses <<File>> and converts it to a <<.tex>> file.
+
+    + Run the resulting file through <<pdflatex>> a couple of times.
+  </ol>
+  <note>
+    This is really easy
+  </note>
+
+

@@ -1,0 +1,572 @@
+@chunk
+@guid: 2009-06-15
+@title: Work in progress
+
+To do:
+
++ Draft of the multicore course. Use newsletter.xsl for this. Don't bother about trimming the layout
++ Lecture for Erlang factory
++ Round-trip editing with textarea and jquery
++ Revisions to the above  see [[http://123.writeboard.com/fb2247295a80068a3]] You’ll also need this password: mytest14
+
+
+@chunk
+@guid: 2009-06-03-2
+@title: Chunk abstractions 
+
+<pre>
+abc
+</pre>
+
+* major bug PRE cannot come first after a header
+
+<pre>
+ ---------------------+
+ | edit |              |
+ -----------------------
+ | ....                |
+ ---------------------+
+</pre>
+
+* there is a window
+* the content is HTML
+* if we hit a edit the contect becomes text which we can edit
+* we can preview store or revert
+* we store all old versions
+* we can diff all old versions
+
+@chunk
+@guid: 2009-06-03-1
+@title: IDG interview
+
+
+=What's behind the name Erlang?
+
+Either it's short for "Ericsson Language" or it's named after the
+Danish mathematician Agner Krarup Erlang.  We have never revealed
+which of these is true, so you'll have to keep guessing.
+
+=What prompted its creation?
+
+It was an accident. There was never a project "to create a new
+programming language." There was an Ericsson research project "to
+find better ways of programming telephony applications" and  Erlang
+was the result.
+
+=Was there a particular problem the language aimed to solve?
+
+Yes we wanted to write a control program for a small telephone
+exchange in the best possible manner. A lot of the properties of
+Erlang can be traced back to this problem. Telephone exchanges should
+never stop, so we have to be able to upgrade code without stopping the
+system.  The application should never fail disastrously so we need to
+developed sophisticated strategies for dealing with software and
+hardware errors during run-time. 
+
+=Why was Erlang released as open source? What's the current version of
+open source Erlang?
+
+To stimulate the spread of Erlang outside Ericsson. The current
+version is release 13 - so it's pretty mature. We release about two
+new versions per year.
+
+=What's the Erlang eco-system like?
+
+There's a very active mailing list where we have a lot of discussions
+about architectures and applications and help solve beginners
+problems.
+
+Currently there are several conferences which are dedicated to
+Erlang. The oldest is the Erlang User Conference that runs once a year
+in Stockholm. The ACM Functional Programming Conference has had an
+"Erlang day" for the last few years and last year the "Erlang Factory"
+started.
+
+The "Erlang Factory" runs twice a year.  The last conference was in
+Palo Alto and the next one will be in London. These conferences are
+explosions of enthusiasm. They are become the meeting place for people
+who want to build large scale systems that never stop.
+
+It's difficult to get overall picture. Erlang is best suited for
+writing fault-tolerant servers. These are things that are not
+particularly visible to the end-user. If you have a desktop
+application it's pretty easy to find out how its been implement. But
+for a server this is much more difficult. The only way to talk to a
+server is through an agreed protocol, so you have no idea how the
+server has been implemented.
+
+
+=What's the most interesting program(s) you've seen written with Erlang for business?
+
+That's difficult to answer, there are many good applications.
+Possibly Ejabberd which is an open-source Jabber/XMPP instant
+messaging server. Ejabberd appears to be the market leading
+XMPP server and things like Google Wave which runs on top of XMPP
+will probably attract a lot of people into building applications 
+on XMPP servers. 
+
+Another candidate might be Rabbit MQ which is an open-source
+implementation of the AMQP protocol. This provides reliable persistent
+messaging in a language-neutral manner. Building systems without
+shared memory and based on pure message passing is really the only way
+to make scalable and reliable systems. So AMQP fits nicely with
+the Erlang view of the world.
+
+
+= How flexible is the language, how does it stand aside the popular programming languages for general applications?
+
+Difficult to say. What we loose in sequential performance we win
+back in parallel performance. To fully utilize a multicore or cloud
+infrastructure your program must exploit parallelism. A sequential
+program just won't run faster on a multicore, in fact as time goes on
+it will run slower since clock speeds will drop in the future to save
+power. The trend is towards more and slower cores. The ease of
+writing parallel program is thus essential to performance.
+
+In the Erlang world we have over twenty years of experience with
+designing and implementing parallel algorithms. What we loose in
+sequential processing speed we win back in parallel performance and
+fault-tolerance.
+
+= Have you ever seen the language used in a way that wasn't originally intended?
+
+Lots of times...
+
+= What limits does Erlang have?
+
+You have distinguish the language from the implementation here.  The
+implementation has various limits, like there is an upper limit on the
+maximum number of processes you can create, this is very large but is
+still a limit.
+
+Somewhere in the next 10-20 years time we might have a million cores per
+chip and Petabyte memories and will discover that "Hey - we can't
+address all this stuff" so we'll have to change the implementation -
+but the language will be the same.
+
+We might discover that massive programs running in "the cloud" will
+need new as yet unthought of mechanism, so we might need to change the
+language.
+
+
+= Were there any particularly difficult or frustrating problems you had to overcome in the development of the language?
+
+Yes. An engineers job is to solve problems. That's why I'm an
+engineer. If the problems weren't difficult they would be no point in
+doing the job. 95% of the time the problems are in a state of "not
+being solved" which is frustrating. Frustration goes hand-in-hand with
+creativity - if you weren't frustrated with how things worked you
+would see no need to invent new things.
+
+
+= What is the third-party library availability like?
+
+Patchy. In some areas it's absolutely brilliant, in others
+on-existent. This is a chicken and egg situation. Without a lot of
+active developers there won't be many third-party libraries, and
+without a lot of libraries we won't attract the developers.
+
+What's happening is that a lot of early-adopters are learning Erlang
+and using it for things that we hadn't imagined.  So we're seeing
+things like CouchDB (a database) and MochiWeb (a web server) which you
+can use to build applications.
+
+= Programming languages are leveraging more and more threading due to multicore processors. Will this push the development of Erlang?
+
+Very much so. We've been doing parallel programming since 1986 and now
+we have real parallel hardware to run our programs on, so our theories
+are turning into reality. We know how to write parallel programs, we
+know how to deploy them on multicores. We know how to debug our
+parallel programs. We have a head start here.
+
+What we don't know is the best way to get optimal performance from
+a multicore so we're doing a lot of tweaking behind the scenes.
+
+The good news for the Erlang programmer is that they can more or less
+ignore most of the problems of multicore programming. They just write
+Erlang code and the Erlang run-time system will try and spread the
+execution over the available cores in an optimal manner.
+
+As each new version of Erlang is released we hope to improve the
+mapping onto multicores. This is all highly dynamic, we don't know
+what multicore architectures will win in the future. Are we going to
+see small numbers of complex cores or large numbers of simple cores
+with a "network on chip" architecture (as in the Tilera chips, or the
+Intel Polaris chip). We just don't know. But whatever happens Erlang
+will be there adapting to the latest chipsets.
+
+= Did you see this trend coming in the early days of its development?
+
+No. We always said "one day everything will be parallel" - but the
+multi-core stuff sneaked up when we weren't watching. I guess the hardware
+guys knew about this in advance but the speed with which the change
+came was a bit of a surprise. Suddenly my laptop had a dual-core and
+a quad-core appeared on my desktop.
+
+And wow - when the dual core came some of my Erlang program just went
+twice as fast with no changes. Other program didn't go twice as fast.
+So the reasons why the program didn't go twice as fast
+suddenly became a really interesting problem.
+
+= What are the advantages of hot swapping?
+
+You're joking. In my world we want to build systems that are started
+once and thereafter never stop. They evolve with time. Stopping a
+system to upgrade the code is an admission of failure.
+
+Erlang takes care of a lot of the the nitty-gritty details needed to
+hot-swap code in an application. It doesn't entirely solve the
+problem, since you have to be pretty careful if you change code as you
+run it, but the in-build mechanisms in Erlang make this a tractable
+problem.
+
+= Functional versus Imperative? What can you tell us?
+
+It's the next step in programming. Functional programs to a large
+extent behave like the math we learnt in school.
+
+Functional programming is good in the sense that it eliminates whole
+classes of errors that can occur in imperative programs.  In pure
+functional programs there is no mutable data and side effects are
+prohibited. Since you can't mutate data you don't need locks to lock
+the data while it is being mutated, since there is no mutation.  This
+enables concurrency, all the arguments to any function can be
+evaluated in parallel if needed.
+
+= Interpreted versus compiled? Why those options?
+
+I think the distinction is artificial. Erlang is compiled to abstract
+machine code, which is then interpreted. The abstract machine code can
+be native code compiled if necessary. This is just same philosophy as
+used in the JVM and .Net.
+
+Whether of not to interpret of compile the code is a pure
+engineering question. It depends upon the performance, memory-size,
+portability etc. requirements we have. As far as the user is
+concerned their is no difference. Sometimes compiled code is faster
+than interpreted code, other times it is slower.
+
+= Looking back, is there anything you would change in the language's development?
+
+Removing stuff turns out to be painfully difficult. It's really easy
+to add features to a language, but almost impossibly difficult to
+remove things. In the early days we would happily add things to the
+language and remove them if they were a bad idea. Now removing
+things is almost impossible.
+
+The main problem here is testing, we have systems with literally
+millions of lines of code and testing them takes a long time, so we
+can only make backwards compatible changes.
+
+Some things we added to the language were with hindsight not so
+brilliant.  I'd happily remove macros, include files, and the way we
+handle records. I'd also add mechanism to allow the language itself to
+evolve.
+
+We have mechanisms that allow the application software to evolve, but
+not the language and libraries itself. We need mechanisms for revision
+control as part of the language itself. But I don't know how to do
+this. I've been thinking about this for a long time.
+
+Instead of having external revision control systems like Git or
+Subversion I'd like to see revision control and re-factoring built into
+the language itself with fine-grain mechanism for introspection and
+version control.
+
+= Will computer science students finally have to learn about dining philosophers?!
+
+Easy - give 'em more forks.
+
+= Finally, where do you envisage Erlang's future lying?
+
+I don't know. Erlang destiny seems to be to influence the design of
+future programming languages. Several new programming language have
+adopted the Erlang way of thinking about concurrency, but they haven't
+followed up on fault-tolerance and dynamic code-change mechanisms.
+
+As we move into cloud computing and massively multicores life becomes
+interesting. How do we program large assemblies of parallel processes?
+Nobody really knows. Exactly what is a cloud? again nobody knows.
+
+I think as system evolve Erlang will be there someplace as we figure
+out how to program massively fault tolerant systems.
+
+@chunk
+@guid: 2009-06-01-1
+@title: blobs and revisions and text and all that stuff
+
+Todo
+
++ drafts (see below)
++ references in the sidebar opposite the text
++ sides
+
+I have figured out how to store blobs, but now wonder, "so what."  My
+blob store is possibly "too general." If we think in an abstract sense
+about chunks, while it is possible to jest invent new tags for the
+meta data, to do so would be pretty stupid. A meta-data tag is only
+useful inso much as there is software that requires or uses the
+tag. Just inventing new tags "for the sake of it" will get us
+nowhere.
+
+Despite everything the book format is still one I like best. True a
+book is composed of a sequence of chunks, but the order of the chunks
+is pretty much fixed as the book progresses.
+
+One might argue that the order of chunks in a book is totally fixed,
+in so-much as temporal order in a book is important. We should not
+use a concept until after it has been defined. In fiction we cannot
+get a character to do something until we know about the
+character. These rules can be broken, but should not be broken without
+thinking carefully about the consequences of breaking the rule.
+
+If we cannot re-order chunks then what might we want to do?  I think
+the main thing I'd like to do is connect research to the document inn
+question. This is pretty easy: Just add an inline <<\<\<aside
+href="..."\>\>> Tag in the text. This would display the given
+resource to the right of the current paragraph. (I'll have to figure
+out the javascript to do this).
+
+Then I want to toggle revisions and note - but probably keep
+everything in the same file. ~~strucken text is pretty good, so all I need
+is a mechanism in the view to turn this on and off. I could have:
+
+<pre>
+  <draft N>
+  ...
+  </draft>
+</pre>
+
+In the text and a mechanism to turn this on and off. What else?
+Free text search. The is still a bugbear...
+
+@chunk
+@guid: 2009-05-28-1
+@title: the guid store
+
+The storage of blobs is tricky. What do we want.
+A guid is a blob stored in a dets table.
+
++ The guid store is a blob store
++ guids have versions (1,2,3)
++ the blob itself has meta data and data
++ the blob is a term encoded with term_to_binary(Assoc)
+
+That about an api:
+
+<dl>
+[guid:create_store(FileName, Size)]
+Creates a guid store. Size is a measure of how large the number
+of GUIDs in the store is. The store should have 2^Size
+GUIDs 
+[guid:get(Key, Vsn) -> Assoc raises Error]
+read a key
+[guid:put(Key, Val) -> Vsn]
+write a new version of the key
+</dl>
+
+
+
+@chunk
+@guid: 2009-05-27-1
+@title: Chunk database
+
+
+
+We now need a proper chunk database.
+So what is the interface? We could use the file system
+to store the chunks - one chunk = one file.
+
+There is an interesting difference between a text file (like this) and
+a database. In the database we can store all old revisions of a
+document.  In my old wiki I stored each chunk as a separate
+file. Wiithin the file I stored a diff structure The top level had the
+"latest" version (in raw form) so that it is easy to access and then a
+diff towards the previous version.
+
+Let's try at an API: I'll assume the module is called <<cstore>>.
+<dl>
+[cstore:new() -> Guid] create a new chunk
+[cstore:get(Guid, Vsn) -> Val] extract a value
+[cstore:put(Guid, Val)] -> aa
+</dl>
+
+Actually I habve implemented something like this before. But
+where was it and what was it called?
+
+This should also allow extremely large files - I'll use pread and
+pwrite and create a write only log.
+
+@chunk
+@guid: 2009-05-14-2
+@title: Twiki Method
+@keywords: twiki,callback,behaivour
+
+In the best OTP spirit, we'll write a Twiki callback
+
+<dl>
+[twiki:start(Mod) -> void] Starts the twiki interface
+[Mod:main_template() -> Template::string()]
+This is the top_level template for the system. It is paramersed with
+arguments <<$title>>, <<$content>> <<$sidebar>>
+</dl>
+
+@chunk
+@guid: 2009-05-14-1
+@title: Design of Web APIs for module handling
+
+= Definitions
+
+<dl>
+[project] A project is a list of modules. We need a "universe of discourse" 
+our universe of discourse is a project.
+</dl>
+
+@chunk
+@guid: 2009-05-13-3
+@title: Things that suck
+
+The is a list of things that suck (for my Erlang lecture)
+
++ records (use ROKs notation)
++ higher order modules
++ !!
++ modules (some code like fac(N) doesn't have a natural home)
++ cannot enter module code into shell
++ shell has no history across sessions
++ No in-build xref at compile time
++ line numbers in = errors
++ receive cannot be built On the fly
++ modules not higher order
+
+Things that are ok
+
+* strings
+* syntax
+
+
+= modules
+<pre>
+Safe:                                 Convenient:
+
+Pid = spawn(fun() -> ... end)         register(Name, Pid)
+Pid ! hello                           Name ! hello
+
+Mod = funs2mod([fun foo/2,            register(Name, Mod),
+                fun bar/3,            Name:foo(1,2)
+		{abc,
+		fun(A,B,C) ->
+		   A + B + C
+		   end}]),
+apply(Mod, foo, [1,2])
+</pre>
+
+@chunk
+@guid: 2009-05-13-2
+@title: What do we search for
+@symbname: WhatDoWeSearchFor
+
+We want do do the following searches
+
++ All referals to a page
++ freetext in the body of the page
++ all zombies (pages that have no pointer to them)
+
+There are some interesting question here. What happens when we change
+a page name?  What do we point to? Normally we would point to the
+title. This page, for example is ~WhatDoWeSearchFor - but if we change
+the title then all the references will be wrong. The <<@symname>>
+field is the "real name" of the page. If this is not given it is
+derived from the title. If the keywords are not given they are derived
+from the title.
+
+Can two pages have the same symbname: yes - in which case clicking on
+a symbname leads to a disambiguation page. Can we change a symbname? -
+yes - can we change a guid? no.
+
+@chunk
+@guid: 2009-05-13-1
+@title: more on metadata
+@symbname: MoreOnMetaData
+
+A log file is composed of a sequence of chunks. Each chunk starts with metadata.
+The start of this chunk looks like this:
+
+<pre>
+ @chunk
+ @guid: 2009-05-13-1
+ @title: more on metadata
+ @symbname: MoreOnMetaData
+
+ A log file ...
+</pre>
+
+The data associated with a tag can be continued to the next line by
+starting the next line with a blank. A completrly blank line separates the 
+metadata from the remainder of the chunk.
+
+<dl>
+[elib1_chunks:string2chunks(Str) -> [{chunk,Meta,Data}\]]
+is a chunk parser that simply isolates the chunks from the data.
+</dl>
+
+Note that when input from a form the <<@tag>> annotation represent values
+filled in in fields in the form. The body of the form is the textarea part of the
+form.
+
+Each individual tag is mapped to a column in the database.
+
+@chunk
+@guid: 2009-05-12-1 
+@keywords: microformat,wiki
+@title: First block
+
+This is the first microformat. There are exactly six
+types of block, these are: 
+
++ ordered lists
++ unordered lists
++ description lists
++ headers
++ preformatted
++ metadata
+
+All blocks are separated by a completely blank line.  Preformatted
+blocks are written within <pre> and </pre> delimiters (in column one).
+Description lists are written between <dl> and </dl> delimiters also
+in column one.
+
+Unordered and ordered lists cannot have long lines of explanation, nor
+can they contain nested paragraphs. The intention is to format bullet's
+blocks in a short space.  
+
+Description lists can contain several paragraphs.
+
+There are restriction on the content of a block, these are as follows:
+
+<dl>
+[Paragraphs] can only contain inlines - see the separate section on inlines.
+
+[Pre] can only contain text (possible colored) and with  hyperlinks.
+
+[description lists] Can only contain text paragraphs.
+
+[Unordered and order lists] can only contain single paragraphs. A plus in column one
+will cause a item break.
+
+[metadata] must fit on one line - the following are accepted: @date @keywords
+
+</dl>
+
+
+= Inlines
+
+<dl>
+[strike] ~~strike this text <<code>> **italic** ~wikiWord [[Url||...]]~~.
+[wiki words] are written in ~camelCode.
+[emphasis] is written **like this**.
+[code] is written in double angle brackets <<like this>>.
+[typographic quotes] Are set "correctly."
+[quoting] with a backslash is used when a character would be incorrectly 
+	  interpreted.
+</dl>

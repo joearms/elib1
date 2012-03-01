@@ -1,0 +1,33 @@
+<title>edit</title>
+<link rel="stylesheet" href="./me.css" type="text/css" media="screen"/>
+
+<div class="box1">
+<a id="commentForm"></a>
+
+<form method="post" action="http://meAuto-Detach" accept-charset="utf-8"
+  id="comments_form" onsubmit="if (this.bakecookie.checked) rememberMe(this)">
+  <input name="parent" type="hidden" value="3009"/>
+  <input name="title" type="hidden" value="Auto Detach"/>
+
+  <table>
+    <tr>
+      <td><label for="name">Title:</label></td>
+      <td><input id="name" name="name" size="40" type="text" value=""/></td>
+    </tr>
+    <tr>
+      <td><label for="name">Keywords:</label></td>
+      <td><input id="name" name="name"  size="40" type="text" value=""/></td>
+    </tr>
+    <tr>
+      <td colspan="2">
+	<textarea cols="72" id="comment" name="comment" rows="15"></textarea>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+	<input name="preview" type="submit" value="Preview"/>
+      </td>
+    </tr>
+  </table>
+</form>
+</div>

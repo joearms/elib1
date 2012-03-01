@@ -1,0 +1,5 @@
+#!/usr/bin/env escript
+main([File]) ->
+    io:format("mkdoc ~s~n",[File]),
+    edoc:files([File], [{dir,"../doc"}]).
+

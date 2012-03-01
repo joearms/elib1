@@ -1,0 +1,35 @@
+= An Erlang Library
+
+This book describes an Erlang library called ''elib1''.
+
+== Todo (formatting program)
+
+<ul>
++ Add a diagram language (inline svg)
++ ~~Make the Book version~~
++ ~~Make compact lists, so I can leave out the blank line in paragraphs like
+this~~
++ ~~add processing of ''footnotes''~~
++ Make commands for /bin
++ check that all list entries do not end with a dot.
++ Check that all list entries start with a big letter.
++ punctuation check.
++ ~~add "typographic quotes."~~
++ Nice to make paragraphs "clickable-editable" in the browser.
++ Add some nive paragraph hover effect that colors paras as we move over them. Makes text easier to read.
+</ul>
+
+== To do (programs)
+
+<ul>
++ mysql full text searching and metadata
++ go through all old library adding good stuff (example topological sort)
++ javascript slide show from wiki markup
++ move over to GIT
++ xref
+</ul>
+
+<include chapter="design" />
+<include chapter="ezxml" />
+<include chapter="lorum" />
+

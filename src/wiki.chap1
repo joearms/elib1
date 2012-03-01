@@ -1,0 +1,44 @@
+= Wiki text
+
+The problem with lists is that we dont know where they end.
+This problem is really easy t solve. Just add a tag:
+
+<pre>
+   <list>
+      ....
+   </list>
+<pre>
+
+Then within the list it is easy to group elements:
+
+<pre>
+<list>
+   * aaaa
+
+   bbb
+
+   *ccccc
+
+   dddd
+</list>
+eeee
+</pre>
+
+Without the final <<<list\>>> tag we don't know if <<eee>> is the second
+paragrah attatched to the <<cccc>> or if it outside the scope of the 
+list.
+
+<list>
+* List item 1
+
+another para.
+
+and another para.
+
+* List item2
+
+A sup para of two.
+
+</list>
+
+  

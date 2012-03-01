@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!DOCTYPE chap SYSTEM "chap.dtd">
+<chap>
+  <title>Lorum Ipsum</title>
+  
+  <p>This file tests the documentation system:</p>
+  
+  <p>This file is regular xml with the exception of a single tag
+  <c>&lt;erl func="..."&gt;</c>. The program <c>elib1_doc</c> expands
+  this tag replacing the tag with well formed xml. Therafter XSLT and
+  xmllint and Apache FOP are used to transform the XML into HTML and
+  PDF.</p>
+  
+  <p><erl func='elib1_misc:lorem(4)'/></p>
+
+  <ol>
+   <li><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p></li>
+   <li><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p></li>
+   <li><p>Lorem <strike>ipsum dolor sit amet,</strike> consectetur
+   adipisicing elit.</p></li>
+   <li><p>Lorem ipsum dolor sit amet, consectetur
+   adipisicing elit.</p></li>
+
+  </ol>
+
+  <p><erl func='elib1_misc:lorem(4)'/></p>
+
+  <p>This tests the constructs in the validator</p>
+
+  <test>
+    <title>aaa</title>
+    <p>aa</p>
+    <title>bbb</title>
+  </test>
+
+  <section>Ipsum Dolor</section>
+  
+  <dl> 
+    <dt><c>[Lorem Ipsum]</c></dt>
+    <dd><p>dolor sit amet, consectetur <c>X></c> adipisicing elit, sed do
+    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+    enim ad.</p>
+    </dd>
+    
+    <dt><c>[consectetur]</c></dt>
+    <dd><p> adipisicing elit, sed do eiusmod tempor incididunt ut labore
+    et dolore magna aliqua. Ut enim ad minim veniam, "quis nostrud
+    exercitation," ullamco laboris nisi ut aliquip ex ea commodo
+    consequat.</p></dd>
+  </dl>
+  
+  <pre><erl func='elib1_misc:get_erl_section("elib1_docmaker.erl","tag1")'/>
+  </pre>
+
+  <pre>
+{dl, [{tag,"aaa",[{p,p1},{p,P2}]}, {tag, "bbb",[{p,p1}]}}
+  </pre>
+</chap>
+

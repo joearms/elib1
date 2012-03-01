@@ -1,0 +1,246 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+  <head>
+    <title>Readme</title>
+    <!-- note: Do not ompit the rel="stylesheet" -->
+    <link href="../../include/elib1.css" rel="stylesheet" />
+    <!-- note: Always use <script>..</script> format -->
+    
+    <script src="../../include/jquery-1.3.2.min.js" 
+	    type="text/javascript"> </script>
+  </head>
+  <body>
+    <h1>Readme</h1>
+    
+    <h1>Design critera</h1>
+    
+    <p>As far as possible I will try to be standards compliant as
+    regards the production of text. HTML will be validated <tt>XHTML
+    1.0 Transitional//EN</tt>. All hand- and computer-generated XML
+    will be validated against the appropriate DTD.</p>
+
+    <p>Text will be generated from properly marked-up and
+    validated XML. It will not be generated from ad-hock wiki
+    formats.</p>
+
+    <h1>Why I don't use wiki markup</h1>
+    
+    <ol>
+      <li>Nobody can agree on what wiki format is <i>best</i>.</li>
+      
+      <li>Wiki parsers are a pain-in-the-arse to write and maintain
+      (and I should know, I must have written about twenty of them).
+      The problem with wiki parsers is that simple layout is simple
+      to parse, but complex layout is a mess (or virtually impossible)).
+      Complex XML markup, is however, trivial in comparison.
+      A good Emacs XML mode (like the <i>excellent</i> nXML mode)
+      makes it really easy to write correctly marked up XML.</li>
+      
+      <li>Wiki markup is extremely <i>fragile</i> - the slightest
+      change in markup and disaster can strike.</li>
+      
+      <li>As a first cast (X)HTLM is a pretty good markup language to base
+      more specialised markup languages on. I usually make markup languages 
+      that are pretty close  (X)HTML since these languages and the tagging
+      is widely known and easy to memorize.</li>
+      
+      <li>Tools for transforming validated XML into HTML and PDF are
+      plentiful and of reasonably good quality. Even without external tools
+      is is easy to transform XML into anything.</li>
+      
+      <li>The fact that we have a known and <i>fixed</i> parse tree
+      makes it easy to build text-processing tools.</li>
+    
+      <li>(X)HTML markup is pretty <i>unobtrusoive</i> when applied to
+      paragraphs of English text. Where there is markup the color
+      coding the the nXML mode provides is sufficient to guide the
+      eye to the marked-up text but not so gross as to be offensive.</li>
+      
+      <li>Concentrating on the markup language and tools to produce
+      the final text is a glorious waste of time. Just use XML and
+      be done. <i>end of argument</i>.</li>
+      
+    </ol>
+
+
+    <h1>NXML setup</h1>
+    
+    <p>
+      <strike>Pretty easy t</strike> The tricky bit is getting the
+      headers right. Do view source on this file to see what to do.
+    </p>
+    
+    <h1>Resolutions</h1>
+    
+    <p>I will write documentation etc. in one of the following:</p>
+    
+    <ol>
+      <li>XHTML with css stylesheets (like this)</li>
+      <li>The <tt>.chap</tt> or <tt>.book</tt> DTDs.
+      These will remain frozen for a long time</li>
+      <li>I will validate all documents as I write them with
+      nxml mode. And later with xmllint</li>
+      <li><tt>.chap</tt> or <tt>.book</tt> will be transformed to 
+      PDF and HTML.</li>
+      <li><tt>elib1_doc</tt> transforms <tt>.chap</tt> and <tt>.book</tt>
+      files.</li>
+    </ol>
+    
+    <h1>To do</h1>
+    
+    <ol>
+      <li><strike>Do a validating parser in erlang.</strike>
+      <i>Actually the full XML thing is a mess - (remember the rules
+      for entity expansion in different contexts, and detecting all
+      possible character encodings) - is this really what you want to
+      spend months or years of your life doing?</i></li>
+      
+      <li>Do the transformations in Erlang</li>
+      <li>Don't waste time by doing 1 and 2 :-)</li>
+      <li><strike><tt>&lt;pre></tt> is broken in my xslt</strike></li>
+      <li>Setup xmllint</li>
+    </ol>
+
+    <p>
+      I need to setup nxmls so that I can do on-the-fly validation.
+      Then I need to find the approproate DTD's - from now on I will
+      only write XHTML that is strictly valid and check everything as
+      I go along ...
+    </p>
+
+    <p>
+      <a href="file:///Applications/mampstack-1.1-0/common/share/doc/libxml2-2.7.2/html/xml.html">info</a>
+    </p>
+
+<pre>
+  xmlcatalog --shell
+  > public "-//W3C//DTD HTML 4.01 Transitional//EN"
+  No entry for PUBLIC -//W3C//DTD HTML 4.01 Transitional//EN
+</pre>
+
+    <p>This is the main library directory</p>
+    
+    <p>The files is this directory have the following extensions</p>
+    
+    <dl>
+      <dt>
+	<tt>.erl</tt></dt>
+      <dd>
+	<p>erlang - compiled versions go into
+	<tt>${TOP}/lib/ebin</tt></p>
+      </dd>
+      
+      <dt><tt>.chap</tt></dt>
+      <dd>
+	<p>
+	  Book "chapters" - these are transformed into PDF and
+	  HTML. The PDF is put into <tt>${TOP}/pdf</tt> and the HTML
+	  into <tt>${TOP}/html</tt>
+	</p>
+      </dd>
+      
+      <dt><tt>.book</tt></dt>
+      <dd>
+	<p>
+	  Books - these are transformed into PDF and HTML. The PDF is
+	  put into <tt>${TOP}/pdf</tt> and the HTML into
+	  <tt>${TOP}/html</tt>
+	</p>
+      </dd>
+      
+      <dt><tt>.html</tt></dt>
+      <dd><p>General documentation that can be read
+      on-line.</p></dd>
+      
+    </dl>
+    
+    <h2>Notes</h2> 
+    
+    <p><tt>.chap</tt> and <tt>.book</tt> files are transformed into pure XML
+    in the <tt>../tmp</tt> directory and thereafter into PDF and
+    HTML</p>
+    
+    <h2>Licences and Credits</h2>
+    
+    <p>All the code in this library with the exception of the 
+    files listed below is subject to the terms and conditions of the
+    MIT licence.</p>
+  
+    <p>Most of the code in this library is the original work of Joe
+    Armstrong.</p>
+    
+    <h2>Code from other libraries</h2>
+    
+    <p>
+      Some of the modules in this library are modified versions of
+      code obtained from other publicly available modules. The
+      reason for modify the code are to provide consistency with the
+      naming conventions of the other modules in the library and to
+      reduce the code size of the modules by reusing code from the
+      general libraries.
+    </p>
+    
+    <p>
+      Where code from external libraries has been used I have retained
+      the original authors information in the files concerned and
+      retained the licence information from the files concerned.
+    </p>
+
+    <p>
+      All the included code is subject to some form of Open Source
+      License and it appears to be the intention of the author(s) that
+      their work should be subject to some form of licensing that
+      makes this clear.  Only lawyers fully understand the petisesses
+      of the differences between licensing - so If I have inadvertently
+      erred in my interpretation of the licencing terms please let me
+      know and I will change the licenses of any external code to some
+      appropriate form.
+    </p>
+    
+    <h1>Documentation</h1>
+    
+    <p>Documentation is produced in the following tool-chain:</p>
+    
+    <ol>
+      <li>
+	<p>We start with a <tt>X.book</tt> file. This is a container
+	for a number of <tt>X.chap</tt> files. Both the <tt>.book</tt>
+	and <tt>.chap</tt> files are transformed to XML by the program
+	<tt>elib1_doc.erl</tt> and stored in the directory
+	<tt>../tmp</tt>.</p>
+      </li>
+      <li>
+	<p>
+	  The transformed files have the extension <tt>.bml</tt> and
+	  <tt>.cxml</tt> respectively. The XML files are validated
+	  with xmlint. If they pass validation they are transformed to
+	  HTML and PDF. The resultant HTML is validated with ????.
+	</p>
+      </li>
+      <li>
+	<p>The transformation to HTML and PDF is done with Apache
+	FOP</p>
+      </li>
+      <li>
+	<p>We try to keep everything fully validated as far as
+	possible.</p>
+      </li>
+    </ol>
+    
+    <h1>Validation</h1>
+
+    <dl>
+      <dt><tt>HTML</tt></dt>
+      <dd><p>HTML is validated with the command:</p></dd>
+    </dl>
+
+    <h1>Editing</h1>
+    <p>The nXML mode is used for all XML/HTML editing. It is setup as
+    follows:</p>
+
+    <p><b><font color="red">How do I setup xmllint to validate xhtml?</font></b></p>
+
+  </body>
+</html>
