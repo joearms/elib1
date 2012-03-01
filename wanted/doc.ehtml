@@ -1,0 +1,33 @@
+<? M=simple_web_server, M:header() ?>
+
+<body>
+
+  <h1>Wanted</h1> 
+  
+  <P>This section is for <i>wanted programs</i>. These are programs that are
+  wanted but not yet written.</P>
+
+  <h2>The life cycle of a program</h2>
+
+  <ol>
+    <li>You check the library - what you want is missing.</li>
+    <li>You choose a sensible name for your module, we'll call it
+    MYNAME here.</li>
+    <li>You fork the library and add a module stub in
+    <b>/wanted/src/elib1_MYNAME.erl</b> You write some
+    edoc annotations to say what you want and why</li>
+    <li>For longer requests you write a request and put it in
+    <b>/wanted/notes/MYNAME.ehtml</b></li>
+    <li>You request that the form be pulled into the main branch</li>
+    <li>The moderator accepts or rejects the request</li>
+    <li>If accepted, sooner of later somebody starts work on your code</li>
+    <li>The code matures (in a forked version)</li>
+    <li>A request is made to move the code to the supported, unsupported or
+    lib branch of the library.</li>
+  </ol>
+
+  <h2>Notes</h2>
+
+  <? M:notes() ?>
+
+</body>

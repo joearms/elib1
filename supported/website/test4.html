@@ -1,0 +1,158 @@
+<style>
+
+.wp-caption { 
+        border: 1px solid #ddd; text-align: center; 
+        background-color: #f3f3f3;  padding-top: 4px; 
+	margin-left: 10px; 
+        -moz-border-radius: 3px; }
+
+.wp-caption img { margin: 0; padding: 0; border: 0 none; }
+
+.wp-caption p.wp-caption-text { 
+      font-size: 14px; line-height: 17px; 
+      padding: 0 4px 5px; margin: 0; }
+
+p img {
+padding: 0;
+max-width: 100%;
+}
+
+img.centered {
+display: block;
+margin-left: auto;
+margin-right: auto;
+}
+
+img.alignright {
+padding: 4px;
+margin: 0 0 2px 7px;
+display: inline;
+}
+
+img.alignleft {
+padding: 4px;
+margin: 0 9px 0 0;  /* top right bottom left */
+display: inline;
+}
+
+.alignright {
+float: right;
+}
+
+.alignleft {
+float: left
+}
+
+body {margin-left:2in; width:60%; font-size:1.2em}
+
+h1, h2, h3, p, td { font-family: serif;}
+
+h1{ font-size:1.2em }
+
+h2{ font-size:1em; display:block; clear:both; }
+
+h3{ font-size:0.75em; color:#777; margin-bottom:0;}
+
+dd >  p:first-child { margin-top:0}
+
+
+h3 + p{ margin-top:0;}
+
+tt { font-weight:bold }
+
+td { border: 1px solid black } 
+table {border-collapse:collapse}
+
+p {  text-align:justify }
+
+p:hover, li:hover
+{  	text-shadow: #ccc 2px 2px 5px;
+	color:#E20074;
+}   
+</style>
+
+<script src="../../include/jquery-1.3.2.min.js"></script>
+<script>
+function setup()
+{
+    $(".right").each(function(i) {
+	    var text = $(this).attr('alt');
+	    // alert(text);
+	    $(this).wrap("<div class='wp-caption alignright'></div>");
+	    $(this).parent().append("<p class='wp-caption-text'>" +
+				    text + "</p>"); 
+	});
+    $(".left").each(function(i) {
+	    var text = $(this).attr('alt');
+	    // alert(text);
+	    $(this).wrap("<div class='wp-caption alignleft'></div>");
+	    $(this).parent().append("<p class='wp-caption-text'>" +
+				    text + "</p>"); 
+	});
+}
+
+$(document).ready(function(){setup()});
+</script>
+
+
+<body>
+<h1>Test</h1>
+
+<img class="left" alt="The left caption" src="joe.jpg" width=240" />
+
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+aliquip ex ea commodo consequat. Duis aute irure dolor in
+reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+culpa qui officia deserunt mollit anim id est laborum.
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+aliquip ex ea commodo consequat. Duis aute irure dolor in
+reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+culpa qui officia deserunt mollit anim id est laborum.
+</p>
+
+
+<img src="joe.jpg" class="right" alt="This is Joe"  width="240" />
+
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+aliquip ex ea commodo consequat. Duis aute irure dolor in
+reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+culpa qui officia deserunt mollit anim id est laborum.
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+aliquip ex ea commodo consequat. Duis aute irure dolor in
+reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+culpa qui officia deserunt mollit anim id est laborum.
+</p>
+
+<img src="spider.jpg" class="right" alt="This is Joe"  width="300"/>
+
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+aliquip ex ea commodo consequat. Duis aute irure dolor in
+reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+culpa qui officia deserunt mollit anim id est laborum.
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+aliquip ex ea commodo consequat. Duis aute irure dolor in
+reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+culpa qui officia deserunt mollit anim id est laborum.
+</p>
+
+
+
+</body>

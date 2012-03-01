@@ -1,0 +1,135 @@
+<style>
+  /* set the padding here to match with the size of the top and right
+     sidebars */
+ body{
+  padding-top:120px;
+  padding-left:100px;
+  padding-right:320px;
+ }
+
+div.buttons {
+    border:1px dotted red;}
+
+p {text-align:justify}
+
+ div#header{
+  background-color:#aabbcc;
+  position:fixed;
+  padding-left:10px;
+  top:0;
+  left:0;
+  width:500%;
+  height:50px;   /* so padding-left:70px */
+ }
+
+ div#sidebar{
+  background-color:#bbccee;
+  position:fixed;
+  padding-left:20px;
+  padding-right:10px;
+  top:50px;
+  right:0;
+  width:250px;   /* so padding-right in body:270px */
+  height:100%;
+ }
+
+pre {
+  margin: 1em;
+  font-weight: bold;
+  background-color: #FED;
+  border-style: solid;
+  border-width: 1px;
+  -webkit-border-radius: .5em;
+  -moz-border-radius: .5em;
+  border-color: #48C;
+  padding: 0.5em;
+  font-size: 120%;
+  overflow: auto;
+}
+
+h2, div.header {
+  background: blue;
+  color: white;
+  font-size: 100%;
+  font-weight: bold;
+  margin: 0.7em 0 0.1em 0;
+  padding: .25em 1em .25em 1em;
+  -webkit-border-radius: .7em;
+  -moz-border-radius: 1em;
+}
+
+ * html body{
+  overflow:hidden;
+ } 
+
+ * html div.content{
+  height:100%;
+  overflow:auto;
+ }
+
+
+*.myhover
+{  	text-shadow: #ccc 2px 2px 5px;
+	color:#E20074;
+}   
+
+body { font-size:1.2em; }
+
+p {  text-align:justify }
+
+
+
+</style>
+
+<link href="./plainX.css" type="text/css" rel="stylesheet"/>
+<script src="../../include/jquery-1.3.2.min.js"></script>
+<script>
+
+function setup()
+{
+    $("#sidebar").append($("<button>scroll</button>").click(scroll1));
+    $("#sidebar").append($("<button>browse</button>").click(browser));
+    browser();
+}
+
+function listDir(x)
+{
+    $("#content").load(x);
+}
+
+function browser()
+{
+     $("#content").load("/");
+}
+
+function scroll1()
+{
+    var target = $("#target").offset().top - 65;
+    $("html,body").animate({scrollTop:target}, 1000);
+}
+
+$(document).ready(function(){setup()});
+
+</script>
+<body>
+
+  <div id="header">
+    Pos:<span id="pos"></span>
+  </div>
+  
+  <div id="sidebar">
+    <b>Buttons</b><br>
+    <div id="buttons">
+    </div>
+  </div>
+
+  <div id="images">
+  </div>
+
+  <div id="content">
+    <h1>Browser</h1>
+    
+  </div>
+
+</body>
+

@@ -1,0 +1,120 @@
+<html>
+
+
+  <h1>/bin</h1>
+
+  <p><b>/bin</b> is a directory of programs that can be run from the
+  command line. They are as follows:</p>
+
+  <dl>
+    <dt><b>&gt; elib1_collect_filenames Name Ext Dir</b></dt>
+    <dd>
+      <p>This command recursively scans all directories under
+      <b>Dir</b> looking for files with the extension <b>Ext</b>.  The
+      set of files found is written to the file <b>Name.files</b> this
+      is fommated as a BTSF file of strings</p>
+    
+      <p>Hidden directories are not followed. Symbolic links are
+      followed once (so chains of circular symbolic links are not
+      followed).  Temporary files (files starting <b>#...</b>) are not
+      collected even if they have the correct extension.</p>
+
+      <p>Example:</p>
+
+      <pre>      
+	> ./elib1_collect_filenames medium erl /home/joe/code
+	listing: Scanning from:"/home/ejoearm/code"
+	listing: Found 912 files
+	listing: Created medium.files size:59661 bytes
+	listing: Took 1495 ms.
+      </pre>
+
+      <p>finds all file under <b>/home/joe/code</b> with extension
+      <b>.erl</b> making a Collection file <b>medium.files</b> in the
+      current directory.</p>
+    </dd>
+    
+    <dt><b>&gt;elib1_pack_files  Name</b></dt>
+    <dd>
+      <p>Makes a trawl file <b>Name.trawl</b> from a file list
+      <b>Name.files</b>. <b>Name.trawl</b> is a BTSF file of
+      <b>{File,Md5,compress(Content)}</b> tuples.
+      </p>
+      
+      <p>Example:</p>
+      
+      <pre>
+	> ./elib1_pack_files medium
+	Packing data ...
+	pack: 912 files (5423222 bytes) read
+	pack: 677 files (1286798 bytes) written
+	pack: Size of input (medium.files): 59661 bytes
+	pack: Created (medium.trawl): 1286798 bytes
+	pack: compression ratio for data = 0.2372755531674713
+	pack: Took 354 ms.
+      </pre>
+
+      <p>The input to this was the file <b>medium.files</b>, the
+      output is the file <b>medium.trawl</b>.
+    </dd>
+
+    <dt><b>> elib1_make_index Name</b></dt>
+    <dd><p>Creates an index from a trawl file.</p>
+    <p>Example:</p>
+    <pre>
+      ./elib1_make_index medium
+      keywords: building word table
+      indexing: 215830 words loaded
+      keywords: analysing files files (can take a while) .....100 
+        ....200 ....300 ....400 ....500 ....600 ...
+      keywords: Number of files indexed: 677
+      keywords: Inverting word table
+      extract keywords Took 5589 ms.
+      pack index: sorting
+      pack index: sorting done
+      pack index: outputting index
+      pack index: Size of temporary pair map:1058713 bytes
+      pack index: Size of serialised word table:6391579 bytes
+      pack index: Number of words in word table:218582
+      pack index: Created medium.index: 532152 bytes
+      pack index: Took 717 ms.
+      indexing: Took 6307 ms.
+    </pre>
+
+    <p>In the above given a trawl file <b>medium.trawl</b> we create
+    an index file <b>medium.index</b>.</p>
+    </dd>
+
+    <dd>
+      <dt><b>./elib1_query name String</b></dt>
+      <dd><p>Query the index. For example:</p>
+      <pre>
+	> elib1_query medium "rectangle area"
+	lookup:"rectangle"
+	rectangle 10 hits
+	lookup:"area"
+	area 9 hits
+	[{874747,&lt;&lt;"/home/ejoearm/code/talks/2009/lecture.erl">>},
+	{138487,&lt;&lt;"/home/ejoearm/code/jaerlang_code/area_server_final.erl">>},
+	{20919,&lt;&lt;"/home/ejoearm/code/whoomph/Whoomph1Day/code/compiling/math2.erl">>},
+	{159631,&lt;&lt;"/home/ejoearm/code/jaerlang_code/geometry.erl">>},
+	{131382,&lt;&lt;"/home/ejoearm/code/jaerlang_code/area_server.erl">>}]
+	query Took 27 ms.
+      </pre>
+      <p>Once we have queried the index we get a list of the matching
+      keywords and the filename of the files which match the query.</p>
+
+      <p>These can be further extracted as follows:</p>
+      <pre>
+	elib1_indexer:extract(medium, 874747).
+	{&lt;&lt;"/home/ejoearm/code/talks/2009/lecture.erl">>,
+	&lt;&lt; "-module(lecture).\n\n%% erl +P 2000000\n%% Erlang ...">>
+      </pre>
+
+      <p>A better way to query the index is 
+      use the <a href="web_query.html">web query page</a>
+      </dd>
+    </dl>
+
+
+</html>

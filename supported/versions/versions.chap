@@ -1,0 +1,93 @@
+<chap>
+  <h1>The versioning problem</h1>
+  
+  <p>Suppose we have several versions of the <i>same</i> module (for
+  example the <b>lists</b> module) throughout the lifetime of Erlang
+  the lists module has been changed many times - suppoe it was
+  important to know <i>exactyl which version of lists we mean</i> when
+  talking about the lists module?</p>
+
+  <h1>The Name collision problem</h1>
+
+  <p>How can we make sure that moudle names don't collide? In Erlang
+  module names must be unique. Ho can two independentally developed
+  program guyarantee that the modukles names they use don't collide?</p>
+
+  <h1>The Authentication Problem</h1>
+  
+  <p>How can we be sure that <b>bing.erl</b> was written by <b>Alice</b>?.
+  We trust the code written by Alice, how can we be sure that nobody else
+  has tampered with <b>bing.erl</b>?</p>
+
+  <h1>The Testing Problem</h1>
+
+  <p>On some date we tested some partticular collection of modules and something
+  went wrong. We want to report a bug. How can we make sure that we can precisely
+  identifcy exactly whhich modue were used so that the bug can be reproduced?</p>
+
+  <h1>Module Version and Authentication Tagging</h1>
+
+  <p>We propose some  new annotations what can be used to precisely identify
+  a moduke and its prove authorship of the module.</p>
+
+  <p>We'll start with an example. Alice starts by writing the module <b>foo</b>
+  Her first version of the module looks like this:</p>
+
+  <pre>
+-module(foo).
+-export([a/1]).
+
+%% Version$author:Alice$ 
+%% Version$end$
+
+a(X) ->
+     Y = lists:reverse(X),
+     foo:baz(Y).
+  </pre>
+
+<p>Alice tests her program and wishes to publish the program. She gives the shell command
+<b>publish</b>. This modifies foo.erl as follows:</p>
+
+<pre>
+  <pre>
+-module(foo).
+-export([a/1]).
+
+%% Version$author:Alice$
+%% Do not edit the Version Block By Hand
+-version(lists,"a23545f1acd365231626217365bcad2").
+-version(foo, "a23545f1acd365231626217365bcad2").
+-version(foo, "623547254726547254725472574527").
+-author(foo,alice,"1625371537136512436143654").
+%% Version$end$
+
+a(X) ->
+     Y = lists:reverse(X),
+     foo:baz(Y).
+  </pre>
+
+<p>
+  The annotatiion <b>version(Mod, C)</b> means that <i>The module
+  <b>M</b>that Alice has tested foo has MD5 checksum <b>C</b></i>.
+  <b>-author(foo,alice,S)</b> provides a proof that Alice has written
+  foo.  <b>S</b> is the checksum of <b>foo</b> signed with Alices
+  public key.
+</p>
+
+<p>When this module is now compiled the compiler will compile the
+code as if Aliuce had written:</p>
+
+<pre>
+-module(foo).
+-export([a/1]).
+
+a(X) ->
+     Y = 'a23545f1acd365231626217365bcad2':reverse(X),
+     '623547254726547254725472574527':baz(Y).
+</pre>
+
+<p>And instead of producing <b>foo.beam</b> the compler will prodiuce
+a file called:<b>XXX.beam</b></p>
+</chap>
+
+

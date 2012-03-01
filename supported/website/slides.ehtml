@@ -1,0 +1,115 @@
+<script src='/include/jquery-1.3.2.min.js'></script>
+<script src='/include/jquery-slides.js'></script>
+<link rel='stylesheet' href='/include/slides.css'>
+<body>
+
+  <div class='slide'>
+    <h1>Elib1</h1>
+     
+    <p>Elib1 is a <strike>large</strike> library of 
+    <strike>well documented and tested</strike> erlang functions.
+    </p>
+
+    <p>The library is best examined through a web-browser. All
+    demos, slide shows etc. are accessable through the web browser.</p>
+    
+    <p>Basic principles:</p>
+    <ol>
+      <li>Use <i>best practise</i> for documentating and testing
+      the library modules</li>
+      <li>Ship a set of <i>supported applications</i> 
+      to test if the libray code is useful</li>
+      <li>Ship a set of <i>unsupported applications</i> 
+      to promote further development of the code</li>
+    </ol>
+  </div>
+  
+
+  <div class='slide'>
+    <h1>Organisation</h1>
+    <pre>
+    /lib/src/*.erl
+        /ebin/*.beam
+        /doc/*.html
+    /supported/website/   -- website
+              /tagger/    -- <a href="browse.ehtml">browsable html</a>
+	      /indexer/   -- <a href="/supported/indexer/doc.ehtml">full text indexing program</a>
+              /irc/       -- irc stuff
+              /template/  -- example supported application
+	      /versions/  -- <a href="/supported/versions/doc.ehtml">Version managment</a>
+	      /drivers/   -- example linked in and port drivers
+    /unsupported/         -- incomplete experiments
+    /bin/eindex           -- full text indexing program
+    /include/             -- include files
+                             mainly js and dtd's images etc
+    Makefile              -- do it all
+    Readme                -- description
+    </pre>
+  </div>
+
+    
+  <div class='slide'>
+    <h1>Principles</h1>
+    <ul>
+      <li>All the library code is in one directory</li>
+      <li>Use the dialyzer</li>
+      <li>Use eunit</li>
+      <li>Use edoc</li>
+      <li>Make open source</li>
+      <li>Write applications to test if the library routines are
+      useful</li>
+    </ul>
+  </div>
+    
+  <div class='slide'>
+    <h1>When writing an application</h1>
+    <ul>
+
+      <li>If you discover that some code you have written should be in
+      a libray, then stop what you are doing and immediately add it to
+      the library.</li>
+      
+      <li>If a libray routine is in the wrong module or has a wrong name
+      then immediately stop what ylou are doping and correct the error</li>
+
+      <li><i>Improve, improve, improve ...</i></li>
+
+      <li><i>Test, test, test ...</i></li>
+
+      <li><i>Document document document ...</i>
+      <font color="red">Code without documentation is useless</font> </li>
+    </ul>
+  </div>
+
+  <div class='slide'>
+    <h1>The default setup</h1>
+    <ul>
+      <li>ToDo
+      <pre>
+Number Status Assigned Date        What
+1      closed joe      2009-12-05  Make an initial release
+2      open   joe      2009-12-05  Improve it             
+
+Notes:
+
+[1] started by joe on 2009-12-15
+    closed by joe on  2009-12-15
+
+[2] nothing yet
+      </pre>
+      </li>
+    </ul>
+  </div>
+
+  <div class='slide'>
+    <h1>Download</h1>
+    <p>Real soon ...</p>
+    <ul>
+      <li>Git ... <i>complex</i>
+      <li>Mercurial ... <i>simple</i>
+    </ul>
+  </li>
+</div>
+
+</body>
+

@@ -1,0 +1,35 @@
+<html>
+
+  <script type="text/javascript" src="/include/jquery-1.3.2.min.js"></script> 
+  <script type="text/javascript" src="/include/jquery.form.js"></script> 
+ 
+  <script type="text/javascript"> 
+    // wait for the DOM to be loaded 
+     $(document).ready(function() { 
+	     var options = {target: '#output1' }
+	     $('#myForm').ajaxForm(options);    });
+
+  </script> 
+  
+  <h1>Web Query</h1>
+
+  <p>Enter a query here (note you must be running live for this to work)</p>
+  
+  <form id="myForm" action="/cgi/elib1_webquery" method="post"> 
+     <table>
+       <tr>
+	 <td>Collection:</td>
+	 <td><input type="text" name="name" value="medium" /></td>
+       </tr>
+       <tr>
+	 <td>Search for:</td>
+	 <td><input type="text" name="query" value="gamma binary"/></td>
+       </tr>
+     </table>
+     <input type="submit" value="Submit Query" /> 
+  </form>
+
+  <h2>Output</h2>
+  <div id="output1">Response</div>
+
+</html>

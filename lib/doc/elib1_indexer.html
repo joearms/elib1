@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Module elib1_indexer</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module elib1_indexer</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>A full-text indexing engine.
+<p>Copyright © 2009 Joe Armstrong</p>
+
+<p><b>Authors:</b> Joe Armstrong (<a href="mailto:erlang@gmail.com"><tt>erlang@gmail.com</tt></a>).</p>
+
+<h2><a name="description">Description</a></h2>A full-text indexing engine. The functions in this library are
+  modeled after the algorithms in the book "Managing Gigabytes" by
+  I.A.Witten, A.Moffat and T.C. Bell, 2'nd edition.
+  Morgan Kaufmann Publishing, 1999.
+  <h2>Unix Commands</h2>
+  <h3><a name="eindex">eindex</a></h3>
+  There are a number of top level UNIX commands to perform indexing.
+  <pre>
+  $ eindex -crawl Name
+      Input Name.in     Output: Name.files and Name.crawl
+  $ eindex -index Name
+      Input: Name.crawl Output: Name.index
+  $ eindex -dump Name
+      Input Name     Output: Name.tmp
+      example eindex -dump test2.crawl produces test2.crawl.tmp
+  $ eindex -dumpIndex Name
+      Input: Name.index Output: Name.index.tmp
+  $ eindex -statstics Name
+      Input: Name.index Output: Statistics
+  $ eindex -search Name "String"
+      Input Name.in
+      Output: matching objects
+      example: eindex -search test2 "property lists"
+  $ eindex -help
+      prints usage
+  </pre><p>
+  <b>-crawl</b>Is used to gather a collection of files
+  together prior to indexing.
+  The file <b>Name.in</b> contains a list of directories and file extensions
+  which control the gathering phase. All matching files specified in the
+  input file are read, compressed and appended into a single file
+  called a <b>crawl</b>. This file will be rather large, depending upon the  
+size of the scan - but it contains all the data we need for the subsequent  
+indexing phases. In a typical gather phase, I collect 46,000 Erlang  
+files on my disk and compress them into a single 120 MByte file.</p>
+ 
+  <h2>File Formats</h2>
+  <h3><a name="Crawl_files">Crawl files</a></h3>
+  A file with the extension <b>.crawl</b> is a crawl file.
+  A crawl file is a set of BFTs containing
+  <pre>
+  {Term:any(), Extension::string(), Md5Content::binry(), compressedContent::binary()}
+  </pre>
+ 
+  The indexer uses a number or different file formats.
+  These are contained in files with the extensions <b>.in</b>
+  <b>.crawl</b> and <b>.index</b>.
+  <h3><a name="Input_Data">Input Data</a></h3>
+  Files with the extension <b>.in</b> contain a list of
+  tuples with a start directory and a file extension. For example the
+  file <b>test1.in</b> in the examples/indexer directory contains
+  the following:
+  <pre>
+  {"/Users/joe/code/elib2-1", ".erl"}.
+  {"/Users/joe/msi/2005/erl/projects/supported", ".erl"}.
+  </pre>
+ 
+  When the first phase of indexing occurs we crawl through the file
+  system looking for all files under the root <b>/Users/joe/code/elib2.1</b>
+  with the file extension <b>.erl</b>. Symbolic links are followed if
+  they point within the root directory, but circular links are not followed.
+  All the Erlang code found is compressed and appended to a so called
+  "crawl" file. The crawl file is a sequence of tuples of the form
+  <pre>
+  {FileName::string(), Md5::binary(), CompressedContent::binary()}
+  </pre>
+  <h3><a name="Binary_Tuple_Format">Binary Tuple Format</a></h3>
+  Binary tuple formats (BTF) occurs a lot.
+  If T is tuple, then the
+  following binary written to disk is in BTF format:
+  <pre>&lt;&lt;(size(tuple_to_binary(T)):32-unsigned-big-integer),
+          tuple_to_binary(T)&gt;&gt;
+  </pre>
+  Stored on disk in binary tuple format (ie as a 4 byte length header,
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#crawl_files-1">crawl_files/1</a></td><td>Reads Name.in and finds all the files in the input
+  packing them in a file called Name.crawl.</td></tr>
+<tr><td valign="top"><a href="#do-1">do/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#dump_index-1">dump_index/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#extract-2">extract/2</a></td><td>given the name of a crawl file and a pointer into the
+  crawl return the filename and content of the file stored in the
+  crawl.</td></tr>
+<tr><td valign="top"><a href="#list_files-2">list_files/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#lookup-2">lookup/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#make_index-2">make_index/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#q-2">q/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#q-3">q/3</a></td><td></td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="crawl_files-1">crawl_files/1</a></h3>
+<div class="spec">
+<p><tt>crawl_files(Name) -&gt; any()</tt></p>
+</div><p>Reads Name.in and finds all the files in the input
+  packing them in a file called Name.crawl. This calls
+  init:stop() when it has finished.</p>
+
+<h3 class="function"><a name="do-1">do/1</a></h3>
+<div class="spec">
+<p><tt>do(Cmd) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="dump_index-1">dump_index/1</a></h3>
+<div class="spec">
+<p><tt>dump_index(Name) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="extract-2">extract/2</a></h3>
+<div class="spec">
+<p><tt>extract(Name, I) -&gt; any()</tt></p>
+</div><p>given the name of a crawl file and a pointer into the
+  crawl return the filename and content of the file stored in the
+  crawl.</p>
+
+<h3 class="function"><a name="list_files-2">list_files/2</a></h3>
+<div class="spec">
+<p><tt>list_files(Name, L) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="lookup-2">lookup/2</a></h3>
+<div class="spec">
+<p><tt>lookup(Name, Str) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="make_index-2">make_index/2</a></h3>
+<div class="spec">
+<p><tt>make_index(Name, Top) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="q-2">q/2</a></h3>
+<div class="spec">
+<p><tt>q(Name, Str) -&gt; any()</tt></p>
+</div>
+
+<h3 class="function"><a name="q-3">q/3</a></h3>
+<div class="spec">
+<p><tt>q(Dir, Name, Str) -&gt; any()</tt></p>
+</div>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc, Dec 9 2009, 19:02:44.</i></p>
+</body>
+</html>

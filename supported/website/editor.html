@@ -1,0 +1,98 @@
+<style>
+  /* set the padding here to match with the size of the top and right
+     sidebars */
+
+body{
+  padding-top:60px;
+  padding-right:370px;
+ }
+
+div.buttons {
+    border:1px dotted red;}
+
+p {text-align:justify}
+
+ div#header{
+  background-color:#aabbcc;
+  position:fixed;
+  padding-left:10px;
+  top:0;
+  left:0;
+  width:500%;
+  height:50px;   /* so padding-left:70px */
+ }
+
+ div#sidebar{
+  background-color:#bbccee;
+  position:fixed;
+  padding-left:20px;
+  padding-right:10px;
+  top:50px;
+  right:0;
+  width:250px;   /* so padding-right in body:270px */
+  height:100%;
+ }
+
+ * html body{
+  overflow:hidden;
+ } 
+
+ * html div.content{
+  height:100%;
+  overflow:auto;
+ }
+
+
+*.myhover
+{  	text-shadow: #ccc 2px 2px 5px;
+	color:#E20074;
+}   
+
+
+
+</style>
+
+<script src="../../include/jquery-1.3.2.min.js"></script>
+<script>
+
+function setup()
+{
+    $("#sidebar").append($("<button>edit</button>").click(edit));
+    // $("#content").load("test.html");
+}
+
+function edit()
+{
+    $.ajax({url:"test.html",
+		success: function(x){
+                             // alert("x="+x);
+		var c = $("#content");
+		c.html(x); 
+		c.get(0).contentEditable = true;
+	    }});
+}	
+
+$(document).ready(function(){setup()});
+
+</script>
+<body>
+
+  <div id="header">
+    Pos:<span id="pos"></span>
+  </div>
+  
+  <div id="sidebar">
+    <b>Buttons</b><br>
+    <div id="buttons">
+    </div>
+  </div>
+
+  <div id="images">
+  </div>
+
+  <div id="content">
+    <h1>Content</h1>    
+    </div>
+
+</body>
+

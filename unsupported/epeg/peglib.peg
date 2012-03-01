@@ -1,0 +1,22 @@
+int = [0-9]+;
+
+float = [0-9]+ "." [0-9]+ ("e" ("+"|"-")? [0-9]+)? ;
+
+# semantic function (which deals with the parse tree) is:
+
+%{
+
+final(int, L) ->
+   list_to_integer(L);
+
+final(float, [A,_,C,D]) ->
+    D1 = toexp(D),
+    Str = lists:flatten([A,".",C,D1]),
+    {float, list_to_float(Str)}.
+
+toexp([]) -> [];
+toexp([[e,['-'],S]]) -> ["e-",S];
+toexp([[e,['+'],S]]) -> ["e+",S];
+toexp([[e,[],   S]]) -> ["e",S].
+
+%}

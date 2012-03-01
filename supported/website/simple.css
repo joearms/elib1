@@ -1,0 +1,40 @@
+body {
+       margin-left:2in;
+       margin-top:0.5cm;
+       width:60%; 
+       font-size:1.2em}
+
+h1 { font-size:1.4em }
+
+p {  text-align:justify }
+
+p:hover, li:hover
+{  	text-shadow: #ccc 2px 2px 5px;
+	color:#E20074;
+}   
+
+.left {
+	position:relative;
+	float:left;
+	margin: 0 1.2em 4px 0; /* top right bottom left */
+	}
+
+
+.right {
+	position:relative;
+	float:right;
+	margin: 0 0 4px 1.2em;
+	}
+
+.caption {
+	font: normal 0.8em;
+	background:#fff;
+	color:#000;
+	position:absolute;
+	bottom:0;
+	left:0;
+	text-align:center;
+	width:100%;
+	opacity:.75;
+	filter:alpha(opacity=85);
+	}

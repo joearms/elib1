@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso8859-1">
+<script language="JavaScript" SRC="render.js"></script>
+<script language="JavaScript" SRC="instructions.js"></script>
+<script language="JavaScript" SRC="folder.js"></script>
+<style>
+
+/* some styles */
+
+body { margin-left:10%; background-color: #f0f0f0;}
+
+.table1 {border-top: solid 1px #000000;
+          border-right: solid 1px #000000;}
+
+.zebra1 { padding-left:7px;
+         background-color:#ffeeaa;
+         border-left: 1px solid black; 
+	 border-bottom: 1px solid black; }
+
+.zebra2 { padding-left:7px;
+         background-color:#e6ecff;
+         border-left: 1px solid black; 
+	 border-bottom: 1px solid black; }
+
+.data {  padding-left: 7px;
+         background-color: #ffffff;
+         border-left: 1px solid black; 
+	 border-bottom: 1px solid black; }
+
+.selected { padding-left:7px; 
+         border-left: 1px solid black; 
+	 border-bottom: 1px solid black;
+         background-color: #ffc080 }
+
+p	 {color:black}
+p i	 {color: black}
+p tt	 {font-weight: bold}
+h1       {color:  #394d7f;}
+h2	 {color:   #394d7f;}
+pre	 {color: green; font-weight:bold}
+ul	 {margin-left: 120px}
+</style>
+
+</head>
+
+<body onload="load()" onkeyup="keypressed(event)" width="80%">
+  <p>Arrow keys up + down moves the focus
+  u + d moves the object. Enter opens or closes a fold.</p>
+  <table>
+    <tr><td>
+      <table class="table1" id="maintab" width="800px" cellspacing=0>
+      </table>
+    </td>
+    </tr>
+  </table>
+
+  <div id="statictab"">
+  </div>
+  
+  <p>
+    <div id="debug">
+    </div>
+  </p>
+</body>

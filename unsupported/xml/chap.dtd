@@ -1,0 +1,34 @@
+<!ENTITY  % inline "#PCDATA|c|i">
+<!ENTITY  % flow   "img|a|erl|code|p|pre|ol|ul|dl|section">
+
+<!ELEMENT chap (title , (%flow;)* )>
+<!ELEMENT title (#PCDATA)> 
+<!ELEMENT section (#PCDATA)>
+<!ELEMENT p  (%inline;)*>
+<!ELEMENT c  (#PCDATA) >
+<!ELEMENT dt (%inline;)* >
+<!ELEMENT dd (%flow;)* >
+<!ELEMENT dl (dt,dd)* >
+<!ELEMENT ol (li)* >
+<!ELEMENT ul (li)*>
+<!ELEMENT pre (#PCDATA)>
+<!ELEMENT li (%flow;)* >
+<!ELEMENT code (#PCDATA) >
+<!ELEMENT i (#PCDATA)>
+
+<!ELEMENT erl EMPTY>
+<!ATTLIST erl
+  func        CDATA #REQUIRED>
+
+
+<!ELEMENT a (#PCDATA)>
+<!ATTLIST a
+  href        CDATA #IMPLIED>
+
+<!ELEMENT img EMPTY>
+
+<!ATTLIST img
+  src         CDATA #REQUIRED
+  height      CDATA #IMPLIED
+  width       CDATA #IMPLIED
+  >

@@ -1,0 +1,178 @@
+<? M=simple_web_server, M:header() ?>
+<body>
+  <h1>Elib</h1>
+
+  <h2>The grand plan</h2>
+  
+  <ul>
+    <li>One big integrated library and set of applications not several 
+    hundred small ones.</li>
+    <li>One place to look.</li>
+    <li>High quality code</li>
+    <li>Community development - many eyes</li>
+    <li>Only add disjoint code (ie code that is <i>different</i>
+    to the exiting code in the library</li>
+    <li>Make you mind up. Now five JSON libraries but only one. The best.</li>
+    <li>Integrated component management</li>
+  </ul>
+
+  <p><a href="slides.ehtml">Slide Show</a></p>
+
+  <h2>Supported programs</h2>
+
+  <p>
+    These programs are "supported." This means that I am interested in
+    them and will try to actively support their development. It does
+    not mean that they are in any sense finished. The quality varies
+    considerably.  The best is probably the full text indexer ...
+  </p>
+
+  <? M:supported() ?>
+
+  <h2>Unsupported programs</h2>
+
+  <p>
+    These programs are "unsupported." This means that I am not
+    currently interested in them and will actively support their
+    development.  They represent experiments I have done and are
+    incomplete.  Often I stopped work on these when I got stuck. So
+    fell free to try and solve the outstanding problems in these
+    programs. If we can improve them sufficiently I might move them to
+    the supported category.
+  </p>
+
+  <? M:unsupported() ?>
+
+  <h2>Wanted Programs</h2>
+
+  <p>These are programs that have not yet been written. Read more
+  in <a href="/wanted/doc.ehtml">wanted</a>.
+
+  <h2>To Do</h2>
+  
+  <p>Checkout the <a href="todo.ehtml">todo</a> list.
+  To add or fix a problem fork and edit</p>
+
+  <h2>The Library</h2>
+  
+  <a href="/lib/src/slides.ehtml">Slides</a>
+
+  
+  <? M:library() ?>
+
+  <p>Structure</p>
+  
+  <pre>
+    /lib/src/*.erl
+        /ebin/*.beam
+        /doc/*.html
+    /supported/website/    -- website
+              /tagger/html -- browsable html
+	      /indexer/    -- full text indexing program
+              /irc/        -- irc stuff
+              /template/   -- example supported application
+	      /drivers/    -- example linked in and port drivers
+    /unsupported/          -- incomplete experiments
+    /bin/eindex            -- full text indexing program
+    /include/              -- include files
+                              mainly js and dtd's images etc
+    /wanted/src/*erl       -- wanted programs
+           /ebin/*.beam   
+           /doc/*.html			   
+           /notes         --  
+    Makefile              -- do it all
+    Readme                -- description
+  </pre>
+
+
+  <h2>Philosophy</h2>
+
+  <dl>
+    <dt><b>All library code in one directory</b></dt>
+
+    <dl>This might sound strange. But I have noticed that code in
+    different directories tends to be less well-integrated, function
+    calls to modules across directory boundaries and
+    infrequent. Putting all the modules in one directory solves this.
+    </dl>
+
+    <dt><b>Co-develop library and applications</b></dt>
+    <dl>How do we know if the library functions are useful? We don't
+    know until we have written a few applications. So we co-develop
+    a number of hopefully non-trivial applications.</dl>
+
+    <dt><b>All small functions in one module</b></dt> <dl><a
+    href="/lib/doc/elib1_misc.html">elib1_misc.erl</a>.  Often
+    functions don't really belong to a module, so I put them all in
+    the same module. This encourages reuse - since In know where to look
+    for things.</dl>
+
+    <dt><b>Don't add a library module if another module almost does
+    the same thing</b></dt> 
+    <dl> The functionality of the library
+    modules should be <i>disjoint</i> as far as possible.</dl>
+
+    <dt><b>Use state-of art tools for checking, testing, documenting</b></dt>
+    <dl>This means I use the dialyzer, eunit and edoc</dl>
+    
+    <dt><b>Refactor, refactor refactor (1) </b></dt>
+    <dl>If when you are writing an application you find
+    some code that should be in the library stop writing you application
+    and put the code in the library, then go back to the application</dl>
+
+    <dt><b>Refactor, refactor refactor (2)</b></dt>
+    <dl>If when see library code that is wrong
+    then change it immediately. <i>And change all the applications</i>
+    This is what takes a long time.</dl>
+
+    <dt><b>Refactor, refactor refactor (3)</b></dt> <dl>If when see
+    functions in the wrong module or badly named then change it
+    immediately. <i>And change all the applications and all the library
+    modules</i> This is what takes even longer.</dl>
+
+
+    <dt><b>Document document document</b></dt>
+    
+    <dl>Code is not finished until the documentation is <i>beautiful</i>
+    Undocumented code is a nightmare to understand and maintain.
+    If you have to read the code to understand it you have failed.
+    Read the documentation, this alone should suffice.
+    <i>This takes a very very long time</i></dl>
+
+    <dt><b>Open source it</b></dt>
+    <dl>Encourage community participation. <i>But not before there is
+    an emergent structure.</i></dl>
+
+    <dt><b>Provide Placeholders</b></dt>
+    
+    <dl>Add modules that are not yet written, these are
+    only placeholders so people know where to look</dl>
+
+    <dt><b>One big project with lots of eyes</b></dt>
+    <dl>I'd like one big project with lots of eyes, rather than
+    many small projects with few eyes/per project</dl>
+
+    <dt><b>Provide a migration path for applications</b></dt>
+    <dl>They start in unsupported and move to supported</dl>
+
+    <dt><b>Applications must be small and use a lot of library code</b></dt>
+    <dl>If you look you'll see the applications directories
+    are small and just show you how to use the library.</dl>
+
+    <dt><b>Use a common management framework</b></dt>
+    <dl>My hypothesis is IRC with dedicated commands:
+    <pre>
+      /JOIN #mnesia
+      #mnesia: joe has joined #mnesia
+      joe: list tables
+      #mnesia: people towns 
+      /LEAVE
+      #mnesia: joe has left mnesia
+    </pre>
+    </dl>
+
+    <dt><b>Provide a test bed for ideas</b></dt>
+    <dl>...</dl>
+    
+
+</body>

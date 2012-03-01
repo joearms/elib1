@@ -1,0 +1,167 @@
+%{
+
+-import(lists, [flatten/1]).
+
+%}
+
+- =	(space | comment)* ;
+
+space = " " | "\t" | endofline;
+
+comment = '#' (!endofline .)* endofline;
+
+endofline = "\r\n" | "\n" | "\r";
+
+float = [0-9]+ "." [0-9]+ ("e" ("+"|"-")? [0-9]+)? -;   
+
+int = [0-9]+ -;
+
+# Now erlang tokens
+
+tokens = - token* endOfFile;
+
+endOfFile = !. ;	  
+
+
+#note float *must* come before int
+
+token = comment | dollarint 
+         | float | atom | var | anonvar | int  
+         | string | quotedatom |
+           punct | error;
+
+error = .; 
+
+atom = [a-z] [A-Za-z0-9_]* -;
+
+var = [A-Z][A-Za-z0-9_]* -;
+
+anonvar = "_" [A-Z] [A-Za-z0-9]* -
+           | "_" -;
+
+dollarint = "$\\" eat_escape  -
+             | "$" . -;
+
+# character after $
+eat_escape = [0-3][0-7][0-7] 
+           | [0-7][0-7]
+           | [0-7]
+           | [nsrtfv]
+           | "\\"
+           | "^" [a-ZA-Z];
+
+string = ["] strquotechars* ["] - ;
+
+strquotechars = "\\\""
+           | "\\" .
+           | !"\"" .;
+
+quotedatom = ['] atomquotechars* ['] -;
+
+
+atomquotechars = "\\'"
+           | !"'" .;
+
+## note "." not '.' ws
+
+
+# note to self I have a bug - I can't say "\s" ...
+
+ws = "\r\n" | " " | "\t" | "\n" | endOfFile;
+
+
+## to do later - efficient compilation of "all quoted" things
+
+punct =
+   '(' | ')' |',' | ';' | '=' | ':' | '->' | '[' | ']' | '||' | '|' |
+   '{' | '}' | 'case' | 'end' | 'receive' | 'if' | 'try' | 'catch' |
+   '?' | '<' | '>' | '+' | '-' | '/' | '*' | 'after' | '-' | dws;
+
+# this fails for .EndOfFile
+
+dws = "." ws -;
+
+# now a grammar
+
+term = tuple | atom ! ':' | var | float | int | list;
+
+tuple = '{' '}'
+      | '{' term (',' term)* '}';
+
+list = '[' ']'
+     | '[' term listTail;
+
+listTail = ']'
+         | ',' term listTail
+         | '|' term ']';
+
+%{
+
+final(tokens, [_,T,_]) -> T;
+
+final(token, X) -> X;
+
+
+final(float, [A,_,C,D,_]=S) ->
+    D1 = toexp(D),
+    Str = flatten([A,".",C,D1]),
+    {float, list_to_float(Str)};
+
+final(int, [S,_]) ->
+    {int, list_to_integer(S)};
+	     
+
+final(dollarint, X) -> {dollarInt, X};
+
+final(eat_escape, X) -> {escape, X};
+
+final(atom, [A,B,_]) ->  {atom, [A|B]};
+
+final(var, [A,B,_]) ->  {var, [A|B]};
+
+final(anonvar, [_,_,B,_]) -> {anonvar, B};
+final(anonvar, [_,_])     -> anonvar;
+
+final(string, [_,S,_,_]) -> {estr, flatten(S)};
+
+final(strquotechars, [bang, X]) -> X;
+final(strquotechars, X)         -> X;
+
+final(atomquotechars,[bang,X]) -> X;
+final(atomquotechars, X)        -> X;
+    
+final(quotedatom, [_,S,_,_]) -> {qatom, S};
+    
+final(punct, X) -> {punct, X};
+
+final(comment, [_, S,_]) -> {comment, reduce(S)};
+
+final(tuple, ['{', '}']) ->
+    {tuple, []};
+final(tuple, ['{', H, L, '}']) ->
+    {tuple, [H|reduce(L)]};
+
+final(term, L) ->
+    L;
+
+final(Tag, Val) ->
+    {glurk, Tag, Val}.
+
+reduce(L) -> [X || [_,X] <- L].
+
+toexp([]) -> [];
+toexp([[e,['-'],S]]) -> ["e-",S];
+toexp([[e,['+'],S]]) -> ["e+",S];
+toexp([[e,[],   S]]) -> ["e",S].
+
+test() ->
+    V = ?MODULE:parse_tokens("abc 3.14159 abc 12 {} 'abc' Var"),
+    io:format("V=~p~n",[V]),
+    V1 = ?MODULE:parse_term("{abc,123}xyz"),		
+    io:format("V1=~p~n",[V1]),				
+    init:stop().
+
+
+
+%}
+

@@ -1,0 +1,14 @@
+<? M= simple_web_server, M:header() ?>
+
+<body>
+
+  <h1>A name register</h1>
+  
+  <p>You have written your program and you want the world to use it.
+  We need something like a dynamic DNS to register your program with.</p>
+
+  <p>You want a single liner</p>
+
+  <p>elib1_dynamic_register(self(), "Name")</p>
+
+</body>

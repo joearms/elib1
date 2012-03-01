@@ -1,0 +1,5 @@
+#!/bin/sh
+## Usage efsim <Name>
+
+erl -noshell -s elib1_similar batch_find_similar $1
+ 

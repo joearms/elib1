@@ -1,0 +1,14 @@
+# test a few peg expressions
+
+s = " "*;  # spaces
+
+a = b; 
+
+%{
+
+line([_,X,_]) -> X.
+
+%}
+
+
+

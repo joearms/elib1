@@ -1,0 +1,82 @@
+<? M = simple_web_server, M:header() ?>
+
+<html>
+
+  <h1>XML Validation</h1>
+
+  <p>This is a very short chapter that merely documents how I have
+  setup <b>xmllint</b> for XML validatation.  I use it to validate
+  XML or to validate xhtml files. <i>This chapter is for information
+  only and may or may not work on your system.</i></p>
+  
+  <h2>xmllint setup</h2>
+
+  <p>
+    I use <b>xmlllint</b> for validation. <b>xmlint</b> must be
+    correctly configured to do this.  I'll start with a simple
+    example. Assume the file <b>story.xml</b> contains the
+    following:
+  </p>
+    
+  <? Dir = elib1_misc:root_dir() ++ "/unsupported/xml/", "" ?>
+  
+  <? quote_file(Dir ++ "story.xml") ?>
+
+  <p>We wish to validate this using the the dtd stored in the file
+  <b>story.dtd</b>:</p>
+  
+  <? quote_file(Dir ++ "story.dtd") ?>
+    
+  <p>If we try to validate this we get the following dreadful error:</p>
+    
+  <pre>
+    > xmllint --nonet  --valid --noout story.xml
+    story.xml:2: warning: 
+    failed to load external entity "test1"
+    &lt;!DOCTYPE story SYSTEM "test1">
+    story.xml:3: validity error : 
+    Validation failed: no DTD found !
+  </pre>
+    
+  <p>The system can't find a DTD to validate the story with.  To fix
+    this up we need to do two things, create a file containing a catalog
+    and add the name of this file to an environment variable contining a
+    list of catalog file names.</p>
+
+  <h2>The catalog file</h2>
+
+  <p>The catalog file <b>my_catalog.xml </b> looks like this:</p>
+
+  <? quote_file(Dir ++ "my_catalog.xml") ?>      
+  
+  <p>It simply maps a symbolic name <b>test1</b> onto a filename.</p>
+    
+  <h2>Setting the paths</h2>
+
+  <pre>
+    > echo $XML_CATALOG_FILES
+    /home/ejoearm/Desktop/docbook-xsl-1.75.2/catalog.xml \
+    /etc/xml/catalog
+    > export XML_CATALOG_FILES=\
+    "$XML_CATALOG_FILES `pwd`/my_catalog.xml"
+    > echo $XML_CATALOG_FILES
+    /home/ejoearm/Desktop/docbook-xsl-1.75.2/catalog.xml\
+    /etc/xml/catalog\
+    /home/ejoearm/code/elib2-1/examples/doc/content/my_catalog.xml
+  </pre>
+    
+  <p>Now it should work:</p>
+    
+  <pre>
+    > xmllint --nonet  --valid --noout story.xml
+    .. no ouput ..
+  </pre>
+  
+  <p>No Output means it worked!</p>
+    
+  <p>If you want to convince yourself that everything works, try
+    changing the name of the dtd or entering XML that will not
+    validate.</p>
+</html>
+  
+

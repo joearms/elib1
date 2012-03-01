@@ -1,0 +1,4 @@
+%% these paths get added to $HOME
+{"code/elib2-1/lib", ".erl"}.
+{"code/elib2-1/supported", ".erl"}.
+{"code/elib2-1/unsupported", ".erl"}.
