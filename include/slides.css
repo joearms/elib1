@@ -1,7 +1,7 @@
 h1 {  text-align: center; font-size:1.5em }
 
-.slide { 
-  padding: 0.5em 2em 0em 2em; 
+.slide {
+  padding: 0.5em 2em 0em 2em;
   display: block;
   border: 1px solid black;
   background: #ffddee;
@@ -31,5 +31,5 @@ pre {
 .middle {position: absolute; left:33%; top:100px;}
 .farright  {position: absolute; left:70%; top:100px;}
 
-td { border: 2px solid black; padding:5px; } 
+td { border: 2px solid black; padding:5px; }
 table {border-collapse:collapse}

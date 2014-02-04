@@ -1,7 +1,7 @@
 <? M=simple_web_server, M:header() ?>
 
 <body>
-  <h1>Website</h1> 
+  <h1>Website</h1>
 
   <p>This website is built using an extremely simple
   web server and mark-up language.</p>
@@ -13,10 +13,10 @@
 
   <p>Files with the extension <b>.ehtml</b> can contain embedded Erlang code.
   such code is contained in <b>&lt;? ... ?></b> brackets.</p>
-  
+
   <p>Expansion module <a href="/lib/html/elib1_expand.html">elib1_expand</a>
   expands the expressions within the brackets and replaces the
-  entire bracked expression by the value of the last expression in the 
+  entire bracked expression by the value of the last expression in the
   brackets, which must be a string. So for example, the code seqeunce:</p>
 
   <pre>
@@ -25,7 +25,7 @@
   </pre>
 
   <p>Evaluates to:</p>
-  
+
   <p>
     <? Who = "Joe", "Hello" ?>
     my name is <? Who ?>

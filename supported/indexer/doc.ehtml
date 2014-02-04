@@ -1,17 +1,17 @@
 <? simple_web_server:header() ?>
 
 <body>
-  
 
-  <h1>Indexer</h1> 
 
-  
+  <h1>Indexer</h1>
+
+
   <p><a href="./slides.ehtml">Slides</a> or <a
   href="/supported/tagger/html/elib1_indexer.html">read the code</a>
   or <a href="/lib/doc/elib1_indexer.html">the module
   documentation</a>
   or run <a href="./web_query.ehtml"> a web query</a></p>
-  
+
   <p>This chapter describes how to make a full text indexer for Erlang
   programs. During the years I have collected a large number of Erlang
   modules and keeping track of all the modules is pretty difficult. I
@@ -33,7 +33,7 @@
   how this file is created. The dets value maps keys onto values.
   There are two types of keys in the dets file, strings and integers.</p>
 
-  <p>The strings are assumed to be words that occur in the collection 
+  <p>The strings are assumed to be words that occur in the collection
   of files that we have indexed. The integers are assumed to be file
   numbers.</p>
 
@@ -42,7 +42,7 @@
 
   <p>As an example imagine we have three files, called A,B and C. They
   contain the following:</p>
-  
+
   <table>
     <tbody><tr><td><b>FileName</b></td><td><b>Contents</b></td></tr>
     <tr><td>A</td><td>this and that</td></tr>
@@ -59,7 +59,7 @@
     <tr><td>2</td><td>"B"</td></tr>
     <tr><td>3</td><td>"C"</td></tr>
     <tr><td>4</td><td>"C"</td></tr>
-    <tr><td>"this"</td><td>[1,2]</td></tr>    
+    <tr><td>"this"</td><td>[1,2]</td></tr>
     <tr><td>"and"</td><td>[1,3]</td></tr>
     <tr><td>"that"</td><td>[1,4]</td></tr>
     <tr><td>"more"</td><td>[2,3,4]</td></tr>
@@ -85,15 +85,15 @@
   and we have to be smart when computing the index.</p>
 
   <h2>How does indexing work?</h2>
-  
+
   <p> The indexing
   program once run will create an index file called
   <b>big_index.dat</b>.  The index file is a dets table.</p>
 
   <p>The <b>big_content.dat</b> is tuple sequence file of
   <b>{FileName, Md5, CContent}</b> tuples.</p>
-  
-  <h2>Tuple sequence files</h2> 
+
+  <h2>Tuple sequence files</h2>
 
   <p>Tuple sequence files are sequential files containing sequences of
   tuples.  each tuple is encoded as a four byte header, containing a
@@ -106,7 +106,7 @@
         Size = size(B),
         io:write(F, [&lt;&lt;I:32/integer&gt;&gt;, B]).
   </pre>
-  
+
   <p>Tuple sequences files can be read and written extremely quickly,
   this is discussed in ...</p>
 
@@ -135,15 +135,15 @@
   preceding the tuple data which contains the content of the file.</p>
 
   <p>The code for <b>lookup/1</b> is as follows:</p>
-  
+
 <pre>  lookup(Name, Str) -&gt;
-      {ok, result} = 
-	dets:open_file(result, 
+      {ok, result} =
+	dets:open_file(result,
 		       {file,atom_to_list(Name) ++ "_index.dets"}),
       Bin = list_to_binary(elib1_porter:stem(Str)),
       case dets:lookup(result, Bin) of
 	[] -&gt; [];
-	[{_,Bin1}] -&gt; 
+	[{_,Bin1}] -&gt;
 	    elib1_gamma:gamma_to_alist(Bin1)
       end.
   </pre>
@@ -163,7 +163,7 @@
     "list"
     &gt; elib1_porter:stem("listing").
     "list"
-    &gt; elib1_porter:stem("listed"). 
+    &gt; elib1_porter:stem("listed").
     "list"
   </pre>
 
@@ -184,7 +184,7 @@
   <b>term_to_binary(L)</b></p>
 
   <p>Here's an demonstration of this:</p>
-  
+
   <p>If we lookup the keyword <b>lists</b>
   we get a list of document numbers. This need 39 bits/document
   to store the data:
@@ -193,7 +193,7 @@
   <pre>    1&gt; L=elib1_indexer:lookup(big, "lists").
     [1,6,8,12,21,24,26,27,31,32,33,34,35,36,37,38,39,40,41,42,
     43,44,45,46,47,49,50,51,52|...]
-    2&gt; length(L).                            
+    2&gt; length(L).
     7450
     3&gt; size(term_to_binary(L)).
     36657
@@ -203,7 +203,7 @@
 
   <p>Now using gamma encoding we can get down to an amazing 1.5
   bits/document:</p>
-  
+
   <pre>    5&gt;  B1 = elib1_gamma:alist_to_gamma(L).
     &lt;&lt;131,104,3,100,0,5,100,108,105,115,116,97,1,77,0,0,5,116,
     7,4,36,164,100,132,182,37,80,154,34,...&gt;&gt;
@@ -230,11 +230,11 @@
   (increments) between successive elements in the original list. So for
   example:</p>
 
-  <pre>    &gt; elib1_gamma:dlist(L).  
+  <pre>    &gt; elib1_gamma:dlist(L).
     {dlist,1,
        [5,2,4,9,3,2,1,4,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1|...]}
   </pre>
- 
+
   <p>The delta list consists mostly of small integers.</p>
 
   <h2>Gamma encoded integers</h2>
@@ -246,11 +246,11 @@
   at rules for decoding a bit string.</p>
 
   <pre>  Bit Sequence      Means
-  "0"               1       
+  "0"               1
   "10X"             2^1 + X (encodes 2,3)
   "110XX"           2^2 + X (encodes 4,5,6,7)
   "1110XXX"         2^3 + X (encodes 8,9,10,11,12,13,14,15)
-  "1.....10X.....X" 2^N + X where X is in 0 .. 2^N-1 
+  "1.....10X.....X" 2^N + X where X is in 0 .. 2^N-1
     N 1's   N bits
   </pre>
 
@@ -300,7 +300,7 @@ pack: compression = 0.20778140583561547
 pack took 160156 ms.
 keywords: building word table
 indexing: 215830 words loaded
-keywords: analysing files files (can take a while) .....100 ....200 ....300 ....400 ....500 ....600 ....700 ....800 ....900 ....1000 ....1100 ....1200 ....1300 ....1400 ....1500 ....1600 ....1700 ....1800 ....1900 ....2000 ....2100 ....2200 ....2300 ....2400 ....2500 ....2600 ....2700 ....2800 ....2900 ....3000 ....3100 ....3200 ....3300 ....3400 ....3500 ....3600 ....3700 ....3800 ....3900 ....4000 ....4100 ....4200 ....4300 ....4400 ....4500 ....4600 ....4700 ....4800 ....4900 ....5000 ....5100 ....5200 ....5300 ....5400 ....5500 ....5600 ....5700 ....5800 ....5900 ....6000 ....6100 ....6200 ....6300 ....6400 ....6500 ....6600 ....6700 ....6800 ....6900 ....7000 ....7100 ....7200 ....7300 ....7400 ....7500 ....7600 ....7700 ....7800 ....7900 ....8000 ....8100 ....8200 ....8300 ....8400 ....8500 ....8600 ....8700 ....8800 ....8900 ....9000 ....9100 ....9200 ....9300 ....9400 ....9500 ....9600 ....9700 ....9800 ....9900 ....10000 ....10100 ....10200 ....10300 
+keywords: analysing files files (can take a while) .....100 ....200 ....300 ....400 ....500 ....600 ....700 ....800 ....900 ....1000 ....1100 ....1200 ....1300 ....1400 ....1500 ....1600 ....1700 ....1800 ....1900 ....2000 ....2100 ....2200 ....2300 ....2400 ....2500 ....2600 ....2700 ....2800 ....2900 ....3000 ....3100 ....3200 ....3300 ....3400 ....3500 ....3600 ....3700 ....3800 ....3900 ....4000 ....4100 ....4200 ....4300 ....4400 ....4500 ....4600 ....4700 ....4800 ....4900 ....5000 ....5100 ....5200 ....5300 ....5400 ....5500 ....5600 ....5700 ....5800 ....5900 ....6000 ....6100 ....6200 ....6300 ....6400 ....6500 ....6600 ....6700 ....6800 ....6900 ....7000 ....7100 ....7200 ....7300 ....7400 ....7500 ....7600 ....7700 ....7800 ....7900 ....8000 ....8100 ....8200 ....8300 ....8400 ....8500 ....8600 ....8700 ....8800 ....8900 ....9000 ....9100 ....9200 ....9300 ....9400 ....9500 ....9600 ....9700 ....9800 ....9900 ....10000 ....10100 ....10200 ....10300
 keywords: inverting word table
 extract keywords took 99634 ms.
 pack index: sorting

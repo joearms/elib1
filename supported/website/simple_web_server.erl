@@ -8,7 +8,7 @@
 -import(lists, [sort/1]).
 
 %% START:start
-start() ->      
+start() ->
     elib1_webkit:start_static_server(2246, fun server/3),
     elib1_misc:forever().
 %% END:start
@@ -25,7 +25,7 @@ server(Tag, Uri, Args) ->
     %% if the file extension is .ehtml then call the expander
     case filename:extension(Uri) of
 	".ehtml" ->
-	    case filelib:is_file(FullName) of 
+	    case filelib:is_file(FullName) of
 		true ->
 		    Str = elib1_expand:expand_file(FullName),
 		    {response, html, [Str]};
@@ -41,7 +41,7 @@ server(Tag, Uri, Args) ->
 
 header() ->
     ["<link  href='/include/elib1.css' type='text/css' rel='stylesheet'/>\n",
-     "<script language='JavaScript' 
+     "<script language='JavaScript'
         SRC='/include/jquery-1.3.2.min.js'></script>
 <script>
 $(document).ready(function(){
@@ -57,7 +57,7 @@ supported() ->
 
 mk_link(L) ->
     ["<li><a href='/supported/",L,"/doc.ehtml'>",L,"</a></li>"].
-    
+
 unsupported() ->
     Dir = elib1_misc:root_dir() ++ "/unsupported",
     V = elib1_misc:ls(Dir),
@@ -66,7 +66,7 @@ unsupported() ->
 
 mk_link1(L) ->
     ["<li><a href='/unsupported/",L,"/doc.ehtml'>",L,"</a></li>"].
-    
+
 library() ->
     Root =  elib1_misc:root_dir(),
     Dir = Root ++ "/lib/src",
@@ -75,12 +75,12 @@ library() ->
     ["<ul>", [mk_link1(I, Root) || I <- L1], "</ul>"].
 
 mk_link1(I, Root) ->
-    L1 = ["<a href='", 
+    L1 = ["<a href='",
 	  "/supported/tagger/html/",I,".html'>",I,"</a>"],
-    L2 = ["<a href='", 
+    L2 = ["<a href='",
 	  "/lib/doc/",I,".html'>edoc</a>"],
     ["<li>", L1, " ", L2, "</li>"].
-    
+
 notes() ->
     Root =  elib1_misc:root_dir(),
     Dir = Root ++ "/wanted/notes",
@@ -90,9 +90,9 @@ notes() ->
     ["<ul>", [mk_link3(I) || I <- L1], "</ul>"].
 
 mk_link3(I) ->
-    L1 = ["<a href='", 
+    L1 = ["<a href='",
 	  "/wanted/notes/",I,".ehtml'>",I,"</a>"],
     ["<li>", L1,"</li>"].
-    
+
 
 

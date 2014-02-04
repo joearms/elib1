@@ -18,14 +18,14 @@ th + th + th{ text-align:left; }
 tt { font-weight:bold }
 
 
-td { border: 1px solid black } 
+td { border: 1px solid black }
 table {border-collapse:collapse}
 
 
 *.myhover
 {  	text-shadow: #ccc 2px 2px 5px;
 	color:#E20074;
-}   
+}
 
 p {  text-align:justify }
 /* structured text styles */
@@ -46,7 +46,7 @@ th + th + th{ text-align:left; }
 tt { font-weight:bold }
 
 
-td { border: 1px solid black } 
+td { border: 1px solid black }
 table {border-collapse:collapse}
 
 pre {
@@ -72,4 +72,4 @@ p {  text-align:justify }
 *.hover
 {  	text-shadow: #ccc 2px 2px 5px;
 	color:#E20074;
-}   
+}

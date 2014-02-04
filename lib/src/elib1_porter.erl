@@ -4,47 +4,47 @@
 %% ---
 %%  Excerpted from "Programming Erlang",
 %%  published by The Pragmatic Bookshelf.
-%%  Copyrights apply to this code. It may not be used to create training material, 
+%%  Copyrights apply to this code. It may not be used to create training material,
 %%  courses, books, articles, and the like. Contact us if you are in doubt.
-%%  We make no guarantees that this code is fit for any purpose. 
+%%  We make no guarantees that this code is fit for any purpose.
 %%  Visit http://www.pragmaticprogrammer.com/titles/jaerlang for more book information.
 %%---
 %%% File    : indexer_porter.erl
 %%% Author  : Hans Nilsson
-%%% Purpose : Porter Stemming 
+%%% Purpose : Porter Stemming
 %%% Created : 16 Nov 2004
 
 -module(elib1_porter).
 
 %% This module is an Erlang implementation of the "Porter Stemming Algorithm".
-%% 
-%% Stemming is the process of converting a word into its stem. This is needed 
+%%
+%% Stemming is the process of converting a word into its stem. This is needed
 %% in text search algorithms.  For instance all of
-%% 
+%%
 %%         CONNECT
 %%         CONNECTED
 %%         CONNECTING
 %%         CONNECTION
 %%         CONNECTIONS
-%% 
-%% are converted into "connect".   
-%% 
-%% For the Porter Stemming, see 
+%%
+%% are converted into "connect".
+%%
+%% For the Porter Stemming, see
 %%       http://www.tartarus.org/~martin/PorterStemmer/index.html
-%% 
+%%
 %% This implementation uses the fact that Erlang is best suited for operations
-%% on heads of lists, while the algorithm operates only on tails of lists. 
+%% on heads of lists, while the algorithm operates only on tails of lists.
 %% Therefore all endings and routines are transformed into there reversed
 %% equivalence.  By this, the speed is increased by a factor of at least two.
-%% 
+%%
 %% For example, the rule
-%%       (m>0) ATIONAL ->  ATE 
+%%       (m>0) ATIONAL ->  ATE
 %% is transformed into
 %%       (m>0) LANOITA ->  ETA
-%% 
+%%
 %% Otherwise the implementation follows the original specification rather
 %% directly.
-    
+
 -export([stem/1,  test/0]).
 
 -export([tst/3]).   % "Internal" export for apply/3
@@ -107,7 +107,7 @@ f(F) ->
 	    ?dfmt('Step ~w: In=~p (reversed: ~p) ',
 		  [StepNum, lists:reverse(WordIn), WordIn]),
 	    Out__ = (WordOutExpr),
-	    ?dfmt(' Out=~p (reversed: ~p)\n', 
+	    ?dfmt(' Out=~p (reversed: ~p)\n',
 		  [lists:reverse(Out__), Out__]),
 	    Out__
 	end).
@@ -144,7 +144,7 @@ s_1b(W="gni"++S) ->
 	true -> step_1b2(S);
 	false -> W
     end;
-s_1b(W) ->	    
+s_1b(W) ->
     W.
 
 
@@ -164,7 +164,7 @@ s_1b2(W) ->
     s_1b2_2(W).
 
 
-s_1b2_2(W) -> 
+s_1b2_2(W) ->
     case (m(W)==1) and '*o'(W) of
 	true -> "e"++W;
 	false -> W
@@ -180,7 +180,7 @@ s_1c("y"++Stem=W) ->
     end;
 s_1c(W) ->
     W.
-    
+
 %%%----------------------------------------------------------------
 step_2(W) -> ?Dstep(2, W, s_2(W)).
 
@@ -211,7 +211,7 @@ s_2(W="itila"++S) -> ?D, if_m_gt("la"++S, W, S, 0);
 s_2(W="itivi"++S) -> ?D, if_m_gt("evi"++S, W, S, 0);
 s_2(W="itilib"++S) -> ?D, if_m_gt("elb"++S, W, S, 0);
 s_2(W) -> W.
-    
+
 %%%----------------------------------------------------------------
 step_3(W) -> ?Dstep(3, W, s_3(W)).
 
@@ -223,7 +223,7 @@ s_3(W="laci"++S) -> ?D, if_m_gt("ci"++S, W, S, 0);
 s_3(W="luf"++S) -> ?D, if_m_gt(S, W, S, 0);
 s_3(W="ssen"++S) -> ?D, if_m_gt(S, W, S, 0);
 s_3(W) -> W.
-    
+
 %%%----------------------------------------------------------------
 step_4(W) -> ?Dstep(4, W, s_4(W)).
 
@@ -251,7 +251,7 @@ s_4(W="suo"++S) -> ?D, if_m_gt(S, W, S, 1);
 s_4(W="evi"++S) -> ?D, if_m_gt(S, W, S, 1);
 s_4(W="ezi"++S) -> ?D, if_m_gt(S, W, S, 1);
 s_4(W) -> W.
-    
+
 %%%----------------------------------------------------------------
 step_5(W) -> step_5b(step_5a(W)).
 
@@ -272,18 +272,18 @@ step_5b(W) -> ?Dstep('5b', W, s_5b(W)).
 
 s_5b(W="ll"++S) -> ?D, if_m_gt("l"++S, W, "l"++S, 1);
 s_5b(W) -> W.
-	    
+
 %%%================================================================
 %%% for rules like:
 %%%   (m>1) SUFFIX -> NEW
 %%% Repl is NEW, Orig is SUFFIX and Ml is what m should be greater than
 
-if_m_gt(Repl, Orig, Stem, Ml) -> 
+if_m_gt(Repl, Orig, Stem, Ml) ->
     case m_gt(Ml, Stem) of
 	true -> Repl;
 	false -> Orig
     end.
-    
+
 %%%----------------------------------------------------------------
 %% Test if m > M for Stem.
 %%
@@ -291,13 +291,13 @@ if_m_gt(Repl, Orig, Stem, Ml) ->
 %% to [V](CV){m}[C]
 
 m_gt(M, Stem) -> m_gt1(skip(v,Stem), M).
-    
+
 m_gt1(S,M) when M>=0 -> case catch take(v, take(c,S)) of
 			    {'EXIT',_} -> false;
 			    S1 -> m_gt1(S1,M-1)
 			end;
 m_gt1(_,M) when M<0 -> true.
-		  
+
 %%%----------------------------------------------------------------
 %%% find the m-value for a Stem
 
@@ -307,7 +307,7 @@ m(S,M) -> case catch take(v, take(c,S)) of
 	      {'EXIT',_} -> M;
 	      S1 -> m(S1,M+1)
 	  end.
-    
+
 %%%----------------------------------------------------------------
 %% Remove characters from W as long as they belong to the class Class
 %% (vowels or consonants)
@@ -318,15 +318,15 @@ skip(Class,W) -> case vc_class(W) of
 		     Class -> skip(Class,tl(W));
 		     _ -> W
 		 end.
-		      
-classtst([C|Cs], W=[_|Ws]) -> 
+
+classtst([C|Cs], W=[_|Ws]) ->
     case vc_class(W) of
 	C when Cs=/=[] -> classtst(Cs,Ws);
 	C when Cs==[] -> true;
 	_ -> false
     end;
 classtst(_, _) -> false.
-    
+
 %%%----------------------------------------------------------------
 vc_class([$a|_]) -> v;
 vc_class([$e|_]) -> v;
@@ -361,7 +361,7 @@ vc_class(_) -> c.
 
 lower_case(Word) -> lower_case(Word,[]).
 
-lower_case([C|Cs], Acc) -> 
+lower_case([C|Cs], Acc) ->
     if
 	$A=<C, C=<$Z -> lower_case(Cs, [(C-$A+$a)|Acc]);
 	true -> lower_case(Cs, [C|Acc])
@@ -369,10 +369,10 @@ lower_case([C|Cs], Acc) ->
 lower_case([], Acc) ->
     Acc.
 
-    
 
 
 
 
 
-    
+
+

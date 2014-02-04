@@ -19,7 +19,7 @@ edit([{"file", F}], Root, _) ->
 	    %% io:format("Str=~s~nStr1=~s~n",[Str, Str1]),
 	    Template = Root ++ "/doc/edit.html",
 	    Args = [{"content", Bin1},{"file",F}],
-	    R = elib1_misc:template_file_and_args_to_io_list(Template, 
+	    R = elib1_misc:template_file_and_args_to_io_list(Template,
 							     Args),
 	    {ok, html, [R]};
 	{error, _} ->
@@ -70,17 +70,17 @@ post_process(Root, File, Str) ->
     make_backup_copy(File1),
     file:write_file(File1, Str2),
     elib1_doc:file(filename:rootname(File1)).
-    
+
 make_backup_copy(Src) ->
-    %% Src   is /a/b/c.xxx 
+    %% Src   is /a/b/c.xxx
     %% Dest     /a/b/backup/c_<time>.xxx
     Dir = filename:dirname(Src),
     File = filename:basename(filename:rootname(Src)),
     Ext = filename:extension(Src),
-    Dest = Dir ++ "/backup/" ++ File ++ "_" ++ elib1_misc:time_stamp() ++ Ext, 
+    Dest = Dir ++ "/backup/" ++ File ++ "_" ++ elib1_misc:time_stamp() ++ Ext,
     io:format("Rename :: ~s as ~s~n",[Src,Dest]),
     file:rename(Src, Dest).
-    
+
 strip_headers_and_trailers("<html>" ++ _ = T) ->
     strip_headers_and_trailers(T, []);
 strip_headers_and_trailers([H|T]) ->
@@ -108,4 +108,4 @@ tidy([H|T], S, L) ->
 tidy([], S, L) ->
     reverse(L).
 
-    
+

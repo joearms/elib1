@@ -28,20 +28,20 @@ proc chat::mkEditor { w } {
     frame $w.f -bd 5
     pack $w.f -fill both -expand 1
 
-    text $w.f.txt 
+    text $w.f.txt
     puts "text widget is $w.f.txt"
     scrollbar $w.f.scroll -orient vertical
 
     pack $w.f.scroll -side right -fill y
     pack $w.f.txt -fill both -expand 1
-    
-    $w.f.txt config -yscrollcommand "$w.f.scroll set" 
+
+    $w.f.txt config -yscrollcommand "$w.f.scroll set"
     $w.f.scroll config -command "$w.f.txt yview"
 }
 
 ## image create photo rball -file "./redball.gif"
 ## image create photo wball -file "./whiteball.gif"
-    
+
 proc chat::readEntry { w f } {
     set val [$f get]
     sendToErlang "event $w entry $val"
@@ -74,8 +74,8 @@ proc chat::add_tab { w t txt} {
     ttk::frame $w.n.$t
     ## puts "add $w.n and $w.n.$t"
     $w.n add $w.n.$t -c right -text $txt -image wball
-    chat::mkEditor $w.n.$t 
-} 
+    chat::mkEditor $w.n.$t
+}
 
 proc chat::delete_tab { w t } {
     $w.n forget $w.n.$t

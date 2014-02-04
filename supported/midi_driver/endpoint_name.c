@@ -18,7 +18,7 @@ CFStringRef EndpointName(MIDIEndpointRef endpoint, bool isExternal)
 {
   CFMutableStringRef result = CFStringCreateMutable(NULL, 0);
   CFStringRef str;
-  
+
   // begin with the endpoint's name
   str = NULL;
   MIDIObjectGetStringProperty(endpoint, kMIDIPropertyName, &str);
@@ -26,13 +26,13 @@ CFStringRef EndpointName(MIDIEndpointRef endpoint, bool isExternal)
     CFStringAppend(result, str);
     CFRelease(str);
   }
-  
+
   MIDIEntityRef entity = NULL;
   MIDIEndpointGetEntity(endpoint, &entity);
   if (entity == NULL)
     // probably virtual
     return result;
-  
+
   if (CFStringGetLength(result) == 0) {
     // endpoint name has zero length -- try the entity
     str = NULL;
@@ -47,7 +47,7 @@ CFStringRef EndpointName(MIDIEndpointRef endpoint, bool isExternal)
   MIDIEntityGetDevice(entity, &device);
   if (device == NULL)
     return result;
-  
+
   str = NULL;
   MIDIObjectGetStringProperty(device, kMIDIPropertyName, &str);
   if (CFStringGetLength(result) == 0) {
@@ -91,7 +91,7 @@ static CFStringRef ConnectedEndpointName(MIDIEndpointRef endpoint)
   CFStringRef str;
   OSStatus err;
   int i;
-  
+
   // Does the endpoint have connections?
   CFDataRef connections = NULL;
   int nConnected = 0;
@@ -132,7 +132,7 @@ static CFStringRef ConnectedEndpointName(MIDIEndpointRef endpoint)
   }
   if (anyStrings)
     return result;
-  
+
   // Here, either the endpoint had no connections, or we failed to obtain names for any of them.
   return EndpointName(endpoint, false);
 }
@@ -154,7 +154,7 @@ char* cm_get_full_endpoint_name(MIDIEndpointRef endpoint)
     defaultEncoding = CFStringGetSystemEncoding();
 
     fullName = ConnectedEndpointName(endpoint);
-    
+
 #ifdef OLDCODE
     /* get the entity and device info */
     MIDIEndpointGetEntity(endpoint, &entity);
@@ -169,7 +169,7 @@ char* cm_get_full_endpoint_name(MIDIEndpointRef endpoint)
     } else {
         fullName = endpointName;
     }
-#endif    
+#endif
     /* copy the string into our buffer */
     newName = (char *) malloc(CFStringGetLength(fullName) + 1);
     CFStringGetCString(fullName, newName, CFStringGetLength(fullName) + 1,

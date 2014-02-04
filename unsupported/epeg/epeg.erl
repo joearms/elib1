@@ -39,7 +39,7 @@ parse_peg_file(F) ->
 %%   {seq,[{nt,"-"},
 %%         {plus,{alt,[{nt,"code"},{nt,"def"},{nt,"unexpected"}]}},
 %%         {nt,"endOfFile"}]}
-%% 
+%%
 
 parse_grammar(S)->
     {Val, S1} =
@@ -59,7 +59,7 @@ parse_grammar(S)->
 
 %% Abstract syntax:
 %%   any
-%% 
+%%
 
 parse_unexpected(S)->
     {Val, S1} =
@@ -73,7 +73,7 @@ parse_unexpected(S)->
 
 %% Abstract syntax:
 %%   {bang,any}
-%% 
+%%
 
 parse_endOfFile(S)->
     {Val, S1} =
@@ -89,7 +89,7 @@ parse_endOfFile(S)->
 %%   {seq,[{lit,"%{"},
 %%         {star,{seq,[{bang,{litthenspace,"%}"}},any]}},
 %%         {litthenspace,"%}"}]}
-%% 
+%%
 
 parse_code(S)->
     {Val, S1} =
@@ -112,7 +112,7 @@ parse_code(S)->
 %%         {nt,"expr"},
 %%         {litthenspace,";"},
 %%         {nt,"-"}]}
-%% 
+%%
 
 parse_def(S)->
     {Val, S1} =
@@ -131,7 +131,7 @@ parse_def(S)->
 
 %% Abstract syntax:
 %%   {seq,[{nt,"seq"},{star,{seq,[{litthenspace,"|"},{nt,"seq"}]}},{nt,"-"}]}
-%% 
+%%
 
 parse_expr(S)->
     {Val, S1} =
@@ -150,7 +150,7 @@ parse_expr(S)->
 
 %% Abstract syntax:
 %%   {seq,[{nt,"prefix"},{star,{nt,"prefix"}}]}
-%% 
+%%
 
 parse_seq(S)->
     {Val, S1} =
@@ -169,7 +169,7 @@ parse_seq(S)->
 %%         {seq,[{litthenspace,"&"},{nt,"suffix"}]},
 %%         {seq,[{litthenspace,"!"},{nt,"suffix"}]},
 %%         {nt,"suffix"}]}
-%% 
+%%
 
 parse_prefix(S)->
     {Val, S1} =
@@ -196,7 +196,7 @@ parse_prefix(S)->
 %%         {question,{alt,[{litthenspace,"?"},
 %%                         {litthenspace,"*"},
 %%                         {litthenspace,"+"}]}}]}
-%% 
+%%
 
 parse_suffix(S)->
     {Val, S1} =
@@ -223,7 +223,7 @@ parse_suffix(S)->
 %%         {nt,"literal"},
 %%         {nt,"class"},
 %%         {litthenspace,"."}]}
-%% 
+%%
 
 parse_primary(S)->
     {Val, S1} =
@@ -252,7 +252,7 @@ parse_primary(S)->
 
 %% Abstract syntax:
 %%   {plus,{class,[{48,57}]}}
-%% 
+%%
 
 parse_int(S)->
     {Val, S1} =
@@ -269,7 +269,7 @@ parse_int(S)->
 %%         {seq,[{class,[{97,122}]},
 %%               {star,{class,[{97,122},{65,90},95]}},
 %%               {nt,"-"}]}]}
-%% 
+%%
 
 parse_ident(S)->
     {Val, S1} =
@@ -290,7 +290,7 @@ parse_ident(S)->
 
 %% Abstract syntax:
 %%   {seq,[{nt,"lit"},{nt,"-"}]}
-%% 
+%%
 
 parse_literal(S)->
     {Val, S1} =
@@ -311,7 +311,7 @@ parse_literal(S)->
 %%         {seq,[{class,"'"},
 %%               {star,{seq,[{bang,{class,"'"}},{nt,"char"}]}},
 %%               {class,"'"}]}]}
-%% 
+%%
 
 parse_lit(S)->
     {Val, S1} =
@@ -348,7 +348,7 @@ parse_lit(S)->
 %%         {seq,[{bang,{lit,"\\"}},any]},
 %%         {seq,[{lit,"\\"},any]},
 %%         any]}
-%% 
+%%
 
 parse_char(S)->
     {Val, S1} =
@@ -391,7 +391,7 @@ parse_char(S)->
 %%         {star,{seq,[{bang,{litthenspace,"]"}},{nt,"range"}]}},
 %%         {litthenspace,"]"},
 %%         {nt,"-"}]}
-%% 
+%%
 
 parse_class(S)->
     {Val, S1} =
@@ -411,7 +411,7 @@ parse_class(S)->
 
 %% Abstract syntax:
 %%   {alt,[{seq,[{nt,"char"},{lit,"-"},{nt,"char"}]},{nt,"char"}]}
-%% 
+%%
 
 parse_range(S)->
     {Val, S1} =
@@ -430,7 +430,7 @@ parse_range(S)->
 
 %% Abstract syntax:
 %%   {seq,[{litthenspace,"{"},{star,{nt,"braces"}},{litthenspace,"}"},{nt,"-"}]}
-%% 
+%%
 
 parse_action(S)->
     {Val, S1} =
@@ -451,7 +451,7 @@ parse_action(S)->
 %%               {star,{seq,[{bang,{litthenspace,"}"}},any]}},
 %%               {litthenspace,"}"}]},
 %%         {seq,[{bang,{litthenspace,"}"}},any]}]}
-%% 
+%%
 
 parse_braces(S)->
     {Val, S1} =
@@ -474,7 +474,7 @@ parse_braces(S)->
 
 %% Abstract syntax:
 %%   {star,{alt,[{nt,"space"},{nt,"comment"}]}}
-%% 
+%%
 
 parse_spaces(S)->
     {Val, S1} =
@@ -490,7 +490,7 @@ parse_spaces(S)->
 
 %% Abstract syntax:
 %%   {star,{alt,[{nt,"space"},{nt,"comment"}]}}
-%% 
+%%
 
 'parse_-'(S)->
     {Val, S1} =
@@ -506,7 +506,7 @@ parse_spaces(S)->
 
 %% Abstract syntax:
 %%   {alt,[{lit," "},{lit,"\t"},{nt,"endofline"}]}
-%% 
+%%
 
 parse_space(S)->
     {Val, S1} =
@@ -525,7 +525,7 @@ parse_space(S)->
 %%   {seq,[{lit,"#"},
 %%         {star,{seq,[{bang,{nt,"endofline"}},any]}},
 %%         {nt,"endofline"}]}
-%% 
+%%
 
 parse_comment(S)->
     {Val, S1} =
@@ -546,7 +546,7 @@ parse_comment(S)->
 
 %% Abstract syntax:
 %%   {alt,[{lit,"\r\n"},{lit,"\n"},{lit,"\r"}]}
-%% 
+%%
 
 parse_endofline(S)->
     {Val, S1} =
@@ -578,7 +578,7 @@ final(class, [_,X,_,_]) -> {class, reduce(X)};
 
 final(char, X) ->
     char1(X);
-	    
+
 final(spaces, X) ->
     {spaces, flatten(X)};
     %% {spaces, X}.
@@ -615,7 +615,7 @@ final(expr, [Seq, More, _]) ->
    L = reduce(More),
    case [Seq|L] of
      [Z] -> Z;
-     Many -> {alt, Many} 
+     Many -> {alt, Many}
    end;
 
 final(seq, [A,B]) ->
@@ -633,8 +633,8 @@ final(suffix, [X, ['?']]) -> {question, X};
 final(suffix, [X, ['+']]) -> {plus, X};
 final(suffix, [X, ['*']]) -> {star, X};
 
-final(primary, [Id, bang]) -> {nt, Id};    
-final(primary, [Mod, ':', Id, bang]) -> {nt, Mod,Id};    
+final(primary, [Id, bang]) -> {nt, Id};
+final(primary, [Mod, ':', Id, bang]) -> {nt, Mod,Id};
 final(primary, ['(',E,')']) -> E;
 final(primary, '.') -> any;
 final(primary, X) -> X;
@@ -650,7 +650,7 @@ final(erlerror, S) -> {badToken, [S]};
 
 final(dws, _) ->  dot;
 final(Tag, S) ->  {Tag, S}.
-	   
+
 reduce(L) -> [X || [_,X] <- L].
 
 char1([bang,X]) ->

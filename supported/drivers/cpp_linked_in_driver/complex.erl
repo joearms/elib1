@@ -38,7 +38,7 @@ start(SharedLib) ->
 	{S, ack} ->
 	    true
     end.
-    
+
 
 init(P, SharedLib) ->
     register(complex, self()),

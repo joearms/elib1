@@ -1,6 +1,6 @@
-   I used 
+   I used
 
-   pircd-beta-one.tar.gz 
+   pircd-beta-one.tar.gz
 
    telnet localhost 6667
 
@@ -16,13 +16,13 @@ NICK joe
    :irc.perl.org 252 joe 0 :operator(s) online
    :irc.perl.org 253 joe 0 :channels formed
    :irc.perl.org 255 joe :I have 2 user(s) and 0 server(s)
-   
+
    :irc.perl.org NOTICE joe :Highest connection count: 3 (3 clients)
    :irc.perl.org 375 joe :- irc.perl.org Message of the Day -
    :irc.perl.org 372 joe :- pircd Beta One
    :irc.perl.org 372 joe :- If you can't do it in Perl, you don't want to do it.
    :irc.perl.org 376 joe :End of /MOTD command.
-  
+
        001    RPL_WELCOME
               "Welcome to the Internet Relay Network
                <nick>!<user>@<host>"
@@ -33,7 +33,7 @@ NICK joe
        004    RPL_MYINFO
               "<servername> <version> <available user modes>
                <available channel modes>"
- 
+
        251    RPL_LUSERCLIENT
               ":There are <integer> users and <integer>
                services on <integer> servers"
@@ -53,7 +53,7 @@ NICK joe
 
 NICK joe
    :irc.perl.org 433 * joe :Nickname already in use
-  
+
     433    ERR_NICKNAMEINUSE
            "<nick> :Nickname is already in use"
 
@@ -64,14 +64,14 @@ NICK joe
 
 JPIN #erlang
    :irc.perl.org 421 joe JPIN :Unknown command
-  
+
    421    ERR_UNKNOWNCOMMAND
               "<command> :Unknown command"
 
          - Returned to a registered client to indicate that the
            command sent is unknown by the server.
-   
-    Names are something like 
+
+    Names are something like
     * nickname!ident@hostname.domain
     * nickname!~username@hostname.domain
 
@@ -105,7 +105,7 @@ join #cats\r\n"
 Mike joins
    :irc.perl.org NOTICE mike :Highest connection count: 3 (3 clients)
 
-Mike says 
+Mike says
 
 JOIN #erlang
    Mike gets
@@ -134,7 +134,7 @@ Joe sends to a non existant channel
 
 
 But joe can send to a channel that he has not joined
-   
+
     PRIVMSG #dogs :hello
       Mike (who by now has joind dogs) gets
       :joe!~armstrong@localhost PRIVMSG #dogs :hello

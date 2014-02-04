@@ -6,7 +6,7 @@
 -import(elib1_mysql, [start/4, cmd/2, stop/1]).
 
 make_data_base() ->
-    {ok, Pid} = start("localhost", 3306, 
+    {ok, Pid} = start("localhost", 3306,
 		      password:username(mysql), password:password(mysql)),
     cmd(Pid, "use test"),
     cmd(Pid, "drop table if exists mods"),

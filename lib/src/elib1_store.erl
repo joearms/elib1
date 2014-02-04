@@ -6,7 +6,7 @@
 %% -compile(export_all).
 %% Time-stamp: <2009-05-28 13:40:06 ejoearm>
 
-%% The GLOB Store 
+%% The GLOB Store
 
 %% M:create_store(FileName, N   ) - fails if the store is running
 %%                                  build a store with hash table size 2^N
@@ -17,23 +17,23 @@
 %%    Prev = {0,0} if there is no previous
 %% M:lookup(Key, Vsn) -> same return as above
 %% M:lookup_abs(Prev) -> {ok,{Prev',Val}}
-%% M:fold_values(Key, Fun, Acc) 
+%% M:fold_values(Key, Fun, Acc)
 %%   applies Acc' = Fun(Key, Vsn, Val, Acc) to each value of the key
 
 -import(lists, [min/1, duplicate/2, reverse/1]).
 
 -import(file, [pwrite/3]).
 
--export([test/0, 
+-export([test/0,
 	 create_store/2,
 	 all_keys/0,
 	 all_old_values/1,
 	 fold_values/3,
-	 start/1, 
-	 lookup/1, 
-	 lookup/2, 
+	 start/1,
+	 lookup/1,
+	 lookup/2,
 	 lookup_abs/1,
-	 store/2, 
+	 store/2,
 	 stop/0]).
 
 test() ->
@@ -50,7 +50,7 @@ test() ->
     io:format("P2=~p~n",[P2]),
     3 = store(joe, [yes,another,thing]),
     {ok, {3,Prev,[yes,another,thing]}} = lookup(joe),
-    {ok, {Prev1, [a,list,{with,a,tuple}]}} = 
+    {ok, {Prev1, [a,list,{with,a,tuple}]}} =
 	lookup_abs(Prev),
     io:format("Prev1=~p~n",[Prev1]),
     {ok, {Prev2, {a,b,12,{d,e}}}} = lookup_abs(Prev1),
@@ -83,7 +83,7 @@ all_old_values(Key) ->
     fold_values(Key, fun(_,N,Val,A) -> [{N,Val}|A] end, []).
 
 examine_key1(Key) ->
-    L = fold_values(Key, 
+    L = fold_values(Key,
 		    fun(K,N,Val,A) ->
 			    [{K,N,Val}|A]
 		    end, []),
@@ -110,9 +110,9 @@ debug() -> cast(debug).
 all_keys() ->
     rpc(all_keys).
 
-lookup(Key,Vsn) when is_integer(Vsn), Vsn > 0 ->  
+lookup(Key,Vsn) when is_integer(Vsn), Vsn > 0 ->
     rpc({lookup,Key,Vsn}).
-    
+
 lookup(K) -> rpc({lookup, K, last}).
 
 stop() -> rpc(stop).
@@ -180,9 +180,9 @@ zero_buffer(S, Start, Left, B, Size) when Size < Left ->
 zero_buffer(S, Start, Left, _, _) ->
     B = list_to_binary(duplicate(Left, 0)),
     pwrite(S, Start, B).
-    
+
 start(File) ->
-    register(?MODULE, 
+    register(?MODULE,
 	     spawn_link(fun() -> start1(File) end)).
 
 start1(File) ->
@@ -221,7 +221,7 @@ disk_lookup_previous(S, {Ptr,N}, Len) when is_integer(Ptr),
                                            is_integer(N),
                                            Ptr > 0, Ptr < Len,
                                            N > 0, Ptr + N =< Len ->
-    {P,L,Val} = read_value(S, Ptr, N),    
+    {P,L,Val} = read_value(S, Ptr, N),
     {ok, {{P,L}, Val}};
 disk_lookup_previous(_, _, _) ->
     error.
@@ -244,19 +244,19 @@ disk_lookup(S, Key, HashTableSize, RequiredVsn) ->
     end.
 
 locate_value(S, ValPtr, ValLen, Vsn, last) ->
-    {P,L,Val} = read_value(S, ValPtr, ValLen),    
+    {P,L,Val} = read_value(S, ValPtr, ValLen),
     {ok, {Vsn, {P,L}, Val}};
 locate_value(S, ValPtr, ValLen, Vsn, Vsn) ->
-    {P,L,Val} = read_value(S, ValPtr, ValLen),    
+    {P,L,Val} = read_value(S, ValPtr, ValLen),
     {ok, {Vsn, {P,L}, Val}};
 locate_value(S, ValPtr, ValLen, Vsn, Req) ->
-    {P,L,_} = read_value(S, ValPtr, ValLen),    
+    {P,L,_} = read_value(S, ValPtr, ValLen),
     case P of
 	0 -> error;
 	_ -> locate_value(S, P, L, Vsn-1, Req)
     end.
 
-disk_store(S, Key, Val, HashTableSize, Len) -> 
+disk_store(S, Key, Val, HashTableSize, Len) ->
     Index = erlang:phash(Key, HashTableSize),
     %% io:format("Hash Index=~p~n",[Index]),
     %% read a pointer and keylength from the hash table
@@ -272,16 +272,16 @@ disk_store(S, Key, Val, HashTableSize, Len) ->
 	_ ->
 	    case find_key(S, term_to_binary(Key), Ptr, KLen) of
 		{found, Ptr1, Vsn, Prev, ValLen} ->
-		    Size = 
+		    Size =
 			write_new_val(S, Val, Len, Prev, ValLen),
 		    Len1 = Len + Size,
 		    Vsn1 = Vsn + 1,
 		    pwrite(S, Ptr1, <<Vsn1:32, Len:32, Size:32>>),
 		    {Vsn1, Len1};
 		{nokey, InsertionPointer} ->
-		    {Len1,KeyBlockSize} = insert_initial_keyval(S, Key, 
+		    {Len1,KeyBlockSize} = insert_initial_keyval(S, Key,
 							     Val, Len),
-		    pwrite(S, InsertionPointer, 
+		    pwrite(S, InsertionPointer,
 			   <<Len:32, KeyBlockSize:32>>),
 		    {1, Len1}
 	    end
@@ -371,7 +371,7 @@ add_keys(S, I, L) ->
 	{0,_}      -> L;
 	{Ptr, Len} -> add_key_chain(S, Ptr, Len, L)
     end.
-    
+
 add_key_chain(_, 0, 0, L) -> L;
 add_key_chain(S, Ptr, Len, L) ->
     {ok, Bin} = file:pread(S, Ptr, Len),
@@ -428,5 +428,5 @@ read_value(S, Ptr, Len) ->
 for(N, N, F) -> F(N);
 for(I, N, F) -> F(I),for(I+1, N, F).
 
-			
-		    
+
+

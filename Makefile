@@ -1,9 +1,9 @@
-## Make 
+## Make
 
 all:
 	cd lib/src; make
-	cd supported/indexer; make	
-	cd supported/tagger; make		
+	cd supported/indexer; make
+	cd supported/tagger; make
 	cd supported/irc; make beam
 	cd supported/website; make
 	(sleep 1 && bin/openurl http://localhost:2246/supported/website/index.ehtml) & \

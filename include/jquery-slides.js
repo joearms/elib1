@@ -2,7 +2,7 @@
 $(document).ready(function(){
        var n = 0;
        var next=n;
-       
+
 	$(window).keydown(function(e){
 		switch(e.keyCode){
 		case 37: next = 0; break;
@@ -17,12 +17,12 @@ $(document).ready(function(){
 		};
 		n = next;
 	    });
-	
+
 	var slides=$('.slide');
 	var size = slides.size();
 	$('.slide').hide();
 
 	// show the first slide
 	slides.eq(n).show();
-   
+
  });

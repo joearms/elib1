@@ -65,7 +65,7 @@ dct(T) ->
 
 bigF(U,V,T) ->
     0.25 * c(U) * c(V) *
-	sum([f(X,Y,T) * 
+	sum([f(X,Y,T) *
 	     math:cos((2*X+1)*U*?Pi1) *
 	     math:cos((2*Y+1)*V*?Pi1) || X <- seq(0,7), Y <- seq(0,7)]).
 
@@ -74,13 +74,13 @@ f(X,Y,T) ->
 
 c(0) -> 0.7071067811865475;
 c(_) -> 1.0.
-    
+
 f8([]) ->
     [];
 f8(L) ->
     {H,T} = take(8, L, []),
     [H|f8(T)].
-	
+
 take(0, L, L1) ->
     {reverse(L1), L};
 take(N, [H|T], L) ->

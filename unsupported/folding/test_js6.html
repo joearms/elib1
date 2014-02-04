@@ -12,21 +12,21 @@ body { margin-left:10%; background-color: #f0f0f0;}
 
 .zebra1 { padding-left:7px;
          background-color:#ffeeaa;
-         border-left: 1px solid #808080; 
+         border-left: 1px solid #808080;
 	 border-bottom: 1px solid #808080; }
 
 .zebra2 { padding-left:7px;
          background-color:#aaeeff;
-         border-left: 1px solid #808080; 
+         border-left: 1px solid #808080;
 	 border-bottom: 1px solid #808080; }
 
 .data {  padding-left: 7px;
          background-color: #ffffff;
-         border-left: 1px solid #808080; 
+         border-left: 1px solid #808080;
 	 border-bottom: 1px solid #808080; }
 
-.selected { padding-left:7px; 
-         border-left: 1px solid #808080; 
+.selected { padding-left:7px;
+         border-left: 1px solid #808080;
 	 border-bottom: 1px solid #808080;
          background-color: #ffaabb }
 
@@ -57,7 +57,7 @@ body { margin-left:10%; background-color: #f0f0f0;}
    Initally the data should look like this:
    <type=header idx=1 class=zebra1>header[1]
    <type=header idx=2 class=zebra2>header[2]
-   
+
 */
 
 var selected = 0;
@@ -105,7 +105,7 @@ function render_rows(){
     debug();
     pos = 0;
     // alert("max="+max);
-    id = document.getElementById("maintab"); 
+    id = document.getElementById("maintab");
     id.innerHTML = "";
     pos = 0;
     k = 1;
@@ -128,7 +128,7 @@ function render_rows(){
 	    node.innerHTML = "<textarea onkeyup='mynewclicker(event)' cols=40 rows=15>" + content[order[i]] + "</textarea>";
 	    // set the focus in the editor
 	    node.childNodes[0].focus();
-	}    
+	}
 	k = 3 - k;
     };
 }
@@ -172,7 +172,7 @@ function debug(){
     out = document.getElementById("debug");
     out.innerHTML = "";
     out.innerHTML += "Debug";
-    id = document.getElementById("maintab"); 
+    id = document.getElementById("maintab");
     max = order.length;
     out.innerHTML += "<br>max="+max;
     out.innerHTML += "<br>selected="+selected;
@@ -260,10 +260,10 @@ function whichElement(e)
 {
     var targ
     if (!e) var e = window.event
-    if (e.target) 
+    if (e.target)
        targ = e.target
-    else 
-       if (e.srcElement) 
+    else
+       if (e.srcElement)
 	  targ = e.srcElement
     if (targ.nodeType == 3) // defeat Safari bug
 	targ = targ.parentNode
@@ -277,7 +277,7 @@ function whichRow(e) {
     var table = tr.parentNode.parentNode;
     var id = table.getAttribute("id");
     // alert("Click tab id=" + id + " index = " + index);
-    
+
 }
 
 </script>
@@ -317,7 +317,7 @@ function whichRow(e) {
 <p>This page tests the techniques used for dynamic manipultaion of tables.
 
 <p></p>
- 
+
 <table class="table1" id="t123" width="400px" cellspacing=0>
 <tr><td class="zebra1" type="header" onclick="whichRow(event)">One</td></tr>
 <tr><td class="zebra2" type="header" onclick="whichRow(event)">Two</td></tr>

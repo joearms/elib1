@@ -11,14 +11,14 @@ all: beam
 beam: ${MODS:%.erl=%.beam}
 
 clean:
-	rm -rf *.beam 
-	rm -rf html/*.html 
+	rm -rf *.beam
+	rm -rf html/*.html
 	rm -rf *.log *.tmp erl_crash.dump
 
 veryclean:
 	make clean
-	rm -rf *~ 
- 
+	rm -rf *~
+
 
 
 

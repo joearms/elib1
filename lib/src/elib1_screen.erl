@@ -10,7 +10,7 @@
 -import(lists, [duplicate/2, foreach/2]).
 
 -define(IAC, 255). %% Interpret as command
--define(DO, 253).  %% 
+-define(DO, 253).  %%
 -define(WILL, 251).
 -define(SB, 250). %% sub negociation Begin
 -define(SE, 240). %% Sub negociation End
@@ -21,7 +21,7 @@
 %% \verb+http://en.wikipedia.org/wiki/ANSI_escape_code#Examples+
 
 %% We start a registered server
-%% When we start a window we first send a message 
+%% When we start a window we first send a message
 %% to the registered process with the Fun to be evaluated
 %% the the telnet server asks the generic server for the Fun
 %% then gets the Fun and evaluates it. The Port is srover in the generic server
@@ -47,8 +47,8 @@ sleep(T) ->
 	    T ->
 		true
 	end.
-    
-    
+
+
 
 handler1(Pid) ->
     Pid ! "\e[32;40;1m",
@@ -77,8 +77,8 @@ make_window(ServerFun) ->
 		  io:format("using port:~p~n", [Port]),
 		  Cmd = case os:cmd("uname") of
 			    "Darwin\n" ->
-				elib1_misc:root_dir() ++ 
-				    "/bin/term.sh -p 100,100 -s 600,400 -x telnet localhost "; 
+				elib1_misc:root_dir() ++
+				    "/bin/term.sh -p 100,100 -s 600,400 -x telnet localhost ";
 			    _ ->
 				"gnome-terminal -x telnet localhost "
 			end,
@@ -112,7 +112,7 @@ loop2(Port, F) ->
 
 goto(X,Y) -> [$\e,$[,integer_to_list(X),$;,integer_to_list(Y),$H].
 clear_screen() -> "\e[2J".
-    
+
 
 for(I, I, F) -> F(I);
 for(I, Max, F) -> F(I),for(I+1,Max,F).
@@ -121,12 +121,12 @@ for(I, Max, F) -> F(I),for(I+1,Max,F).
 %% Fun/0 returns a Pid - it then sends character messages to this Pid
 
 start_telnet_server() ->
-    {ok, Listen} = gen_tcp:listen(0, 
+    {ok, Listen} = gen_tcp:listen(0,
 				  [binary,
 				   %% {dontroute, true},
 				   {nodelay,true},
 				   {packet, 0},
-				   {reuseaddr, true}, 
+				   {reuseaddr, true},
 				   {active, true}]),
     {ok, Port} = inet:port(Listen),
     %% io:format("telnet server started on port:~p~n",[Port]),
@@ -142,11 +142,11 @@ par_connect(Listen) ->
     process_flag(trap_exit, true),
     %% The handler owns the socket - but it has to spawn
     %% a control process
-    Self = self(),   
+    Self = self(),
     %% Ask the server for the Fun
     Fun = elib1_misc:rpc(?MODULE, getFun),
     Pid = spawn_link(fun() -> Fun(Self) end),
-    self() ! [?IAC, ?WILL, ?ECHO, 
+    self() ! [?IAC, ?WILL, ?ECHO,
 	      ?IAC, ?WILL, ?SURPRESS_GO_AHEAD,
 	      ?IAC, ?DO, ?NAWS  %% this causes window resize events
 	     ],

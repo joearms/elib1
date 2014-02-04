@@ -11,7 +11,7 @@ test() ->
     io:format("Port process starting~n"),
     start(6).
 
-start(Idev) -> 
+start(Idev) ->
     S = self(),
     Pid = spawn(fun() -> run(S, Idev) end),
     receive

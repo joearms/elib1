@@ -19,9 +19,9 @@ test() ->
     io:format("test:test worked~n"),
     init:stop().
 
-final(line, [_,L]) -> 
+final(line, [_,L]) ->
     [I || [I,_] <- L];
-final(Tag, Val) -> 
+final(Tag, Val) ->
     {Tag, Val}.
 
 

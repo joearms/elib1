@@ -45,11 +45,11 @@
   The file <b>Name.in</b> contains a list of directories and file extensions
   which control the gathering phase. All matching files specified in the
   input file are read, compressed and appended into a single file
-  called a <b>crawl</b>. This file will be rather large, depending upon the  
-size of the scan - but it contains all the data we need for the subsequent  
-indexing phases. In a typical gather phase, I collect 46,000 Erlang  
+  called a <b>crawl</b>. This file will be rather large, depending upon the
+size of the scan - but it contains all the data we need for the subsequent
+indexing phases. In a typical gather phase, I collect 46,000 Erlang
 files on my disk and compress them into a single 120 MByte file.</p>
- 
+
   <h2>File Formats</h2>
   <h3><a name="Crawl_files">Crawl files</a></h3>
   A file with the extension <b>.crawl</b> is a crawl file.
@@ -57,7 +57,7 @@ files on my disk and compress them into a single 120 MByte file.</p>
   <pre>
   {Term:any(), Extension::string(), Md5Content::binry(), compressedContent::binary()}
   </pre>
- 
+
   The indexer uses a number or different file formats.
   These are contained in files with the extensions <b>.in</b>
   <b>.crawl</b> and <b>.index</b>.
@@ -70,7 +70,7 @@ files on my disk and compress them into a single 120 MByte file.</p>
   {"/Users/joe/code/elib2-1", ".erl"}.
   {"/Users/joe/msi/2005/erl/projects/supported", ".erl"}.
   </pre>
- 
+
   When the first phase of indexing occurs we crawl through the file
   system looking for all files under the root <b>/Users/joe/code/elib2.1</b>
   with the file extension <b>.erl</b>. Symbolic links are followed if

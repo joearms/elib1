@@ -1,4 +1,4 @@
-<script language="JavaScript" 
+<script language="JavaScript"
         SRC="../../include/jquery-1.3.2.min.js"></script>
 <script>
 $(document).ready(function(){
@@ -50,7 +50,7 @@ $(document).ready(function(){
 	$("#orgtab tr").eq(selected).addClass("selected");
     };
 
-   
+
     function move_row_up(){
 	// swap selected with selected + 1 in the data array
 	if(selected > 0){
@@ -62,7 +62,7 @@ $(document).ready(function(){
 	    init_html();
 	};
     };
-    
+
     function move_row_down(){
 	// swap selected with selected + 1 in the data array
 	if(selected < data.length - 1){
@@ -78,7 +78,7 @@ $(document).ready(function(){
     function debug(x){
 	$("#debug").append("<br>"+x);
     };
-    
+
     function move_selection_down(){
 	if(selected < data.length - 1){
 	    selected += 1;
@@ -86,15 +86,15 @@ $(document).ready(function(){
 	    $("#orgtab tr").eq(selected-1).removeClass("selected");
 	};
     };
-    
+
     function move_selection_up(){
-	if(selected > 0){ 
+	if(selected > 0){
 	    selected -= 1;
 	    $("#orgtab tr").eq(selected).addClass("selected");
 	    $("#orgtab tr").eq(selected+1).removeClass("selected");
 	};
     };
-    
+
     function edit_selected(){
 	debug("edit");
 	$("body").css("background", "#cccccc");
@@ -103,12 +103,12 @@ $(document).ready(function(){
 
 	$("#mynote").show();
     };
-    
+
     // off we go
     // start by rendering the text and the organiser boxes
     // then display the HTMNL box
 
-    $(document).keypress(function(e){ 
+    $(document).keypress(function(e){
 	if ( e.keyCode == 27) {
 	    if (display){
 		html.hide();
@@ -157,7 +157,7 @@ $(document).ready(function(){
 	    };
 	};
     };
-    
+
     selected = 0;
     display = true;
     html = $("#html");
@@ -198,16 +198,16 @@ body { margin-left:10%; background-color: #f0f0f0;}
 
 .zebra1 { padding-left:7px;
          background-color:#eeeeee;
-         border-left: 1px solid black; 
+         border-left: 1px solid black;
 	 border-bottom: 1px solid black; }
 
 .zebra2 { padding-left:7px;
     background-color:#cccccc;
-         border-left: 1px solid black; 
+         border-left: 1px solid black;
 	 border-bottom: 1px solid black; }
 
-.selected { padding-left:40px; 
-         border-left: 1px solid black; 
+.selected { padding-left:40px;
+         border-left: 1px solid black;
 	 border-bottom: 1px solid black;
          background-color: orange }
 
@@ -225,10 +225,10 @@ ul	 {margin-left: 120px}
 
 div#mynote {
 display: none;
-position: fixed; 
+position: fixed;
 padding:10px;
-top:100; 
-left:100; 
+top:100;
+left:100;
 width:600;
 height:400;
 background-color:white;
@@ -281,7 +281,7 @@ a.but:hover {background-color:yellow;
       </table>
     </center>
   </div>
-  
+
   <!-- define two top regions. Only one is visable -->
   <div id="org">
     <table class="table1" border=1 id="orgtab" width="800px" cellspacing=0>

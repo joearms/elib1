@@ -5,14 +5,14 @@
 %%%-------------------------------------------------------------------
 %%% File    : ircd.erl
 %%% Author  : joe armstrong <joe@localhost>
-%%% Description : 
+%%% Description :
 %%%
 %%% Created :  8 Dec 2009 by joe armstrong <joe@localhost>
 %%%-------------------------------------------------------------------
 
 %% testing three windows ...
 %% ircd:start_server()
-%% irc_tex 
+%% irc_tex
 
 -import(lists, [reverse/1]).
 
@@ -38,7 +38,7 @@ register_name(Name, Pid) ->
 -spec find_or_create_group(Name::string()) -> pid().
 
 %% always succeeds
-		  
+
 find_or_create_group(Name) ->
     gen_server:call(?MODULE, {findorc,Name}).
 
@@ -182,17 +182,17 @@ format_reply({1, Nick}) ->
     [":", host()," 001 ", Nick, " :Welcome to the Internet Relay Network ",
      Nick,"\r\n"];
 format_reply({2, Nick}) ->
-    [":",host()," 002 ", Nick, 
+    [":",host()," 002 ", Nick,
      " :Your host is ", host(), ",running version 0\r\n"];
 format_reply({3, Nick}) ->
-    [":",host()," 003 ", Nick, 
+    [":",host()," 003 ", Nick,
      ": This server was created Wed Dec  9 13:32:17 2009\r\n"];
-format_reply({4,Nick}) -> 
+format_reply({4,Nick}) ->
     %% this is a lie :-)
     [":",host()," 004 ", Nick, " ", host()," 0 dioswkg biklmnopstv\r\n"];
 format_reply({mod,Nick}) ->
    [":", host()," 375 ", Nick, ":- ", host(), " Message of the Day \n",
-    ":",  host()," 372 ", Nick, ":- ", host(), 
+    ":",  host()," 372 ", Nick, ":- ", host(),
     " If you can't do it in Erlang, you don't want to do it.\r\n",
     ":", host()," 376 ", Nick, ":End of /MOTD command.\r\n"];
 
@@ -267,7 +267,7 @@ group_loop(Id, L) ->
 		    %% ignore
 		    group_loop(Id, L)
 	    end;
-	{leave, Name} -> 
+	{leave, Name} ->
 	    case lists:keysearch(Name, 1, L) of
 		false ->
 		    group_loop(Id, L);
@@ -285,7 +285,7 @@ group_loop(Id, L) ->
     end.
 
 broadcast(Id, [{Name,Pid}|T], Msg) ->
-    io:format("Group ~s sending ~p to ~s~n",[Id,Msg,Name]), 
+    io:format("Group ~s sending ~p to ~s~n",[Id,Msg,Name]),
     Pid ! {sendClient, Msg},
     broadcast(Id, T, Msg);
 broadcast(_,  [], _) ->

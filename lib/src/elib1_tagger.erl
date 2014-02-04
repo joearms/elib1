@@ -33,9 +33,9 @@ add_test() ->
     elib1_misc:show_loaded(fun() -> all() end).
 
 all() ->
-    L = elib1_find:files(code:lib_dir("stdlib") ++ "/src", 
-			 "*.erl", false) ++ 
-	elib1_find:files(code:lib_dir("kernel") ++ "/src", 
+    L = elib1_find:files(code:lib_dir("stdlib") ++ "/src",
+			 "*.erl", false) ++
+	elib1_find:files(code:lib_dir("kernel") ++ "/src",
 			 "*.erl", false),
     [erl2html(I) || I <- L].
 
@@ -58,12 +58,12 @@ erl2html(File) ->
 
 %% A module isa ...
 
--record(mod, 
+-record(mod,
 	{module,
 	 compile = [],
 	 export = [],
-	 import = [], 
-	 record = [], 
+	 import = [],
+	 record = [],
 	 specs = [],
 	 funcs = []}).
 
@@ -114,7 +114,7 @@ key(X) when is_atom(X)  -> X.
 update(K,V,[{K,Vs}|T]) -> [{K,[V|Vs]}|T];
 update(K,V,[H|T])      -> [H|update(K, V, T)];
 update(K,V,[])         -> [{K,[V]}].
-    
+
 is_func({{func,_,_},_}) -> true;
 is_func(_) -> false.
 
@@ -156,7 +156,7 @@ merge_forms([], _, L) ->
     reverse(L).
 
 apply_patches(Toks, [])      ->
-    %% we've run out of patches but we must still simplify 
+    %% we've run out of patches but we must still simplify
     %% every term
     {[simplify(I) || I <- Toks], []};
 apply_patches(Toks, Patches) ->
@@ -263,17 +263,17 @@ to_html1({anchor,F,A})  ->  ["<a name='",linkname(F,A),"'></a>"];
 to_html1({keyword, Val}) ->  span("keyword", Val);
 to_html1({bif,F,A,Str}) ->
     ["<a href='bifs#",linkname(F,A),"'>",Str,"</a>"];
-to_html1({local,F,A,Str}) ->  
-    ["<a href='#",linkname(F,A),"'>", 
+to_html1({local,F,A,Str}) ->
+    ["<a href='#",linkname(F,A),"'>",
      htmlquote(Str),"</a>"];
-to_html1({remote,M,F,A,Str}) ->  
+to_html1({remote,M,F,A,Str}) ->
     ["<a href='",htmlname(M), "#",linkname(F,A),"'>",htmlquote(Str),"</a>"].
 
 %% merge the anchors
 %% there should be one block per anchor
 %% we check the containing form (for safety)
 
-%% merge_anchors([{_,{file,_}}|A], B) -> 
+%% merge_anchors([{_,{file,_}}|A], B) ->
 %%     merge_anchors(A, B);
 merge_anchors([{Tag,Val}=H|A], [B|T])  ->
     case contains(Tag, B) of
@@ -289,7 +289,7 @@ merge_anchors([], [X]) ->
     %% trailing white space and comments have no tag
     %% because eos is not a tag ...
     [{eof, X}];
-merge_anchors(X, Y) -> 
+merge_anchors(X, Y) ->
     io:format("ops:~p~n",[{X,Y}]),
     [].
 
@@ -315,12 +315,12 @@ remove_junk([{comment, _,_}|T]) -> remove_junk(T);
 remove_junk([H|T]) -> [H|remove_junk(T)];
 remove_junk([]) -> [].
 
-dodge_file(File) ->   
+dodge_file(File) ->
     case file:open(File, [read]) of
 	{ok, Handle} ->
 	    {ok, F} = epp_dodger:parse(Handle, {1,1}),
 	    file:close(Handle),
-	    L = [revert_forms(I) || I <- F],	    
+	    L = [revert_forms(I) || I <- F],
 	    {ok, L};
 	Error ->
 	    Error
@@ -356,7 +356,7 @@ loop({done, {eof,_}, eof}, L) ->
 loop({done, {ok, Toks, _}, eof}, L) ->
     reverse([normalize_toks(Toks)|L]);
 loop({done, {ok, Toks, Ln}, Str1}, L) ->
-    loop(erl_scan:tokens([], Str1, Ln, [return,text]), 
+    loop(erl_scan:tokens([], Str1, Ln, [return,text]),
 	 [normalize_toks(Toks)|L]);
 loop({more, X}, L) ->
     loop(erl_scan:tokens(X, eof, {1,1}, [return,text]), L).
@@ -366,7 +366,7 @@ normalize_toks(Toks) ->
 
 normalize_tok(Tok) ->
     %% this is the portable way ...
-    [{_,Type},{_,Line},{_,Col},{_,Txt}] = 
+    [{_,Type},{_,Line},{_,Col},{_,Txt}] =
 	erl_scan:token_info(Tok, [category,line,column,text]),
     Val  = {Type,{Line,Col},Txt},
     %% io:format("here:X=~p ~p~n",[Tok,Val]),
@@ -394,13 +394,13 @@ analyse(Forms) ->
 %% The anchor is named after the first item in the form
 %% compute_anchors(Forms) -> [{{Line,Col}, anchor()}]
 %%   {Line,Col} is the line and column of where the
-%%   form starts - this is not the same as the first token in 
+%%   form starts - this is not the same as the first token in
 %%   the form since we might have skipped comments and white space
 %%   at the start of the form.
 %%   anchor() is a term decscribing the anchor
 %%   anchor(() = {func,Name,Aritry} (for functions)
-%%             | 
-%%             | {Type,{Line,Col}} anythis else    
+%%             |
+%%             | {Type,{Line,Col}} anythis else
 
 compute_anchors(Forms) ->
     A1 = [anchor0(I) || I <- Forms],
@@ -410,7 +410,7 @@ compute_anchors(Forms) ->
 %% a function when we promote the function anchor to point
 %% at the specification.
 %% We change the second tag to func2 - because we still want a
-%% tag for every block 
+%% tag for every block
 
 merge_specs([{_Ln1,{specification,F,A}}=H,{Ln2, {func,F,A}}|T]) ->
     [H,{Ln2,{func1,F,A}}|merge_specs(T)];
@@ -434,12 +434,12 @@ anchor({attribute,Ln,module, M}) ->
     {Ln, {module,M}};
 anchor({attribute,Ln,Type,_}) -> {Ln, {Type, Ln}};
 anchor({eof,Ln}) -> {Ln, eof};
-anchor({error,{Ln,_,_}}) -> 
+anchor({error,{Ln,_,_}}) ->
     %% Ln is in a different format in errors (sigh)
     {Line, Col} = Ln,
     Ln1 = {Line,Col,0,""},
     {Ln1, {error, Ln}};
-anchor({tree,attribute,{attr,{_,_,_,Type}=Ln,_,_},_}) -> 
+anchor({tree,attribute,{attr,{_,_,_,Type}=Ln,_,_},_}) ->
     {Ln, {attribute,Type,Ln}};
 anchor({tree,attribute,_,
 	{attribute, {atom,Ln,Type}, _}}) ->
@@ -454,7 +454,7 @@ anchor(X) ->
     %% about yet ...
     io:format("FIX ME this is a bug????:~p~n",[X]),
     exit(1).
-    
+
 resolve({F,A}=Tup, D) ->
     case dict:find({F,A}, D) of
 	{ok, Mod} ->
@@ -640,4 +640,4 @@ is_terminal('=') -> true;
 is_terminal('::') -> true;
 is_terminal('?') -> true;
 is_terminal(_) -> false.
-    
+

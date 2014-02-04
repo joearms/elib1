@@ -7,7 +7,7 @@
 
 %% -compile(export_all).
 
--import(lists, [foreach/2, map/2, member/2, filter/2, 
+-import(lists, [foreach/2, map/2, member/2, filter/2,
 		reverse/1, sort/1]).
 
 -import(elib1_misc, [time_fun/2]).
@@ -27,18 +27,18 @@ make_hashes(Trawl) ->
     ets:delete(Ets),
     ok.
 
-add_hash({_FileName,_Index,_Md5,Cbin}, Pos, Ets) -> 
+add_hash({_FileName,_Index,_Md5,Cbin}, Pos, Ets) ->
     Bin = binary_to_term(Cbin),
     H = add_hashes(Bin),
     %% io:format("File:~p size:~p Pos=~p Hashes=~p~n",[FileName,size(Bin),Pos, H]),
-    [ets:insert(Ets,{Hash,Pos}) || Hash <- H], 
+    [ets:insert(Ets,{Hash,Pos}) || Hash <- H],
     Ets.
 
 add_hashes(B) ->
     S = size(B),
     case gap(S) of
 	no -> [];
-	L  -> 
+	L  ->
 	    [block_checksum_bin(B, I, I+299) || I <- L]
     end.
 
@@ -62,7 +62,7 @@ find_similar_files(Base) ->
     make_hashes(Crawl),
     {ok, Hash} = ets:file2tab(Hashed),
     CrawlStream = elib1_fast_read:open_abs(Crawl),
-    {_,_,L} = 
+    {_,_,L} =
 	elib1_fast_read:foldl(Crawl, fun find_sim/3, {Hash, CrawlStream, []}),
     ets:delete(Hash),
     elib1_fast_read:close_abs(CrawlStream),
@@ -71,7 +71,7 @@ find_similar_files(Base) ->
     file:close(S),
     io:format("Created:~s~n",[Out]).
 
-find_sim({FileName,_Index,_Md5,Cbin}, Pos, {Ets, S, L}) -> 
+find_sim({FileName,_Index,_Md5,Cbin}, Pos, {Ets, S, L}) ->
     Bin = binary_to_term(Cbin),
     Sim = find_similar(Bin, 300, Ets),
     io:format("Pos=~p FileName=~p~n",[Pos, FileName]),
@@ -95,7 +95,7 @@ find_sim({FileName,_Index,_Md5,Cbin}, Pos, {Ets, S, L}) ->
 
 sim_index(Bin, PosL, S) ->
     Md5Sums1 = md5_sums_str(binary_to_list(Bin)),
-    Sims1 = [sim1(Md5Sums1, I, S) || I <- PosL], 
+    Sims1 = [sim1(Md5Sums1, I, S) || I <- PosL],
     %% Sims1 = [{File,Pos}, Sim}]
     %% Sim is a number from 0-1
     %% io:format("Sims1=~p~n",[Sims1]),
@@ -105,7 +105,7 @@ sim_index(Bin, PosL, S) ->
     Sims3 = reverse(lists:keysort(2, Sims2)),
     %% io:format("Sims3=~p~n",[Sims3]),
     Sims3.
-    
+
 sim1(Md5Sums1, Pos, Stream) ->
     Term = elib1_fast_read:read_abs(Stream, Pos),
     {File, _Index, _Md5, CContent} = Term,
@@ -114,7 +114,7 @@ sim1(Md5Sums1, Pos, Stream) ->
     Md5Sums2 = md5_sums_str(Str1),
     Similaratity = sorensen(Md5Sums1, Md5Sums2),
     {{File,Pos}, Similaratity}.
-			  
+
 find_similar(Bin, BlockSize, Tab) ->
     Max = size(Bin),
     if
@@ -122,7 +122,7 @@ find_similar(Bin, BlockSize, Tab) ->
 	    %% We want to share data :-)
 	    All    = binary_to_list(Bin),
 	    Tail   = lists:nthtail(BlockSize, All),
-	    First  = lists:sublist(All, BlockSize), 
+	    First  = lists:sublist(All, BlockSize),
 	    {A, B} = block_checksum_str(First),
 	    slide_window(A, B, All, Tail, Tab, []);
 	true ->
@@ -140,7 +140,7 @@ slide_window(A, B, [OldChar|All], [NewChar|Tail], Tab, L) ->
     L1 = case ets:lookup(Tab, {A, B}) of
 	     [] -> L;
 	     L2 ->
-		 %% L2 is a list of {Hash,Pos} tuples but we are only 
+		 %% L2 is a list of {Hash,Pos} tuples but we are only
 		 %% interested in Pos
 		 PosL = [Pos || {_Hash,Pos} <- L2],
 		 PosL ++ L
@@ -167,14 +167,14 @@ block_checksum_str([], A, B)    -> {A, B}.
 %% N-300-N-300-N-300-N 4N + 900
 
 gap(S) when S < 603 -> no;
-gap(S) when S >= 603, S =< 904 -> 
+gap(S) when S >= 603, S =< 904 ->
     N = (S-600) div 3,
     [N,2*N+300];
 gap(S) ->
     N = (S-900) div 4,
     [N,2*N+300,3*N+600].
 
-%% Given a string containing a number of lines 
+%% Given a string containing a number of lines
 %% return a list of md5 sums of each line
 
 md5_sums_str(Str) ->
@@ -194,10 +194,10 @@ sorensen(A, B) ->
 
 list_intersection(A, B) ->
     filter(fun(X) -> member(X, B) end, A).
-		   
 
 
-	     
 
-    
-    
+
+
+
+

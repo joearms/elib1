@@ -21,7 +21,7 @@ q(Name, Str) ->
 		     io:format("~p~n",[FileNames])
 	     end).
 
-intersection(L) ->	    
+intersection(L) ->
     sets:to_list(sets:intersection([sets:from_list(I) || I <- L])).
 
 filename(I) ->
@@ -35,7 +35,7 @@ q1(Str) ->
     Bin1 = list_to_binary(elib1_porter:stem(Str)),
     L = case dets:lookup(result, Bin1) of
 	    [] -> [];
-	    [{_,Bin2}] -> 
+	    [{_,Bin2}] ->
 		elib1_gamma:gamma_to_alist(Bin2)
 	end,
     io:format("~s : ~p hits~n",[Str, length(L)]),

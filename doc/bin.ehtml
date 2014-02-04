@@ -13,7 +13,7 @@
       <b>Dir</b> looking for files with the extension <b>Ext</b>.  The
       set of files found is written to the file <b>Name.files</b> this
       is fommated as a BTSF file of strings</p>
-    
+
       <p>Hidden directories are not followed. Symbolic links are
       followed once (so chains of circular symbolic links are not
       followed).  Temporary files (files starting <b>#...</b>) are not
@@ -21,7 +21,7 @@
 
       <p>Example:</p>
 
-      <pre>      
+      <pre>
 	> ./elib1_collect_filenames medium erl /home/joe/code
 	listing: Scanning from:"/home/ejoearm/code"
 	listing: Found 912 files
@@ -33,16 +33,16 @@
       <b>.erl</b> making a Collection file <b>medium.files</b> in the
       current directory.</p>
     </dd>
-    
+
     <dt><b>&gt;elib1_pack_files  Name</b></dt>
     <dd>
       <p>Makes a trawl file <b>Name.trawl</b> from a file list
       <b>Name.files</b>. <b>Name.trawl</b> is a BTSF file of
       <b>{File,Md5,compress(Content)}</b> tuples.
       </p>
-      
+
       <p>Example:</p>
-      
+
       <pre>
 	> ./elib1_pack_files medium
 	Packing data ...
@@ -65,7 +65,7 @@
       ./elib1_make_index medium
       keywords: building word table
       indexing: 215830 words loaded
-      keywords: analysing files files (can take a while) .....100 
+      keywords: analysing files files (can take a while) .....100
         ....200 ....300 ....400 ....500 ....600 ...
       keywords: Number of files indexed: 677
       keywords: Inverting word table
@@ -111,7 +111,7 @@
 	&lt;&lt; "-module(lecture).\n\n%% erl +P 2000000\n%% Erlang ...">>
       </pre>
 
-      <p>A better way to query the index is 
+      <p>A better way to query the index is
       use the <a href="web_query.html">web query page</a>
       </dd>
     </dl>

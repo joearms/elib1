@@ -21,7 +21,7 @@ html: ${DOCS:%.ehtml=%.html}
 clean:
 	rm -rf *.aux *.beam
 	rm -rf  ${DOCS:%.ehtml=%.html}
-	rm -rf *.log *.tmp erl_crash.dump 
+	rm -rf *.log *.tmp erl_crash.dump
 
 veryclean:
 	rm ../bin/* ../doc/* ../tmp/*

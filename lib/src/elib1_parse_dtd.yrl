@@ -2,7 +2,7 @@
 %% Time-stamp: <2009-09-22 21:21:44 joe>
 %%---------------------------------------------------------------------------
 %% Copyright (c) 2009 Joe Armstrong <erlang@gmail.com>
-%% Copyright (c) 2009 Whoomph Software AB 
+%% Copyright (c) 2009 Whoomph Software AB
 %%
 %% Permission is hereby granted, free of charge, to any person
 %% obtaining a copy of this software and associated documentation
@@ -25,14 +25,14 @@
 %% SOFTWARE.
 %%---------------------------------------------------------------------------
 %% elib1_parse_dtd: Miscellaneous Functions
-%% elib1_parse_dtd:parse/1 -- internal 
+%% elib1_parse_dtd:parse/1 -- internal
 %% elib1_parse_dtd:parse_dtd_in_file(File) -> [Form]
 %% elib1_parse_dtd:parse_dtd_in_string(String) -> [Form]
 
 
 %% Example forms:
 %%
-%% <!ELEMENT conf2 (Password?, log*, table*, FrontEndNode*, BackEndNode*, 
+%% <!ELEMENT conf2 (Password?, log*, table*, FrontEndNode*, BackEndNode*,
 %%                 FrontEndCluster*)>
 %% <!ELEMENT Password (#PCDATA)>
 %% <!ELEMENT table (name, type, access)>
@@ -50,14 +50,14 @@ Rootsymbol form.
 form -> elementdecl: '$1'.
 
 elementdecl -> element nameA empty: {{element, '$2'}, '$empty'}.
-    
-elementdecl -> element nameA '(' content ')' mod :  
+
+elementdecl -> element nameA '(' content ')' mod :
 		   {{element,  '$2'}, fix_mod('$6', '$4')} .
 elementdecl -> attlist attdefs: '$2'.
 
 attdefs -> nameA attdef: {{attlist, '$1'},'$2'}.
 
-attdef -> nameA theatttype defaultdecl attdef: 
+attdef -> nameA theatttype defaultdecl attdef:
 	      [{'$1',{'$2','$3'}}|'$4'].
 attdef -> '$empty': [].
 
@@ -73,7 +73,7 @@ defaultdecl -> required: required.
 defaultdecl -> implied: implied.
 defaultdecl -> fixed extra : {fixed, '$2'}.
 defaultdecl -> extra: '$1'.
-    
+
 extra -> string: unwrap3('$1').
 extra -> '$empty': nil.
 
@@ -96,17 +96,17 @@ cp -> '(' cp rest ')' mod   : fix_mod('$5', fix_type('$2','$3')).
 rest -> ',' seq    : {'$seq','$2'}.
 rest -> '|' choise : {'$alt', '$2'}.
 rest -> '$empty'   : nil.
-    
+
 seq -> cp ',' seq : ['$1'|'$3'].
 seq -> cp         : ['$1'].
 seq -> '$empty'  : [].
-    
+
 choise -> cp            : ['$1'].
 choise -> cp '|' choise : ['$1'|'$3'].
 choise -> '$empty'      : [].
 
 nameA -> name: fix_name('$1').
-    
+
 
 mod -> '*' 			: '$star'.
 mod -> '?' 			: '$question'.
@@ -133,7 +133,7 @@ fix_mod(Mod, X) -> {Mod, X}.
 unwrap2({_,X,_}) -> X.
 
 unwrap3({_,_,X}) -> X.
-    
+
 
 fix_name({_,_,X}) ->
     list_to_atom(X).
@@ -176,13 +176,13 @@ collect_stuff([{'%',_},{name,Ln,Name},{';',_}|T], Forms, Ents, F) ->
     T1 = expand_entity(Name, Ln, Ents),
     collect_stuff(T1 ++ T, Forms, Ents, F);
 collect_stuff([{'<!', _},{entity,_},{'%',_},{name,_,Name},
-	       {string,_,Str},{'>',_}|Toks], 
+	       {string,_,Str},{'>',_}|Toks],
 	      Forms, Ents, F) ->
     %% io:format("Name=~p Str=~p~n",[Name,Str]),
     Str1 = expand_entities_in_string(Str, Name, 1, Ents),
     collect_stuff(Toks, Forms, [{Name,Str1}|Ents], F);
 collect_stuff([{'<!', _},{entity,_},{'%',_},{name,_,Name},{name,_,_Vis},
-	       {string,_,StdName},{string,_,LocalName},{'>',_}|Toks], 
+	       {string,_,StdName},{string,_,LocalName},{'>',_}|Toks],
 	      Forms, Ents, F) ->
     %% Vis = "PUBLIC" | "PRIVATE"
     %% Defining a parameter entity
@@ -216,7 +216,7 @@ do_parse({form, [{entity,_},{name,_,N},{string,_,S}]}) ->
     {entity, {N,S}};
 do_parse({form, Toks}) ->
     case parse(Toks) of
-	{error,{Line,Mod,Args}} -> 
+	{error,{Line,Mod,Args}} ->
 	    io:format("Parse:~p~n",[Toks]),
 	    Str = lists:flatten(Mod:format_error(Args)),
 	    io:format("Error line:~w ~s~n",[Line, Str]),
@@ -224,7 +224,7 @@ do_parse({form, Toks}) ->
 	{ok, P} ->
 	    P
     end.
-    
+
 expand_entities_in_string(_, Name, 20, _) ->
     exit({tooDeepRecursionInExpandEntity,Name});
 expand_entities_in_string([$%|T], Name, Level, E) ->
@@ -240,7 +240,7 @@ expand_entities_in_string([$%|T], Name, Level, E) ->
 	    [$%|expand_entities_in_string(T, Name, Level, E)]
      end;
 expand_entities_in_string([H|T], Name, Level, E) ->
-    [H|expand_entities_in_string(T, Name, Level, E)]; 
+    [H|expand_entities_in_string(T, Name, Level, E)];
 expand_entities_in_string([], _, _, _) ->
     [].
 
@@ -265,7 +265,7 @@ expand_entity(Name, Ln, Ents) ->
 skip_comment("-->" ++ T, Ln) -> {Ln, T};
 skip_comment([$\n|T], Ln)    -> skip_comment(T, Ln+1);
 skip_comment([_|T], Ln)      -> skip_comment(T, Ln).
-    
+
 tokenize("<!--" ++ T, Ln, L) ->
     {Ln1, T1} = skip_comment(T, Ln),
     tokenize(T1, Ln1, L);
@@ -306,13 +306,13 @@ tokenize([H|T], Ln, L) when H =:= $(; H =:= $);
                             H =:= $=;
 			    H =:= $%; H =:= $;;
 			    H =:= $|; H == $*;
-			    H =:= $/; 
+			    H =:= $/;
                             H =:= $$; H == $[;
                             H == $#;
-			    H =:= $,; H =:= $>; 
+			    H =:= $,; H =:= $>;
                             H =:= $+; H =:= $?; H =:= $] ->
     tokenize(T, Ln, {list_to_atom([H]),Ln}, L);
-tokenize([$\n|T], Ln, L) -> 
+tokenize([$\n|T], Ln, L) ->
     tokenize(T, Ln+1, L);
 tokenize([$"|T], Ln, L) ->
     {Str, Ln1, T1} = collect_string(T, $", Ln, []),
@@ -373,7 +373,7 @@ check_grammar(G) ->
 	[] -> void;
 	_ -> exit({attributeHasNoElement,Missing2})
     end.
-	    
+
 
 atoms_in(H, L) when is_atom(H) ->
     case member(H, L) of
@@ -386,12 +386,12 @@ atoms_in([H|T], L) ->
     atoms_in(H, atoms_in(T, L));
 atoms_in(_, L) ->
     L.
-    
+
 merge_attribues_and_elements(G) ->
     {Elems, Attrs} = lists:partition(fun({{element,_I},_}) -> true;
 					(_) -> false
 				     end, G),
     [{I, {Def, get_attr(I, Attrs)}} || {{element,I},Def} <- Elems].
-					     
+
 get_attr(I, Attrs) ->
     elib1_misc:lookup({attlist,I}, Attrs).

@@ -1,5 +1,5 @@
 <html>
-  
+
   <h1>About</h1>
 
   <h2>Restrictions</h2>
@@ -7,7 +7,7 @@
   <p>All documentation <i>must be in a fixed directory</i>
   <b>${ROOT}/doc</b> documentation is written with the extension
   <b>.ehtml</b></p>
-    
+
   <p>Elib1 is a library of Erlang modules, together with a number of
   complete applications built using the library. The applications have
   been co-developed with the library. The test of any library is
@@ -39,7 +39,7 @@
                                     library
            /doc                  -- documentation
   </pre>
-  
+
 
 
 

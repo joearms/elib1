@@ -5,8 +5,8 @@
 # testall.peg
 # This file contains a numeber of differnt grammars
 # and test cases
-# 
-# This file contains a sequence of 
+#
+# This file contains a sequence of
 #    - comments
 #    - Erlang code
 #    - peg productions
@@ -21,14 +21,14 @@
 #
 #    %{
 #       erlang code
-#       .. 
+#       ..
 #    %}
 #
 # Peg Productions
 # ===============
 #
 # Are written
-#  
+#
 # Id = Expr ;
 #
 # For each rule a number of functions are generated
@@ -37,7 +37,7 @@
 # The rule
 
     erlint = [0-9]+ -;
- 
+
    abc = erlint;
 
 %{
@@ -49,7 +49,7 @@ abc(X) -> abc.
 # the compiler will turn this into the function
 #  parse_erlint(Str) which returns {Val, Str'}
 # to produce Val the user *must* supply a funtion called
-#  
+#
 # defined as follows:
 
 %{
@@ -64,7 +64,7 @@ erlint([A,_]) -> {int, list_to_integer(A)}.
 
 # A more complex example is:
 
-erlfloat = [0-9]+ "." [0-9]+ ("e" ("+"|"-")? [0-9]+)? -;   
+erlfloat = [0-9]+ "." [0-9]+ ("e" ("+"|"-")? [0-9]+)? -;
 
 # semantic function (which deals with the parse tree) is:
 
@@ -109,7 +109,7 @@ toexp([[e,[],   S]]) -> ["e",S].
 # both are literals. The diffence is that
 # 'XX' consumes any additional space *after* the
 # literal whereas "XX" does not.
-# 'XX' is compiled to lit_then_space("XX") 
+# 'XX' is compiled to lit_then_space("XX")
 # "XX" is compiled to lit("XX")
 
 grammar = - ( decln | def | unexpected)+ endOfFile ;
@@ -118,15 +118,15 @@ unexpected = . ;
 
 lines = spaces line (';' line)* endOfFile;
 
-endOfFile = !. ;	  
+endOfFile = !. ;
 
 line = (!';' .)*;
- 
+
 decln = '%{' ( !'%}' . )* '%}' -;
 
 def = ident '=' expr ';' - ;
 
-expr = seq ('|' seq)* -; 
+expr = seq ('|' seq)* -;
 
 seq = prefix (prefix)*;
 
@@ -138,8 +138,8 @@ prefix = ( '&' action )
 suffix  = primary ('?' | '*' | '+' )?;
 
 primary = ident ! '='
- |	'(' expr ')' 
- |	literal        
+ |	'(' expr ')'
+ |	literal
  |	class
  |	'.' ;
 
@@ -147,15 +147,15 @@ primary = ident ! '='
 
 int = [0-9]+;
 
-ident =  "-" - | [a-z][a-zA-Z_]* -; 
+ident =  "-" - | [a-z][a-zA-Z_]* -;
 
 literal = lit -;
 
 # literals '...'  or "..."
 # the ... are char's
 
-lit  =  ["] (!["] char )*  ["] 
-     |  ['] (!['] char )*  [']; 
+lit  =  ["] (!["] char )*  ["]
+     |  ['] (!['] char )*  ['];
 
 # chars are what we find inside strings
 # we use the Erlang quoting convention here
@@ -163,18 +163,18 @@ lit  =  ["] (!["] char )*  ["]
 # \\ is backslash
 # \C is C
 # \OOO is octal
-# \^ C is control 
+# \^ C is control
 
 ## this is horrible
 
-char = 
+char =
      "\\" [0-3][0-7][0-7]
-     | "\\" [0-7][0-7]     
+     | "\\" [0-7][0-7]
      | "\\" [0-7]
      | "\\" [bdefnrstv\'"]
      | "\\^" [a-zA-Z]
-     | "\\\\"            
-     | !"\\" . 
+     | "\\\\"
+     | !"\\" .
      | "\\" .
      | . ;
 
@@ -204,12 +204,12 @@ erltokens = - erltoken* endOfFile;
 
 #note float *must* come before int
 
-erltoken = erlcomment | erldollarint 
-         |  erlfloat | erlatom | erlvar | erlanonvar | erlint  
+erltoken = erlcomment | erldollarint
+         |  erlfloat | erlatom | erlvar | erlanonvar | erlint
          | erlstring | erlquotedatom |
            erlpunct | erlerror;
 
-erlerror = .; 
+erlerror = .;
 
 erlatom = [a-z] [A-Za-z0-9_]* -;
 
@@ -222,7 +222,7 @@ erldollarint = "$\\" eat_escape  -
              | "$" . -;
 
 # character after $
-eat_escape = [0-3][0-7][0-7] 
+eat_escape = [0-3][0-7][0-7]
            | [0-7][0-7]
            | [0-7]
            | [nsrtfv]
@@ -296,9 +296,9 @@ strquotechars(X)         -> X.
 
 atomquotechars([bang,X]) -> X;
 atomquotechars(X)        -> X.
-    
+
 erlquotedatom([_,S,_,_]) -> {qatom, S}.
-    
+
 erlpunct(X) -> {punct, X}.
 
 erlcomment([_, S,_]) -> {comment, reduce(S)}.
@@ -350,7 +350,7 @@ char1(['\\', C]) ->
 char1(X) ->
     io:format("ooo char=~p~n",[X]),
     {char, X}.
-	    
+
 spaces(X) ->
     {spaces, flatten(X)}.
     %% {spaces, X}.
@@ -389,7 +389,7 @@ expr([Seq, More, _]) ->
    L = [X || [_,X] <- More],
    case [Seq|L] of
      [Z] -> Z;
-     Many -> {alt, Many} 
+     Many -> {alt, Many}
    end.
 
 seq([A,B]) ->
@@ -407,7 +407,7 @@ suffix([X, ['?']]) -> {question, X};
 suffix([X, ['+']]) -> {plus, X};
 suffix([X, ['*']]) -> {star, X}.
 
-primary([Id, bang]) -> Id;    
+primary([Id, bang]) -> Id;
 primary(['(',E,')']) -> E;
 primary(['.']) -> any;
 primary(X) -> X.
@@ -415,7 +415,7 @@ primary(X) -> X.
 literal([X,_]) ->
     X.
 
-lit([$',L,$']) -> 
+lit([$',L,$']) ->
     {lit1, reduce(L)};
 lit([$",L,$"]) -> {lit2, reduce(L)}.
 
@@ -476,8 +476,8 @@ test() ->
     run(parse_literal, "'\^za' abc", {lit1, [26,$a]}, "abc"),
     run(parse_literal, "'\^ZZ' abc", {lit1, [26,$Z]}, "abc"),
     run(parse_char, [?QUOTE,?QUOTE,$z], ?QUOTE,"z"),
-    run(parse_lit, 
-	[$',?QUOTE,?QUOTE,$z,$',$a], 
+    run(parse_lit,
+	[$',?QUOTE,?QUOTE,$z,$',$a],
 	{lit1, [?QUOTE,$z]}, "a"),
     %% run(parse_literal, "'\\z' abc", {lit1, "\\z"}, "abc"),
     run(parse_literal, [$',?QUOTE,?QUOTE,$z,$',32,32,$a],
@@ -487,9 +487,9 @@ test() ->
     run(parse_ident, "-A", "-", "A"),
     run(parse_ident, "abcABC+", "abcABC", "+"),
     run(parse_range, "a-zB", {$a,$z}, "B"),
-    run(parse_class, 
-	"[a-zA-Z12]     abc", 
-	{class, [{$a,$z},{$A,$Z},$1,$2]}, 
+    run(parse_class,
+	"[a-zA-Z12]     abc",
+	{class, [{$a,$z},{$A,$Z},$1,$2]},
 	"abc"),
     run(parse_erltokens, "1.23 abc. "),
     run(parse_erltokens, "foo(X) ->
@@ -565,12 +565,12 @@ run(Parse, Str) ->
 %%  \b \d \e \f \n\r \s \t \v
 %%     \O \OO \OOO
 %%     \^a..zA..Z 12..26
-%%     \' 
+%%     \'
 %%     \"
 %%     \\
 %%     \C
 %}
 
 
-    
+
 

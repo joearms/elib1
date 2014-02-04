@@ -52,15 +52,15 @@ color(C, X) ->
     ["<table><tr><td bgcolor=\"",atom_to_list(C),"\">",
      X,
      "</td></tr></table>\n"].
-   
+
 get_data(Assoc, Key, Default) ->
     case elib1_ml9:search(Key, Assoc) of
 	{ok, Val} -> Val;
 	error -> Default
     end.
-	    
 
-get_data(X) ->    
+
+get_data(X) ->
     {_,Str} = elib1_ml9:fetch(data, X),
     Str.
 
@@ -100,4 +100,4 @@ inline_to_html({link,Str}) ->
 inline_to_html(C) -> ["<pre>",io_lib:format("unknown inline:~p",[C]),
 		     "<pre>"].
 
-    
+

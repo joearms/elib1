@@ -32,7 +32,7 @@
 
 %% Acc is an accumulator
 
--spec foldl(filename(), 
+-spec foldl(filename(),
 	    fun((any(), Pos::integer(), acc()) -> acc()),
 	    acc()) -> acc().
 
@@ -71,7 +71,7 @@ foldl_test() ->
 %% @doc Create a stream from a file.
 
 -spec open_abs(filename()) -> stream().
-    
+
 open_abs(File) ->
     {ok, Stream} = file:open(File, [read,raw,binary,{read_ahead, 64000}]),
     Stream.
@@ -80,7 +80,7 @@ open_abs(File) ->
 %% @doc Close a stream.
 
 -spec close_abs(stream()) -> ok.
-    
+
 close_abs(Stream) ->
     file:close(Stream).
 
@@ -103,7 +103,7 @@ read2a(Stream, Fun, A0, Pos, <<Size:32/big,B/binary>>=Bx) ->
 	    A1 = Fun(T, Pos, A0),
 	    read2a(Stream, Fun, A1, Pos + Size + 4, Bb);
 	_ ->
-	    case 
+	    case
 		file:read(Stream, 64000) of
 		{ok, Bc} ->
 		    read2a(Stream, Fun, A0, Pos, <<Bx/binary, Bc/binary>>);
@@ -112,7 +112,7 @@ read2a(Stream, Fun, A0, Pos, <<Size:32/big,B/binary>>=Bx) ->
 	    end
     end;
 read2a(Stream, Fun, A0, Pos, Bx) ->
-        case 
+        case
 	    file:read(Stream, 64000) of
 	    {ok, Bc} ->
 		read2a(Stream, Fun, A0, Pos, <<Bx/binary, Bc/binary>>);

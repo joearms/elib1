@@ -7,7 +7,7 @@
 #   the current directory, i.e. the executed command is "cd $PWD".
 # - If the first argument is a directory, the new terminal will "cd" into
 #   that directory before executing the remaining arguments as command.
-# - The optional "-t" flag executes the command in a new tab 
+# - The optional "-t" flag executes the command in a new tab
 #   instead of a new window.
 # - The optional "-x" flag closes the new window or tab
 #   after the executed command finishes.

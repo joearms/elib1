@@ -3,7 +3,7 @@
 
 -module(elib1_wish).
 
-%% Time-stamp: <2009-12-07 21:49:17 joe> 
+%% Time-stamp: <2009-12-07 21:49:17 joe>
 %% Copyright (C) 2005 by Joe Armstrong
 %% All rights reserved.
 %% The copyright holder hereby grants the rights of usage, distribution
@@ -13,20 +13,20 @@
 
 -compile(export_all).
 
--export([start/0, 
-	 stop/0, 
-	 new_index/0, 
+-export([start/0,
+	 stop/0,
+	 new_index/0,
 	 status/0,
 	 cast/1,
 	 cmd/1,
-	 do/1, 
+	 do/1,
 	 make_window/2,
 	 controlling_process/3,
 	 %% register_window/2,
 	 %% install_dir/0,
 	 rpc/2]).
 
--import(lists, [map/2, member/2, flatten/1, foldl/3, foreach/2, 
+-import(lists, [map/2, member/2, flatten/1, foldl/3, foreach/2,
 		reverse/1, reverse/2]).
 
 -define(EXIT(X,Y),io:format("** EXIT ~p Module:~p Line:~p Args:~p~n",
@@ -38,7 +38,7 @@
 %%   stop(Pid)              -- stop server
 %%   mkWindow(Pid)          -- rpc in server
 %%   incastPid, Args)        -- send command to server
-    
+
 start() ->
     elib1_misc:ensure_started(wish83, fun() -> open_graphics() end).
 
@@ -111,7 +111,7 @@ start_driver(Parent) ->
     {ok, ListenSocket} = gen_tcp:listen(0, SocketOpts),
     {ok, ListenPort} = inet:port(ListenSocket),
     io:format("Listening port=~p~n",[ListenPort]),
-    Cmd = wish_version() ++ " " ++ Dir ++ "/elib1_wish.tcl " ++ 
+    Cmd = wish_version() ++ " " ++ Dir ++ "/elib1_wish.tcl " ++
 	integer_to_list(ListenPort),
     io:format("Cmd=~p~n",[Cmd]),
     %% Spawn a parallel process which starts wish --
@@ -141,7 +141,7 @@ wish_version() ->
     %% windows C:/Tcl/bin/wish.exe"
     "wish8.5".
 
-wait_for_connect_from_wish(Socket) ->		      
+wait_for_connect_from_wish(Socket) ->
     receive
 	{tcp, Socket, <<"magic sync">>} ->
 	    io:format("starting~n"),
@@ -160,7 +160,7 @@ internal_cmd(C) -> rpc1({cmd, C}).
 stop()     -> rpc1(stop).
 
 status() -> rpc1(status).
-    
+
 internal_cast(Cmd) -> wish83 ! {cast, Cmd}.
 
 register_window(Win, Pid) ->
@@ -177,7 +177,7 @@ rpc1(X) ->
 -define(REPLY(X), From ! {wish83, X}).
 
 %% Mon = [{Name,Pid,Ref}]
- 
+
 server_loop(Driver, Free, Mon, N) ->
     %% io:format("server_loop (~p) DRiver=~p E=~p~n", [self(), Driver, E]),
     receive
@@ -187,7 +187,7 @@ server_loop(Driver, Free, Mon, N) ->
 	    server_loop(Driver, Free+1, [{Win, Pid, Ref}|Mon], N);
 	{sendWin, Win, Event} ->
 	    io:format("sendWin:: Win=~p Event =~p~n",[Win,Event]),
-	    %% This should be a registered window 
+	    %% This should be a registered window
 	    case [P || {Name,P,_} <- Mon, Win == Name] of
 		[Pid] ->
 		    io:format("sending ~p to ~p~n",[{event,Event}, Pid]),
@@ -231,7 +231,7 @@ server_loop(Driver, Free, Mon, N) ->
 	    %% For all sub-widgets -- I don't know dow to turn this
 	    %% Off .. So Instead I'll just count dots
 	    NDots = length([X || X <- Win, X =:= $.]),
-	    if 
+	    if
 		NDots =:= 1 ->
 		    case keysplit(Win, 1, Mon) of
 			{found, {_Name, Pid, Ref}, Mon1} ->
@@ -274,7 +274,7 @@ possibly_remove_monitor(_, []) ->
     [].
 
 keysplit(Key, Pos, L) -> keysplit(Key, Pos, L, []).
-    
+
 keysplit(Key, Pos, [H|T], L) ->
     case element(Pos, H) of
 	Key ->
@@ -290,7 +290,7 @@ warning(X) ->
 
 
 %% tell_user_about_error
-%%   Tells the user why a window died ... 
+%%   Tells the user why a window died ...
 %%   very useful when debugging
 
 tell_user_about_error(_,normal) ->
@@ -359,13 +359,13 @@ driver_loop(Server, Socket, Data) ->
 	{cast, N, C} ->
 	    %% C1 = quote(C),
 	    Str1 = lists:flatten(["ecast ",integer_to_list(N)," ",C]),
-	    %% io:format("wish83:driver_loop cast:~s~n",[Str1]), 
+	    %% io:format("wish83:driver_loop cast:~s~n",[Str1]),
 	    send_socket(Socket, Str1),
 	    %% sleep(100),
 	    driver_loop(Server, Socket, Data);
 	{cmd, N, C} ->
 	    C1 = ["ecall ",integer_to_list(N)," ", C],
-	    %% io:format("wish83:driver_loop cmd:~w ~s~n", 
+	    %% io:format("wish83:driver_loop cmd:~w ~s~n",
 	    %% [N, lists:flatten(C1)]),
 	    send_socket(Socket, C1),
 	    %% sleep(100),
@@ -400,19 +400,19 @@ parse_messages(Data, Server) ->
 
 %% Bs .w1.w2.w3 XXXX => {".w1",".w2.w3",XXX}
 
-parse_event(Str) -> 
+parse_event(Str) ->
     [$.|S1] = skip_blanks(Str),
     {Win, S2} = collect_win(S1, [$.]),
     case S2 of
 	[$.|_] ->
-	    {SubWin, S3} = collect_unil_space(S2, []), 
+	    {SubWin, S3} = collect_unil_space(S2, []),
 	    S4 = skip_blanks(S3),
 	    {Win, {SubWin, S4}};
 	_ ->
 	    S4 = skip_blanks(S2),
 	    {Win, {[], S4}}
     end.
-    
+
 collect_win([$\s|T], L) -> {reverse(L), T};
 collect_win([$.|_]=T, L)  -> {reverse(L), T};
 collect_win([H|T], L)   -> collect_win(T, [H|L]);
@@ -446,7 +446,7 @@ parse_msg("eret " ++ T) ->
     {N, T1}    = get_int(T),
     {Str, _T2} = get_string(T1),
     {eret, N, Str};
-parse_msg("error " ++ T) ->   
+parse_msg("error " ++ T) ->
     {N, T1}    = get_int(T),
     {Str, _T2} = get_string(T1),
     {error, N, Str};
@@ -487,7 +487,7 @@ rpc(Pid, Q) ->
 	    Reply
     end.
 
-install_dir() ->    
+install_dir() ->
     filename:dirname(code:which(?MODULE)).
 
 controlling_process(Pid, Tag, Win) ->

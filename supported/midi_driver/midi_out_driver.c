@@ -1,10 +1,10 @@
-#include <CoreMIDI/CoreMIDI.h> 
-#include <unistd.h>            
-#define MESSAGESIZE 3          
+#include <CoreMIDI/CoreMIDI.h>
+#include <unistd.h>
+#define MESSAGESIZE 3
 
 typedef unsigned char byte;
 
-void playPacketListOnAllDevices   (MIDIPortRef     midiout, 
+void playPacketListOnAllDevices   (MIDIPortRef     midiout,
                                    const MIDIPacketList* pktlist);
 
 
@@ -31,7 +31,7 @@ int write_cmd(byte *buf, int len)
 
   li = (len >> 8) & 0xff;
   write_exact(&li, 1);
-  
+
   li = len & 0xff;
   write_exact(&li, 1);
 
@@ -70,18 +70,18 @@ send_string(char *str){
 	     write_cmd(str, n);
 }
 
-int main(void) 
+int main(void)
 {
   byte buff[100];
   int idev, n;
-  
+
   // Prepare MIDI Interface Client/Port for writing MIDI data:
   MIDIClientRef midiclient  = NULL;
   MIDIPortRef   midiout     = NULL;
   MIDIEndpointRef dest;
 
   OSStatus status;
-  
+
   if (status = MIDIClientCreate(CFSTR("TeStInG"), NULL, NULL, &midiclient)) {
     fprintf(stderr,"Error trying to create MIDI Client structure: %d\n", status);
     fprintf(stderr,"%s\n", GetMacOSStatusErrorString(status));
@@ -92,7 +92,7 @@ int main(void)
     fprintf(stderr, "%s\n", GetMacOSStatusErrorString(status));
     exit(status);
   }
-  
+
   // find the output device
   read_cmd(buff);
   idev = buff[0];
@@ -102,21 +102,21 @@ int main(void)
   while (n = read_cmd(buff), n > 0) {
     handle(midiout, dest, n, buff);
   };
-  
+
   sleep(1);
   exit(1);
-  
+
 }
 
 handle(MIDIPortRef midiout, MIDIEndpointRef dest, int n, byte* in){
 
   // fprintf(stderr,"playsome %d\r\n",n);
-  // Prepare a MIDI Note-On message to send 
-  MIDITimeStamp timestamp = 0;   // 0 will mean play now. 
+  // Prepare a MIDI Note-On message to send
+  MIDITimeStamp timestamp = 0;   // 0 will mean play now.
   Byte buffer[1024];             // storage space for MIDI Packets (max 65536)
   MIDIPacketList *packetlist = (MIDIPacketList*)buffer;
   MIDIPacket *currentpacket = MIDIPacketListInit(packetlist);
-  currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer), 
+  currentpacket = MIDIPacketListAdd(packetlist, sizeof(buffer),
 				    currentpacket, timestamp, n, in);
    MIDISend(midiout, dest, packetlist);
 }

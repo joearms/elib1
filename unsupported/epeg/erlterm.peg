@@ -12,7 +12,7 @@ comment = '#' (!endofline .)* endofline;
 
 endofline = "\r\n" | "\n" | "\r";
 
-float = [0-9]+ "." [0-9]+ ("e" ("+"|"-")? [0-9]+)? -;   
+float = [0-9]+ "." [0-9]+ ("e" ("+"|"-")? [0-9]+)? -;
 
 int = [0-9]+ -;
 
@@ -20,17 +20,17 @@ int = [0-9]+ -;
 
 tokens = - token* endOfFile;
 
-endOfFile = !. ;	  
+endOfFile = !. ;
 
 
 #note float *must* come before int
 
-token = comment | dollarint 
-         | float | atom | var | anonvar | int  
+token = comment | dollarint
+         | float | atom | var | anonvar | int
          | string | quotedatom |
            punct | error;
 
-error = .; 
+error = .;
 
 atom = [a-z] [A-Za-z0-9_]* -;
 
@@ -43,7 +43,7 @@ dollarint = "$\\" eat_escape  -
              | "$" . -;
 
 # character after $
-eat_escape = [0-3][0-7][0-7] 
+eat_escape = [0-3][0-7][0-7]
            | [0-7][0-7]
            | [0-7]
            | [nsrtfv]
@@ -109,7 +109,7 @@ final(float, [A,_,C,D,_]=S) ->
 
 final(int, [S,_]) ->
     {int, list_to_integer(S)};
-	     
+
 
 final(dollarint, X) -> {dollarInt, X};
 
@@ -129,9 +129,9 @@ final(strquotechars, X)         -> X;
 
 final(atomquotechars,[bang,X]) -> X;
 final(atomquotechars, X)        -> X;
-    
+
 final(quotedatom, [_,S,_,_]) -> {qatom, S};
-    
+
 final(punct, X) -> {punct, X};
 
 final(comment, [_, S,_]) -> {comment, reduce(S)};
@@ -157,8 +157,8 @@ toexp([[e,[],   S]]) -> ["e",S].
 test() ->
     V = ?MODULE:parse_tokens("abc 3.14159 abc 12 {} 'abc' Var"),
     io:format("V=~p~n",[V]),
-    V1 = ?MODULE:parse_term("{abc,123}xyz"),		
-    io:format("V1=~p~n",[V1]),				
+    V1 = ?MODULE:parse_term("{abc,123}xyz"),
+    io:format("V1=~p~n",[V1]),
     init:stop().
 
 

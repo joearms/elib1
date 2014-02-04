@@ -1,6 +1,6 @@
 <chap>
   <h1>The versioning problem</h1>
-  
+
   <p>Suppose we have several versions of the <i>same</i> module (for
   example the <b>lists</b> module) throughout the lifetime of Erlang
   the lists module has been changed many times - suppoe it was
@@ -14,7 +14,7 @@
   program guyarantee that the modukles names they use don't collide?</p>
 
   <h1>The Authentication Problem</h1>
-  
+
   <p>How can we be sure that <b>bing.erl</b> was written by <b>Alice</b>?.
   We trust the code written by Alice, how can we be sure that nobody else
   has tampered with <b>bing.erl</b>?</p>
@@ -37,7 +37,7 @@
 -module(foo).
 -export([a/1]).
 
-%% Version$author:Alice$ 
+%% Version$author:Alice$
 %% Version$end$
 
 a(X) ->

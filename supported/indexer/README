@@ -4,7 +4,7 @@ The Index consists of 4 programs
         <Name>.in -> <Name>.flist <Name>.trawl
      eindex <Name>
         <Name>.trawl -> <Name>.idx
-     esearch <Name> "Query" 
+     esearch <Name> "Query"
         <Name>.idx "Query" -> Output
      efsim <Name>
         <Name>.trawl -> <Name>.fsim
@@ -18,15 +18,15 @@ Talk:
 	elib2 - an Erlang library
 	Joe Armstrong
 
-Elib2 is an Erlang library and a number of complete programs that 
+Elib2 is an Erlang library and a number of complete programs that
 make use of the library.
 
 The talk discusses:
 
    - the philosophy behind the library
-   - what's in the library 
+   - what's in the library
    - my plans for the library
-   
+
 I'll also show some of the programs that I have built using the
 library, with special attention to the following programs:
 
@@ -39,7 +39,7 @@ library, with special attention to the following programs:
      A program that creates a full text index from a trawl.
      This implements some of the algorithms in "managing gigabytes."
      In particular I'll show how gamma compression is implemented
-     using the bit syntax. 
+     using the bit syntax.
 
    - elib2_query
      A program that queries the full text index.
@@ -51,9 +51,9 @@ library, with special attention to the following programs:
      digraph of all Erlang module programs on my disk.
 
      Programs which are very similar are candidates for refactoring into
-     a library part and a specific part. 
+     a library part and a specific part.
 
 I'll also discuss my plans for releasing the library.
 
 
-	 
+

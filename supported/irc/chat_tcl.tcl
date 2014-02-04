@@ -2,7 +2,7 @@ set s "This is a demonstration of a notepad widget.
 
 This editor will resize when you change resize the outer window
 
-This can be launched with the command 
+This can be launched with the command
 
    > wish -f chat_best.tcl
 
@@ -16,13 +16,13 @@ to be used with Erlang is in the file chat_erl.tcl
     proc mypackage::get {\} {\}
     proc mypackage::set {\} {\}
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
-sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
-nisi ut aliquip ex ea commodo consequat. 
-Duis aute irure dolor in reprehenderit in voluptate velit 
-esse cillum dolore eu fugiat nulla pariatur. 
-Excepteur sint occaecat cupidatat non proident, 
+Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+nisi ut aliquip ex ea commodo consequat.
+Duis aute irure dolor in reprehenderit in voluptate velit
+esse cillum dolore eu fugiat nulla pariatur.
+Excepteur sint occaecat cupidatat non proident,
 sunt in culpa qui officia deserunt mollit anim id est laborum.
 "
 
@@ -56,14 +56,14 @@ proc mkEditor { w } {
     frame $w.f -bd 5
     pack $w.f -fill both -expand 1
 
-    text $w.f.txt 
+    text $w.f.txt
     puts "text widget is $w.f.txt"
     scrollbar $w.f.scroll -orient vertical
 
     pack $w.f.scroll -side right -fill y
     pack $w.f.txt -fill both -expand 1
-    
-    $w.f.txt config -yscrollcommand "$w.f.scroll set" 
+
+    $w.f.txt config -yscrollcommand "$w.f.scroll set"
     $w.f.scroll config -command "$w.f.txt yview"
 }
 

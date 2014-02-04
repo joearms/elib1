@@ -16,7 +16,7 @@ proc windowDestroyed { w } {
 toplevel .w1
 bind .w1 <Destroy> "windowDestroyed %W"
 
-chat::make_chat .w1 
+chat::make_chat .w1
 chat::add_tab .w1 f1 "One"
 chat::add_content .w1 f1 {This is some content}
 

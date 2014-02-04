@@ -8,7 +8,7 @@
 </head>
 <body><chap>
   <h1 class="title">Versions</h1>
-  
+
   <p>Suppose we have several versions of the <i>same</i> module (for
   example the <c>lists</c> module) throughout the lifetime of Erlang
   the lists module has been changed many times - suppoe it was
@@ -16,7 +16,7 @@
   talking about the lists module?</p>
 
   <h1>Problems with names</h1>
-  
+
   <dl>
     <dt>The Name collision problem</dt>
     <dd>
@@ -41,7 +41,7 @@
       were used so that the bug can be reproduced?</p>
     </dd>
   </dl>
-  
+
   <h1>Module Version and Authentication Tagging</h1>
 
   <p>We propose some  new annotations what can be used to precisely identify
@@ -54,7 +54,7 @@
 -module(foo).
 -export([a/1]).
 
-%% Version$author:Alice$ 
+%% Version$author:Alice$
 %% Version$end$
 
 a(X) -&gt;
@@ -121,7 +121,7 @@ current directory:</p>
 
 <p>This lists the files which have been added to the name map. The
 name map is stored in a file called <c>nmape.erl</c>. The first few lines of this
-file look like this:</p> 
+file look like this:</p>
 
 <pre>
 -module(nmap).

@@ -29,32 +29,32 @@ test() ->
 	     [<<"mary">>,<<"mnesia-master">>,<<"joe">>,<<"jim">>]},
 	    {<<"#webserver">>,[<<"webserver-master">>,<<"jim">>]},
 	    {<<"erlang">>,[<<"jim">>,<<"fred">>]},
-	    {<<"chat">>,[<<"jim">>,<<"mary">>]}]} = 
+	    {<<"chat">>,[<<"jim">>,<<"mary">>]}]} =
 	add_user_to_group(<<"mary">>, <<"#mnesia">>, Gs),
     ok,
     %% delete_user_from_group
     %% sue is not in #mnesia
     false = delete_user_from_group(<<"sue">>, <<"#mnesia">>, Gs),
-    %% 
+    %%
     false = delete_user_from_group(<<"sue">>, <<"#nosuchgroup">>, Gs),
     {value,Ga = [{<<"#mnesia">>,
 		  [<<"mnesia-master">>,<<"joe">>,<<"jim">>]},
 		 {<<"#webserver">>,[<<"webserver-master">>,<<"jim">>]},
 		 {<<"erlang">>,[<<"fred">>]},
-		 {<<"chat">>,[<<"jim">>,<<"mary">>]}]} = 
+		 {<<"chat">>,[<<"jim">>,<<"mary">>]}]} =
 	delete_user_from_group(<<"jim">>, <<"erlang">>, Gs),
     {value,[{<<"#mnesia">>,
 	     [<<"mnesia-master">>,<<"joe">>,<<"jim">>]},
 	    {<<"#webserver">>,[<<"webserver-master">>,<<"jim">>]},
-	    {<<"chat">>,[<<"jim">>,<<"mary">>]}]} = 
+	    {<<"chat">>,[<<"jim">>,<<"mary">>]}]} =
 	delete_user_from_group(<<"fred">>, <<"erlang">>, Ga),
     [p5,p2,p1] = pids(<<"#mnesia">>, Ps, Gs),
     [p2] = pid(<<"joe">>, Ps).
 
-pids(Group, Ps, Gs) -> 
+pids(Group, Ps, Gs) ->
     [Pid || {G,L} <- Gs, G =:= Group,
 	    Nick <- L,
-	    {N, Pid} <- Ps, 
+	    {N, Pid} <- Ps,
 	    Nick =:= N].
 
 pid(Nick, Ps) ->
@@ -63,8 +63,8 @@ pid(Nick, Ps) ->
 add_user_to_group(Who, Group, Gs) ->
     case lists:keysearch(Group, 1, Gs) of
 	{value, {_, L}} ->
-	    case member(Who, L) of 
-		true  -> 
+	    case member(Who, L) of
+		true  ->
 		    false;
 		false ->
 		    {value, lists:keyreplace(Group, 1, Gs, {Group,[Who|L]})}
@@ -72,11 +72,11 @@ add_user_to_group(Who, Group, Gs) ->
 	false ->
 	    {value, [{Group, [Who]}|Gs]}
     end.
-    
+
 delete_user_from_group(Who, Group, Gs) ->
     case lists:keysearch(Group, 1, Gs) of
 	{value, {_, L}} ->
-	    case member(Who, L) of 
+	    case member(Who, L) of
 		true  ->
 		    L1 = lists:delete(Who, L),
 		    case L1 of

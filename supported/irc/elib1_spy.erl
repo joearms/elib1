@@ -13,7 +13,7 @@ start() ->
 start(LocalPort, RemoteHost, RemotePort) ->
     start_parallel_server(LocalPort,
 			  fun(Socket) ->
-				  server_start(Socket, 
+				  server_start(Socket,
 					       RemoteHost,
 					       RemotePort)
 			  end).
@@ -29,12 +29,12 @@ stop(Pid) ->
 
 stop_parallel_server(Pid) ->
     exit(Pid, stop).
-			
-%% @doc start_parallel_server			
+
+%% @doc start_parallel_server
 
 %% -spec start_parallel_server(Port::integer(), fun(->_)) -> pid().
-    
-							 
+
+
 start_parallel_server(Port, Fun) ->
     S = self(),
     spawn_link(fun() ->
@@ -43,7 +43,7 @@ start_parallel_server(Port, Fun) ->
 
 start_parallel_server0(Parent, Port, Fun) ->
     process_flag(trap_exit, true),
-    Val = gen_tcp:listen(Port, 
+    Val = gen_tcp:listen(Port,
 			 [binary, {packet,0},
 			  {active, true},
 			  {reuseaddr, true}]),
@@ -93,7 +93,7 @@ server_start(Local, Host, Port) ->
 	X ->
 	    io:format("no remote connection:~p~n",[X]),
 	    exit(eNoConnection)
-    end.    
+    end.
 
 log(Local, Remote, S) ->
     receive
@@ -109,11 +109,11 @@ log(Local, Remote, S) ->
 	    io:format(S, "~p.~n",[{received, Data, list_to_binary(Data)}]),
 	    gen_tcp:send(Local, Data),
 	    log(Local, Remote, S);
-	{tcp_closed, Local} ->  
+	{tcp_closed, Local} ->
 	    io:format(S, "~p.~n",[{closed,local}]),
 	    file:close(S),
 	    io:format("Local terminated ~n");
-	{tcp_closed, Remote} ->  
+	{tcp_closed, Remote} ->
 	    io:format(S, "~p.~n",[{closed,remote}]),
 	    file:close(S),
 	    io:format("Remote terminated ~n")

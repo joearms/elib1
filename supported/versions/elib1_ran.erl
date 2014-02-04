@@ -23,7 +23,7 @@ make_prime(K, D, N) ->
     io:format(".",[]),
     case is_prime(100, D, N) of
 	yes -> D;
-	{no,X,Y} -> 
+	{no,X,Y} ->
 	    %% io:format("   ~p ~p~n",[X,Y]),
 	    make_prime(K+1,D+1,N)
     end.
@@ -48,7 +48,7 @@ is_prime(Ntest, D, N) ->
     %% generate a random number A less than D
     K = random:uniform(N),
     A = make(K),
-    if 
+    if
 	A < D ->
 	    %% fermat's theormem says that if D is a prime and if A is
 	    %% less than A then
@@ -63,7 +63,7 @@ is_prime(Ntest, D, N) ->
 
 ensure_seeded() ->
     case get(random_seed) of
-	undefined -> 
+	undefined ->
 	    random:seed();
 	_ ->
 	    true

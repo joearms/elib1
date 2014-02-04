@@ -23,13 +23,13 @@
 %% $ eindex -statstics Name
 %%     Input: Name.index Output: Statistics
 %% $ eindex -search Name "String"
-%%     Input Name.in     
+%%     Input Name.in
 %%     Output: matching objects
 %%     example: eindex -search test2 "property lists"
 %% $ eindex -help
 %%     prints usage
 %% </pre>
-%% <b>-crawl</b>Is used to gather a collection of files 
+%% <b>-crawl</b>Is used to gather a collection of files
 %% together prior to indexing.
 %% The file <b>Name.in</b> contains a list of directories and file extensions
 %% which control the gathering phase. All matching files specified in the
@@ -46,7 +46,7 @@
 %% <pre>
 %% {Term:any(), Extension::string(), Md5Content::binry(), compressedContent::binary()}
 %% </pre>
-%% 
+%%
 %% The indexer uses a number or different file formats.
 %% These are contained in files with the extensions <b>.in</b>
 %% <b>.crawl</b> and <b>.index</b>.
@@ -67,7 +67,7 @@
 %% All the Erlang code found is compressed and appended to a so called
 %% "crawl" file. The crawl file is a sequence of tuples of the form
 %% <pre>
-%% {FileName::string(), Md5::binary(), CompressedContent::binary()}  
+%% {FileName::string(), Md5::binary(), CompressedContent::binary()}
 %% </pre>
 %% ==Binary Tuple Format==
 %% Binary tuple formats (BTF) occurs a lot.
@@ -98,7 +98,7 @@
 -type void() :: any(). %% my way of saying I don't care about the result
 
 -spec do(Command::string()) -> no_return().
-    
+
 do(Cmd) -> do1(Cmd), init:stop().
 
 do1(["-crawl", Name])       -> crawl_files(Name);
@@ -134,7 +134,7 @@ usage() ->
 
 %% @doc Reads Name.in and finds all the files in the input
 %% packing them in a file called Name.crawl. This calls
-%% init:stop() when it has finished. 
+%% init:stop() when it has finished.
 
 crawl_files(Name) ->
     InFile = Name ++ ".in",
@@ -157,7 +157,7 @@ crawl_files(Name) ->
 %%          5.
 %%
 
- 
+
 make_index(Name, Top) ->
     time_fun("total time to buid index",
 	     fun() ->
@@ -179,10 +179,10 @@ make_index(Name) ->
 		     pack_index(Name)
 	     end),
     init:stop().
-    
+
 %%----------------------------------------------------------------------
 %% list_files(Name, [{Top, Ext}]
-%%     Make a list of files with extension <Ext> 
+%%     Make a list of files with extension <Ext>
 %%     below the sub-directory <Top>
 %%     Write the results to a file called <Name>.files
 %%----------------------------------------------------------------------
@@ -212,9 +212,9 @@ list_files_to_stream([{TopR,Ext}|T], Stream) ->
     AddFile = fun(I,J,K,L) ->
 		      correct_type_of_file(I,J,K,L,Ext)
 	      end,
-    Stream1 = elib1_file_finder:foldl(Top, 
+    Stream1 = elib1_file_finder:foldl(Top,
 				      AddFile,
-				      Stream, 
+				      Stream,
 				      fun follow/3),
     list_files_to_stream(T, Stream1).
 
@@ -263,9 +263,9 @@ pack_files(Name) ->
 	    Out = Name ++ ".crawl",
 	    Set = sets:new(),
 	    Stream = elib1_fast_write:new(Out),
-	    {_Set1, Stream1, NFiles, NBytes, _} = 
-		elib1_fast_read:foldl(In, 
-				      fun add_file/3, 
+	    {_Set1, Stream1, NFiles, NBytes, _} =
+		elib1_fast_read:foldl(In,
+				      fun add_file/3,
 				      {Set,Stream,0,0,1}),
 	    {NWritten, NTot} = elib1_fast_write:close(Stream1),
 	    io:format("pack: ~w files (~w bytes) read~n",[NFiles,NBytes]),
@@ -274,7 +274,7 @@ pack_files(Name) ->
 		      [In,filelib:file_size(In)]),
 	    io:format("pack: Created (~s): ~w bytes~n",
 		      [Out,filelib:file_size(Out)]),
-	    if 
+	    if
 		NBytes > 0 ->
 		    io:format("pack: Compression ratio for data = ~p~n",
 			      [NTot/NBytes]);
@@ -287,7 +287,7 @@ add_file(File, _Pos, {Set, Stream, NRead, NBytes, Index}) ->
     {ok, Bin} = file:read_file(File),
     Md5 = erlang:md5(Bin),
     case sets:is_element(Md5, Set) of
-	true -> 
+	true ->
 	    {Set, Stream, NRead+1, NBytes, Index};
 	false ->
 	    %% io:format("adding:~p~n",[File]),
@@ -309,15 +309,15 @@ extract_keywords0(Name) ->
     Word2Index = ets:new(table, [set]),
     Free = build_word_table(Word2Index),
     io:format("keywords: analysing files (can take a while) "),
-    In  = Name ++ ".crawl",    
-    Out = Name ++ "_unsorted.tmp", 
+    In  = Name ++ ".crawl",
+    Out = Name ++ "_unsorted.tmp",
     OutS = elib1_fast_write:new(Out),
     %% OutS is the output stream where we will write {I,J} tuples
-    {ok, result} = dets:open_file(result, 
+    {ok, result} = dets:open_file(result,
 				  {file,Name ++ ".index"}),
-    {Out2, _, Free1,NFiles} = 
-	elib1_fast_read:foldl(In, 
-			      fun index_file/3, 
+    {Out2, _, Free1,NFiles} =
+	elib1_fast_read:foldl(In,
+			      fun index_file/3,
 			      {OutS,Word2Index,Free,1}),
     ets:insert(Word2Index, {free, Free1}),
     elib1_fast_write:close(Out2),
@@ -348,7 +348,7 @@ index_file({Term,Ext,_Md5,B0}, Pos, {Stream,Tab,Free,FileNumber}) ->
     Str  = binary_to_list(Bin),
     Words = file2words(Term, Str, Ext),
     plip(FileNumber),
-    {Stream1, Free1} = 
+    {Stream1, Free1} =
 	foldl(fun(Word, {S,F}) ->
 		      {Index,F1} = ensure_stored(Word, {F,Tab}),
 		      S1 = elib1_fast_write:write(S, {Index,FileNumber}),
@@ -366,7 +366,7 @@ pack_index(Name) ->
 
 pack_index0(Name) ->
     io:format("pack index: sorting~n"),
-    In  =  Name ++ "_unsorted.tmp", 
+    In  =  Name ++ "_unsorted.tmp",
     Out =  Name ++ "_sorted.tmp",
     WordTable = Name ++ "_word2index.tmp",
     file_sorter:sort([In], Out),
@@ -395,12 +395,12 @@ pack_index0(Name) ->
 
     io:format("pack index: Created ~s: ~w bytes~n",
 	      [OutDets, filelib:file_size(OutDets)]).
-    
+
 merge_tuples({Word,File}, {Word,L}, _Tab) ->
     %% same word
     {Word, [File|L]};
 merge_tuples({New,File}, {Old, L}, Tab) ->
-    case Old of 
+    case Old of
 	-1 -> void;
 	_  ->
 	    %% Old is the index of a word
@@ -417,8 +417,8 @@ merge_tuples({New,File}, {Old, L}, Tab) ->
 			      [Word,L2]),
 		    exit(oops3)
 	    end,
-	    %% done checking 
-	    L1 = lists:sort(elib1_misc:remove_duplicates(L)), 
+	    %% done checking
+	    L1 = lists:sort(elib1_misc:remove_duplicates(L)),
 	    Bin = elib1_gamma:alist_to_gamma(L1),
 	    dets:insert(result, {Word, Bin})
     end,
@@ -430,8 +430,8 @@ invert_word_table(Tab) ->
     %% we want Index -> Word
     %% and build an inverse map
     Tab1 = ets:new(table, [set]),
-    ets:foldl(fun({Word,Index}, A) -> 
-		      ets:insert(Tab1, {Index,Word}), 
+    ets:foldl(fun({Word,Index}, A) ->
+		      ets:insert(Tab1, {Index,Word}),
 		      A
 	      end, 0, Tab),
     Tab1.
@@ -494,13 +494,13 @@ ensure_stored(Word, {Free, Tab}) ->
 %%----------------------------------------------------------------------
 
 lookup(Name, Str) ->
-    {ok, result} = 
-	dets:open_file(result, 
+    {ok, result} =
+	dets:open_file(result,
 		       {file,atom_to_list(Name) ++ ".index"}),
     Bin = list_to_binary(elib1_porter:stem(Str)),
     case dets:lookup(result, Bin) of
 	[] -> [];
-	[{_,Bin1}] -> 
+	[{_,Bin1}] ->
 	    elib1_gamma:gamma_to_alist(Bin1)
     end.
 
@@ -560,13 +560,13 @@ q1(Str) ->
     Bin1 = list_to_binary(elib1_porter:stem(Str)),
     L = case dets:lookup(result, Bin1) of
 	    [] -> [];
-	    [{_,Bin2}] -> 
+	    [{_,Bin2}] ->
 		elib1_gamma:gamma_to_alist(Bin2)
 	end,
     io:format("~s ~p hits~n",[Str, length(L)]),
     {Str, length(L), L}.
 
-intersection(L) ->	    
+intersection(L) ->
     sets:to_list(sets:intersection([sets:from_list(I) || I <- L])).
 
 plip(N) ->
@@ -580,28 +580,28 @@ plip(N) ->
     end.
 
 dump_index(Name) ->
-    Dets = Name ++ ".index",    
+    Dets = Name ++ ".index",
     {ok, result} = dets:open_file(result, {file,Dets}),
     A1 = dets:foldl(fun(I, L) -> [I|L] end, [], result),
     dets:close(result),
     elib1_misc:dump("index", A1).
 
 dump_statistics(Name) ->
-    Dets = Name ++ ".index",    
+    Dets = Name ++ ".index",
     {ok, result} = dets:open_file(result, {file,Dets}),
     A1 = dets:foldl(fun analyse_entry/2, [], result),
     dets:close(result),
     N1 = lists:sum([ N || {_,N,_,_} <- A1]),
     N2 = lists:sum([ N || {_,_,N,_} <- A1]),
     N3 = lists:sum([min(NN1,NN2) || {_,NN1,NN2,_} <- A1]),
-    elib1_misc:dump("statistics", 
+    elib1_misc:dump("statistics",
 		    {gamma,N1,term_to_binary,N2,optimal,N3,A1}).
 
 min(A, B) when A < B -> A;
 min(_, B) -> B.
 
 analyse_entry({Key,Gamma}, L) when is_binary(Key) ->
-    %% Val is a fancy thing ...		
+    %% Val is a fancy thing ...
     PageNumbers = elib1_gamma:gamma_to_alist(Gamma),
     C1 = size(term_to_binary(PageNumbers)),
     [{Key,size(Gamma),C1,PageNumbers}|L];
@@ -609,8 +609,8 @@ analyse_entry(_, L) ->
     L.
 
 dump(Name) ->
-    L = elib1_fast_read:foldl(Name, 
-			      fun(T,Pos,L) -> [{Pos,T}|L] end, 
+    L = elib1_fast_read:foldl(Name,
+			      fun(T,Pos,L) -> [{Pos,T}|L] end,
 			      []),
     elib1_misc:dump(Name, reverse(L)).
 
@@ -640,4 +640,4 @@ dump(Name) ->
 %%  making index        38   seconds
 %%  Total              398   seconds
 %%  25 files/second
-    
+

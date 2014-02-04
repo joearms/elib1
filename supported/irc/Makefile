@@ -28,12 +28,12 @@ widgets: beam
 beam: ${MODS:%.erl=%.beam}
 
 clean:
-	rm -rf *.beam 
+	rm -rf *.beam
 	rm -rf *.log *.tmp erl_crash.dump
 
 veryclean:
 	make clean
-	rm -rf *~ 
+	rm -rf *~
 
 
 

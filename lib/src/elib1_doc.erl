@@ -16,12 +16,12 @@ batch([X]) ->
     File = filename:rootname(atom_to_list(X)),
     file(File).
 
-%% file converts F.ehtml to F.html in the same directory 
+%% file converts F.ehtml to F.html in the same directory
 
 file(F) ->
     io:format("elib1_doc::~s~n",[F]),
     file(F ++ ".ehtml", F ++ ".html").
-    
+
 file(InFile, OutFile) ->
     case file:read_file(InFile) of
 	{ok, Bin} ->
@@ -53,8 +53,8 @@ setup(File) ->
 	<title>", File, "</title>
         <link href='../include/elib1.css' type='text/css' rel='stylesheet'/>
       </head>
-      <body>	
+      <body>
 	<a href='/cgi?mod=elib1_content_edit&func=edit&file=",
-     File,"'>edit</a>	
+     File,"'>edit</a>
 
 	"].

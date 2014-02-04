@@ -37,15 +37,15 @@ function render_rows() {
 }
 
 function clear_static_display(){
-  id = document.getElementById("statictab"); 
+  id = document.getElementById("statictab");
   id.innerHTML="";
 }
 
 function render_non_folding(){
     var i,id,max;
-    id = document.getElementById("maintab"); 
+    id = document.getElementById("maintab");
     id.innerHTML = "";
-    id = document.getElementById("statictab"); 
+    id = document.getElementById("statictab");
     max = data.length;
     for(i=0; i < max; i++){
 	id.innerHTML += "<h1>" + data[i].header + "</h1>";
@@ -59,7 +59,7 @@ function render_folds(){
     // debug();
     pos = 0;
     // alert("max="+max);
-    id = document.getElementById("maintab"); 
+    id = document.getElementById("maintab");
     id.innerHTML = "";
     // alert("stop");
     pos = 0;
@@ -80,13 +80,13 @@ function render_folds(){
 	    // disable the window click event
 	    document.body.setAttribute("onkeyup", "");
 	    node1 = id.rows[pos-2].cells[0];
-	    node.innerHTML = "<textarea cols=40 rows=1>" + 
-		data[i].header + "</textarea>" + 
-		"<textarea onkeyup='mynewclicker(event)' cols=40 rows=15>" + 
+	    node.innerHTML = "<textarea cols=40 rows=1>" +
+		data[i].header + "</textarea>" +
+		"<textarea onkeyup='mynewclicker(event)' cols=40 rows=15>" +
 		data[i].content + "</textarea>";
 	    // set the focus in the editor
 	    node.childNodes[0].focus();
-	}    
+	}
 	k = 3 - k;
     };
 }
@@ -213,10 +213,10 @@ function whichElement(e)
 {
     var targ
     if (!e) var e = window.event
-    if (e.target) 
+    if (e.target)
        targ = e.target
-    else 
-       if (e.srcElement) 
+    else
+       if (e.srcElement)
 	  targ = e.srcElement
     if (targ.nodeType == 3) // defeat Safari bug
 	targ = targ.parentNode
@@ -230,5 +230,5 @@ function whichRow(e) {
     var table = tr.parentNode.parentNode;
     var id = table.getAttribute("id");
     // alert("Click tab id=" + id + " index = " + index);
-    
+
 }

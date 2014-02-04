@@ -63,5 +63,5 @@ store_i(Name, Key, Val) ->
     %% io:format("**real insert:~p ~p~n",[Key,Val]),
     dets:insert(Name, {Key, Val}).
 
-		       
-    
+
+

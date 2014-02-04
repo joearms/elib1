@@ -43,7 +43,7 @@ function expand_links(s) {
 	    // two parts
 	    var a = mid.substring(0, linksep);
 	    var b = mid.substring(linksep+1, mid.length);
-	    link = "<a href='two?arg=" + b + "'>" + a + "</a>"; 
+	    link = "<a href='two?arg=" + b + "'>" + a + "</a>";
 	    // alert("a="+a+"b="+b+"link2="+link);
 	    s = s1 + link + s2;
 	}
@@ -132,10 +132,10 @@ function getnext(out, i, max, lines){
     } else if(s[0] == '!') {
         setListLevel(out, 0);
 	collected_header(out, s);
-	return(i+1);    
+	return(i+1);
     } else if(s[0] == '*') {
 	collected_list(out, s);
-	return(i+1);    
+	return(i+1);
     } else {
 	// alert("para");
 	acc = s;

@@ -16,15 +16,15 @@
 %% The webkit acts as a "middle man" and abstracts out details
 %% of the real HTTP rpotocol convertting it into a form
 %% that is convenient for an Erlang program.
-%% 
+%%
 %% that abstract the protocol in different ways
 %% The simplest is
-%%  Messages from driver 
+%%  Messages from driver
 %%  {Pid, {get, File, Args}}
 %%  {Pid, {post, File, Args, Data}}
 %%  {Pid, close}
 %%  To the client
-%%  {page, FileExtension, DeepList} 
+%%  {page, FileExtension, DeepList}
 %%  {error, What}
 %%  close
 
@@ -41,22 +41,22 @@
 	 start_static_server/2,
 	 serve_static_file/1,
 	 serve_static_file_report_error/1,
-	 classify/1, 
+	 classify/1,
 	 forever/0,
 	 mod_server/4,
-	 header/1, 
+	 header/1,
 	 mime/1,
-	 pre/1, 
+	 pre/1,
 	 get_file/1
 	]).
 
 start(Port, Fun) ->
-    {ok, Listen} = gen_tcp:listen(Port, 
+    {ok, Listen} = gen_tcp:listen(Port,
 				  [binary,
 				   %% {dontroute, true},
 				   {nodelay,true},
 				   {packet, 0},
-				   {reuseaddr, true}, 
+				   {reuseaddr, true},
 				   {active, true}]),
     io:format("listen port:~p~n",[Port]),
     spawn_link(fun() -> par_connect(Listen, Fun) end).
@@ -81,7 +81,7 @@ relay(Socket, Server, State) ->
 	    %% io:format("<-- ~s~n", [Data]),
 	    parse_request(State, Socket, Server, Data);
 	{tcp_closed, Socket} ->
-	    io:format("http driver got tcp closed (socket:~p) -" 
+	    io:format("http driver got tcp closed (socket:~p) -"
 		      " so browser closed connection~n",
 		      [Socket]),
 	    Server ! {self(), closed};
@@ -171,7 +171,7 @@ collect_chunk(N, [], Buff)      -> {no, Buff, N}.
 scan_header([$\n|T], [$\r,$\n,$\r|L]) -> {yes, reverse(L), T};
 scan_header([H|T],  L)                -> scan_header(T, [H|L]);
 scan_header([], L)                    -> {no, L}.
-				
+
 mime_type(gif)  ->  "image/gif";
 mime_type(jpg) -> "image/jpeg";
 mime_type(png) -> "image/png";
@@ -202,7 +202,7 @@ classify(FileName) ->
 	_       -> html
     end.
 
-header(X) when is_atom(X) -> 
+header(X) when is_atom(X) ->
     ["HTTP/1.0 200 Ok\r\n", powered_by(), content_type(mime_type(X))];
 header({redirect,To}) ->
     ["HTTP/1.0 302 Come and get it!\r\n",
@@ -216,7 +216,7 @@ content_type(X) ->
 
 %% parse_header(Str) -> {ContentLength, {Verb,Vsn, URI, Args, Headers}\\
 %%   Verb = get | put\\
-%%   ContentLen = the length of any additional data that has to be 
+%%   ContentLen = the length of any additional data that has to be
 %%                fetched
 
 parse_header(Str) ->
@@ -329,7 +329,7 @@ quote("<" ++ T) -> "&lt;" ++ quote(T);
 quote("&" ++ T) -> "&amp;" ++ quote(T);
 quote([H|T]) -> [H|quote(T)];
 quote([]) -> [].
-    
+
 forever() ->
     receive
 	after infinity ->
@@ -345,7 +345,7 @@ forever() ->
 start_fold_server(Port, Fun4, State) ->
     %% From should be local host ... but I don't check
     start(Port, fun(MM, _From) ->  loop4(MM, Fun4, State) end).
-    
+
 loop4(MM, Fun4, State) ->
     receive
 	{MM, {Tag, _Vsn, Uri, Args, _Headers}} ->
@@ -383,7 +383,7 @@ loop4(MM, Fun4, State) ->
 start_static_server(Port, Fun3) ->
     %% From should be local host ... but I don't check
     start(Port, fun(MM, _From) ->  loop2(MM, Fun3) end).
-    
+
 loop2(MM, Fun) ->
     receive
 	{MM, {Tag, _Vsn, Uri, Args, _Headers}} ->
@@ -427,7 +427,7 @@ start_batch_mod_server([P,D]) ->
 
 start_mod_server(Port, RootDir) ->
     start_static_server(Port, fun(Tag, Uri, Args) ->
-				      mod_server(Tag, Uri, Args, 
+				      mod_server(Tag, Uri, Args,
 						 filename:split(RootDir))
 			      end).
 
@@ -450,7 +450,7 @@ mod_server(Tag, Uri, Args, Root) ->
 %% Rules:
 %%   The beam code must be loaded from Root
 %%   The erlang module must be in Root
-%%   The Erlang module is compiled if out of date 
+%%   The Erlang module is compiled if out of date
 
 exec_mod(SMod, Func, Args, Root) ->
     Mod = list_to_atom(SMod),
@@ -491,7 +491,7 @@ recompile(Mod, Root) ->
 	  filelib:last_modified(Beam)} of
 	{0, _} ->
 	    error({no,src,Src});
-	{T1, T2} when T1 > T2 -> 
+	{T1, T2} when T1 > T2 ->
 	    recompile(Src);
 	_ ->
 	    ok
@@ -508,9 +508,9 @@ recompile(Src) ->
 	    error({errors,E,warnings,W})
     end.
 
-error(X) ->    
+error(X) ->
     {response, html, [pre({error, X})]}.
 
-    
+
 
 

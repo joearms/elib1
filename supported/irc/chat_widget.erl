@@ -7,7 +7,7 @@
 %%   chat_widget.erl    the erlang controller
 %%   chat_erl.tcl       the tcl component
 %%   chat_erl_test.tcl  the tcl test program
-%%   chat_best.tcl      pure TCL test program 
+%%   chat_best.tcl      pure TCL test program
 
 %% The *only* commands this program should emit are those used
 %% in chat_erl_test.tcl
@@ -20,7 +20,7 @@
 -import(elib1_misc, [lookup/2]).
 
 -export([new/0,
-	 loaded/0, 
+	 loaded/0,
 	 test1/0,
 	 delete_tab/2,
 	 set_title/2,
@@ -36,7 +36,7 @@ loaded() ->
     io:format("chat_widget loaded~n"),
     elib1_wish:start(),
     Dir = elib1_misc:root_dir() ++ "/supported/irc/",
-    File = Dir ++ "chat_erl.tcl", 
+    File = Dir ++ "chat_erl.tcl",
     cmd("source " ++ File),
     cmd("image create photo rball -file \"" ++ Dir ++ "redball.gif\""),
     cmd("image create photo wball -file \"" ++ Dir ++ "whiteball.gif\""),
@@ -56,7 +56,7 @@ new() ->
     Pid = spawn(fun() -> run() end),
     add_tab(Pid, "One"),
     Pid.
-    
+
 rpc(Pid, Q) ->
     Pid ! {self(), Q},
     receive
@@ -65,7 +65,7 @@ rpc(Pid, Q) ->
     end.
 
 add_tab(Pid, Name) -> rpc(Pid, {addTab, Name}).
- 
+
 set_title(Pid, Title) -> rpc(Pid, {setTitle, Title}).
 
 set_button_text(Pid, N, Text) -> rpc(Pid, {setButtonText, N, Text}).
@@ -83,8 +83,8 @@ read_text(Pid, N)             -> rpc(Pid, {readText, N}).
 set_handler(Pid, Fun)         -> rpc(Pid, {setHandler, Fun}).
 
 make_tab(Win, I) ->
-    Tab = "f" ++ integer_to_list(I), 
-    Name = "the" ++ Tab, 
+    Tab = "f" ++ integer_to_list(I),
+    Name = "the" ++ Tab,
     widget_add_tab(Win, Tab, Name),
     widget_set_color(Win,Tab,"red").
     %% widget_set_button_text(Win, I, "none"),
@@ -212,17 +212,17 @@ widget_add_tab(Win, N, Name) ->
 widget_delete_tab(Win, N) ->
     do(["chat::delete_tab",Win,tname(N)]).
 
-widget_set_button_text(Win, N, Txt) -> 
+widget_set_button_text(Win, N, Txt) ->
     do(["setButtonText",Win,tname(N),Txt]).
 
 widget_set_title(Win, Title) -> do(["chat::set_title",Win,Title]).
 
-widget_add_content(Win, Tab, Txt) -> 
+widget_add_content(Win, Tab, Txt) ->
     do(["chat::add_content", Win, tname(Tab), "{" ++ Txt ++ "}"]).
 
 widget_clear_text(Win) -> do(["clearText", Win]).
-    
-widget_set_color(Win, Tab, Color) -> 
+
+widget_set_color(Win, Tab, Color) ->
     do(["chat::set_color",Win,tname(Tab),Color]).
 
 tname(N) ->
@@ -237,7 +237,7 @@ addEditor(Win, Txt) ->
     do(["addEditor", Win, Txt]).
 
 %%----------------------------------------------------------------------
-%% 
+%%
 
 make_test_widget(Pid) ->
     widget_lib:make_button_box(

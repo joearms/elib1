@@ -4,9 +4,9 @@
 %% ---
 %%  Excerpted from "Programming Erlang",
 %%  published by The Pragmatic Bookshelf.
-%%  Copyrights apply to this code. It may not be used to create training material, 
+%%  Copyrights apply to this code. It may not be used to create training material,
 %%  courses, books, articles, and the like. Contact us if you are in doubt.
-%%  We make no guarantees that this code is fit for any purpose. 
+%%  We make no guarantees that this code is fit for any purpose.
 %%  Visit http://www.pragmaticprogrammer.com/titles/jaerlang for more book information.
 %%---
 -module(example1).
@@ -30,7 +30,7 @@ test() ->
     io:format("Port process stopped~n"),
     init:stop().
 
-start() -> 
+start() ->
     S = self(),
     Pid = spawn(fun() -> run(S) end),
     receive
@@ -61,7 +61,7 @@ call_port(Msg) ->
 loop(Port) ->
     receive
 	{call, Caller, Msg} ->
-	    Port ! {self(), {command, encode(Msg)}}, 
+	    Port ! {self(), {command, encode(Msg)}},
 	    receive
 		{Port, {data, Data}} ->
 		    Caller ! {example1, decode(Data)}
@@ -77,7 +77,7 @@ loop(Port) ->
 	    exit({port_terminated,Reason})
     end.
 
-encode({twice, X}) -> [1, X];  
-encode({sum, X, Y}) -> [2, X, Y]. 
+encode({twice, X}) -> [1, X];
+encode({sum, X, Y}) -> [2, X, Y].
 
-decode([Int]) -> Int. 
+decode([Int]) -> Int.

@@ -3,9 +3,9 @@
   <h1>Elib</h1>
 
   <h2>The grand plan</h2>
-  
+
   <ul>
-    <li>One big integrated library and set of applications not several 
+    <li>One big integrated library and set of applications not several
     hundred small ones.</li>
     <li>One place to look.</li>
     <li>High quality code</li>
@@ -49,19 +49,19 @@
   in <a href="/wanted/doc.ehtml">wanted</a>.
 
   <h2>To Do</h2>
-  
+
   <p>Checkout the <a href="todo.ehtml">todo</a> list.
   To add or fix a problem fork and edit</p>
 
   <h2>The Library</h2>
-  
+
   <a href="/lib/src/slides.ehtml">Slides</a>
 
-  
+
   <? M:library() ?>
 
   <p>Structure</p>
-  
+
   <pre>
     /lib/src/*.erl
         /ebin/*.beam
@@ -77,9 +77,9 @@
     /include/              -- include files
                               mainly js and dtd's images etc
     /wanted/src/*erl       -- wanted programs
-           /ebin/*.beam   
-           /doc/*.html			   
-           /notes         --  
+           /ebin/*.beam
+           /doc/*.html
+           /notes         --
     Makefile              -- do it all
     Readme                -- description
   </pre>
@@ -108,13 +108,13 @@
     for things.</dl>
 
     <dt><b>Don't add a library module if another module almost does
-    the same thing</b></dt> 
+    the same thing</b></dt>
     <dl> The functionality of the library
     modules should be <i>disjoint</i> as far as possible.</dl>
 
     <dt><b>Use state-of art tools for checking, testing, documenting</b></dt>
     <dl>This means I use the dialyzer, eunit and edoc</dl>
-    
+
     <dt><b>Refactor, refactor refactor (1) </b></dt>
     <dl>If when you are writing an application you find
     some code that should be in the library stop writing you application
@@ -132,7 +132,7 @@
 
 
     <dt><b>Document document document</b></dt>
-    
+
     <dl>Code is not finished until the documentation is <i>beautiful</i>
     Undocumented code is a nightmare to understand and maintain.
     If you have to read the code to understand it you have failed.
@@ -144,7 +144,7 @@
     an emergent structure.</i></dl>
 
     <dt><b>Provide Placeholders</b></dt>
-    
+
     <dl>Add modules that are not yet written, these are
     only placeholders so people know where to look</dl>
 
@@ -165,7 +165,7 @@
       /JOIN #mnesia
       #mnesia: joe has joined #mnesia
       joe: list tables
-      #mnesia: people towns 
+      #mnesia: people towns
       /LEAVE
       #mnesia: joe has left mnesia
     </pre>
@@ -173,6 +173,6 @@
 
     <dt><b>Provide a test bed for ideas</b></dt>
     <dl>...</dl>
-    
+
 
 </body>

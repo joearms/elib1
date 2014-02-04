@@ -1,10 +1,10 @@
 <? simple_web_server:header() ?>
 
 <body>
-  <h1>IRC</h1> 
+  <h1>IRC</h1>
 
   <p>This is an IRC client and server.</p>
-  
+
   <p><a href="/cgi/start_irc">Show me</a></p>
 
   <p>The intention is to control all Erlang components with
@@ -28,7 +28,7 @@
     #mnesia: {name:string(), ag::integer()}
     ...
   </pre>
-  
-  
+
+
  </body>
 

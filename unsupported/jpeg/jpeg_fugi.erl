@@ -12,7 +12,7 @@ time(File) ->
     %% io:format("L=~p~n",[L]),
     time1(L).
 
-time1({ok, BB}) -> 
+time1({ok, BB}) ->
     case (catch get_time(binary_to_list(BB))) of
 	error ->
 	    error;
@@ -23,9 +23,9 @@ time1(error)    -> error.
 
 get_time("Digital Camera FinePix4700 ZOOM Ver1.00\000" ++ T) ->
     extract_time(T);
-get_time([_|T]) -> 
+get_time([_|T]) ->
     get_time(T);
-get_time([])    -> 
+get_time([])    ->
     error.
 
 extract_time([0|_]) ->
@@ -63,7 +63,7 @@ p_seq(Bin) ->
 		    Len = (Msb bsl 8) bor Lsb,
 		    {B1, B2} = split_binary(T, Len-2),
 		    io:format("~p ~n",[Type]),
-		    case Type of 
+		    case Type of
 			225 ->
 			    {ok, B1};
 			_ ->
@@ -74,4 +74,4 @@ p_seq(Bin) ->
 	    end
     end.
 
-   
+

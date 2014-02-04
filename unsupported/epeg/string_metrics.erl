@@ -2,7 +2,7 @@
 %% See MIT-LICENSE for licensing information.
 
 %%%=============================================================================
-%%% @author Adam Lindberg 
+%%% @author Adam Lindberg
 %%%			Fredrik Svensson
 %%% @doc This module contains string metric operations.
 %%%
@@ -30,16 +30,16 @@ levenshtein(Source, Target) ->
 
 %% Recurses over every character in the source string and calculates a list of distances
 levenshtein_rec([SrcHead|SrcTail], Target, DistList, Step) ->
-    levenshtein_rec(SrcTail, Target, 
-		    levenshtein_distlist(Target, DistList, SrcHead, 
+    levenshtein_rec(SrcTail, Target,
+		    levenshtein_distlist(Target, DistList, SrcHead,
 					 [Step], Step), Step + 1);
 levenshtein_rec([], _, DistList, _) ->
     lists:last(DistList).
 
 %% Generates a distance list with distance values for every character in the target string
-levenshtein_distlist([TargetHead|TargetTail], [DLH|DLT], 
+levenshtein_distlist([TargetHead|TargetTail], [DLH|DLT],
 		     SourceChar, NewDistList, LastDist) when length(DLT) > 0 ->
-    Min = lists:min([LastDist + 1, hd(DLT) + 1, 
+    Min = lists:min([LastDist + 1, hd(DLT) + 1,
 		     DLH + dif(TargetHead, SourceChar)]),
     levenshtein_distlist(TargetTail, DLT, SourceChar, NewDistList ++ [Min], Min);
 levenshtein_distlist([], _, _, NewDistList, _) ->

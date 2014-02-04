@@ -16,7 +16,7 @@ test() ->
     store([{guid,g1},{name,joe1},{content,"abc\ndef"}]),
     store([{guid,g1},{date,123},{content,"123"}]),
     store([{guid,g1},{date,125},{stuff,123}, {content,"123abc\ndef\n\234"}]),
-    store([{guid,g1},{nonsense,foodedo}, {content,""}]),    
+    store([{guid,g1},{nonsense,foodedo}, {content,""}]),
     store([{guid,g1},{nonsense,foodedo12313}, {content,"123123"}]),
     elib1_blob_store:close().
 
@@ -37,7 +37,7 @@ fetch1(Meta, N, [P|T]) ->
     fetch1(OldMeta, N-1, T);
 fetch1(_, N, []) ->
     exit({ebadLevel,N}).
-    
+
 store(Assoc) ->
     Guid = must(guid, Assoc),
     NewBlob = case elib1_blob_store:fetch(Guid) of
@@ -125,7 +125,7 @@ lookup(Key, L) ->
 	{value, {_,V}} -> {value, V};
 	false  -> false
     end.
-	    
+
 
 must(K, [{K,V}|_]) -> V;
 must(K, [_|T])     -> must(K, T);
@@ -138,6 +138,6 @@ replace(K, V, [], L)        -> [{K,V}|L].
 delete_key(K, [{K,_}|T]) -> T;
 delete_key(K, [H|T])     -> [H|delete_key(K, T)];
 delete_key(_, [])        -> [].
-     
- 
+
+
 

@@ -24,16 +24,16 @@ body { margin-left:10%; background-color: #f0f0f0;}
 
 .zebra1 { padding-left:7px;
          background-color:red;
-         border-left: 1px solid black; 
+         border-left: 1px solid black;
 	 border-bottom: 1px solid black; }
 
 .zebra2 { padding-left:7px;
     background-color:green;
-         border-left: 1px solid black; 
+         border-left: 1px solid black;
 	 border-bottom: 1px solid black; }
 
 .selected {
-         border-left: 1px solid black; 
+         border-left: 1px solid black;
 	 border-bottom: 1px solid black;
          background-color: orange }
 
@@ -51,10 +51,10 @@ ul	 {margin-left: 120px}
 
 div#popup_editor {
 display: none;
-position: fixed; 
+position: fixed;
 padding:10px;
-top:100; 
-left:100; 
+top:100;
+left:100;
 width:600;
 height:400;
 background-color:white;
@@ -73,7 +73,7 @@ a.but:hover {background-color:yellow;
         border:1px solid black; background-color:#ddffff}
 
 </style>
-<script language="JavaScript" 
+<script language="JavaScript"
         SRC="/include/jquery-1.3.2.min.js"></script>
 
 <script src="./jquery.localscroll-1.2.7-min.js"></script>
@@ -112,7 +112,7 @@ $(document).ready(function(){
     var selected;    // which row is selected
     var display;     // true = display the content
 
-    var editing; // true means we are editing 
+    var editing; // true means we are editing
     var html; // id of the html region
     var org; // id of the org region
     var orgtab; // id of the organiser table
@@ -139,7 +139,7 @@ $(document).ready(function(){
     function debug(x){
 	$("#debug").append("<br>"+x);
     };
-    
+
     function swap(i, j){
 	var tmp = data[i];
 	data[i] = data[j];
@@ -177,7 +177,7 @@ $(document).ready(function(){
 		selected -= 1;
 		$(".header").eq(selected+1).removeClass("selected");
 		$(".header").eq(selected).addClass("selected").localScroll();
-		
+
 	    };
 	    break;
 	case 39:
@@ -206,7 +206,7 @@ $(document).ready(function(){
 		render_html();
 		break;
 	    case 85:
-		// 'U' undelete 
+		// 'U' undelete
 		var max = deleted_data.length;
 		if(max > 0) {
 		    var max1 = data.length;
@@ -218,7 +218,7 @@ $(document).ready(function(){
 	    case 100:
 		// 'd' down
 		if(selected < data.length - 1) {
-		    swap(selected, selected+1);	
+		    swap(selected, selected+1);
 		    selected+=1;
 		    render_html();
 		};
@@ -251,7 +251,7 @@ $(document).ready(function(){
 		break;
 	    }
 	}};
-    
+
     function edit_selected(){
 	editing = true;
 	$("body").css("background", "#cccccc");
@@ -259,18 +259,18 @@ $(document).ready(function(){
 	$("#content").html(data[selected].data);
 	$("#popup_editor").show();
     };
-    
+
     $("#save_edit").click(function(){
 	data[selected].header = $("#title").html();
 	data[selected].data = $("#content").html();
-	$("#popup_editor").hide();	
+	$("#popup_editor").hide();
 	render_html();
 	$("body").css("background", "#f0f0f0");
 	editing = false;
     });
 
     $("#quit_edit").click(function(){
-	    $("#popup_editor").hide();	
+	    $("#popup_editor").hide();
 	    render_html();
 	    $("body").css("background", "#f0f0f0");
 	    editing = false;
@@ -293,7 +293,7 @@ $(document).ready(function(){
 </script>
 
 <body>
-    <button id="save_all">save all</button>  
+    <button id="save_all">save all</button>
   <!-- this div is a hidden editor div -->
   <div id="popup_editor">
     <center>
@@ -322,7 +322,7 @@ $(document).ready(function(){
       </table>
     </center>
   </div>
-  
+
   <!-- define two top regions. Only one is visable -->
   <div id="org">
     <table class="table1" border=1 id="orgtab" width="800px" cellspacing=0>

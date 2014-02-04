@@ -25,16 +25,16 @@ body { margin-left:10%; background-color: #f0f0f0;}
 
 .zebra1 { padding-left:7px;
          background-color:red;
-         border-left: 1px solid black; 
+         border-left: 1px solid black;
 	 border-bottom: 1px solid black; }
 
 .zebra2 { padding-left:7px;
     background-color:green;
-         border-left: 1px solid black; 
+         border-left: 1px solid black;
 	 border-bottom: 1px solid black; }
 
-.selected { padding-left:40px; 
-         border-left: 1px solid black; 
+.selected { padding-left:40px;
+         border-left: 1px solid black;
 	 border-bottom: 1px solid black;
          background-color: orange }
 
@@ -52,10 +52,10 @@ ul	 {margin-left: 120px}
 
 div#mynote {
 display: none;
-position: fixed; 
+position: fixed;
 padding:10px;
-top:100; 
-left:100; 
+top:100;
+left:100;
 width:600;
 height:400;
 background-color:white;
@@ -74,7 +74,7 @@ a.but:hover {background-color:yellow;
         border:1px solid black; background-color:#ddffff}
 
 </style>
-<script language="JavaScript" 
+<script language="JavaScript"
         SRC="../../include/jquery-1.3.2.min.js"></script>
 <script>
 $(document).ready(function(){
@@ -103,7 +103,7 @@ $(document).ready(function(){
     var selected;    // which row is selected
     var display;  // true = display the text
     // false organise
-    var editing; // true means we are editing 
+    var editing; // true means we are editing
     var html; // id of the html region
     var org; // id of the org region
     var orgtab; // id of the organiser table
@@ -130,11 +130,11 @@ $(document).ready(function(){
 	    j = 3 - j;
 	    k = $("<tr><td>"+data[i].data+"</td></tr>");
 	    orgtab.append(k);
-	    if (!data[i].show)k.hide(); 
+	    if (!data[i].show)k.hide();
 	};
 	$("#orgtab tr").eq(2*selected).addClass("selected");
     };
-   
+
     function move_row_up(){
 	// swap selected with selected + 1 in the data array
 	if(selected > 0){
@@ -146,7 +146,7 @@ $(document).ready(function(){
 	    init_html();
 	};
     };
-    
+
     function move_row_down(){
 	// swap selected with selected + 1 in the data array
 	if(selected < data.length - 1){
@@ -162,7 +162,7 @@ $(document).ready(function(){
     function debug(x){
 	$("#debug").append("<br>"+x);
     };
-    
+
     function move_selection_down(){
 	if(selected < data.length - 1){
 	    selected += 1;
@@ -170,15 +170,15 @@ $(document).ready(function(){
 	    $("#orgtab tr").eq(2*(selected-1)).removeClass("selected");
 	};
     };
-    
+
     function move_selection_up(){
-	if(selected > 0){ 
+	if(selected > 0){
 	    selected -= 1;
 	    $("#orgtab tr").eq(2*selected).addClass("selected");
 	    $("#orgtab tr").eq(2*(selected+1)).removeClass("selected");
 	};
     };
-    
+
     function toggle_fold(){
 	// debug("toggle "+selected);
 	data[selected].show = !data[selected].show;
@@ -212,7 +212,7 @@ $(document).ready(function(){
 		    do_org_cmd(e);
 		}
 	    }}});
-    
+
     function do_org_cmd(e){
 	// do a command in organise mode
 	switch(e.keyCode) {
@@ -259,7 +259,7 @@ $(document).ready(function(){
 	$("#content").html(data[selected].data);
 	$("#mynote").show();
     };
-    
+
     $("#save_edit").click(function(){
 	data[selected].header = $("#title").html();
 	data[selected].data = $("#content").html();
@@ -269,7 +269,7 @@ $(document).ready(function(){
 	editing = false;
 	$("#mynote").hide();
     });
-    
+
     selected = 0;
     display = true;
     editing = false;
@@ -313,7 +313,7 @@ $(document).ready(function(){
       </table>
     </center>
   </div>
-  
+
   <!-- define two top regions. Only one is visable -->
   <div id="org">
     <table class="table1" border=1 id="orgtab" width="800px" cellspacing=0>

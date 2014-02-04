@@ -1,7 +1,7 @@
 <? simple_web_server:header() ?>
 
 <body>
-  <h1>Midi drivers</h1> 
+  <h1>Midi drivers</h1>
 
   <p>Programs to read and write midi streams. Mac OS-X only</p>
 
